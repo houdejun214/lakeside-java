@@ -1,4 +1,3 @@
-
 lakeside-java
 =============
 
@@ -12,11 +11,11 @@ Here I would like to thank my guys that help to contribute it.
 
 
 1. lakeside-core
-  core library which include some general java utils.
+    core library which include some general java utils.
 
 2. lakeside-data
-  java data operation libarary which contain many database access interface, as Mysql, Mongo, Redis, Sqlite...
+    java data operation libarary which contain many database access interface, as Mysql, Mongo, Redis, Sqlite...
 
 3. lakeside-web
-  A java web project library , it provide some custom class that will be used to resolve some special java-web project 
-  problem, especial integrate with spring framework.
+    A java web project library , it provide some custom class that will be used to resolve some special java-web project 
+problem, especial integrate with spring framework.
