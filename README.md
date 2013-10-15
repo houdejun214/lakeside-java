@@ -1,6 +1,5 @@
 
-<!-- saved from url=(0099)https://raw.github.com/houdejun214/lakeside-java/e57d6c063a29962b7a3bc8a7e588ce5f854ad33f/README.md -->
-<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style> 	.jq_selected  { 		 border-width:1px; border-style:solid;border-color:red; background-color:yellow 	 } 	</style><style>[touch-action="none"]{ -ms-touch-action: none; touch-action: none; }[touch-action="pan-x"]{ -ms-touch-action: pan-x; touch-action: pan-x; }[touch-action="pan-y"]{ -ms-touch-action: pan-y; touch-action: pan-y; }[touch-action="scroll"],[touch-action="pan-x pan-y"],[touch-action="pan-y pan-x"]{ -ms-touch-action: pan-x pan-y; touch-action: pan-x pan-y; }</style></head><body><pre style="word-wrap: break-word; white-space: pre-wrap;">lakeside-java
+lakeside-java
 =============
 
 A java program library, it aim to help us with some simple coding tips. You can consider it as equal with 
