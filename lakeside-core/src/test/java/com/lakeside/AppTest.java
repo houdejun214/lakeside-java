@@ -1,5 +1,7 @@
 package com.lakeside;
 
+import java.io.UnsupportedEncodingException;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -14,10 +16,12 @@ public class AppTest
      * Create the test case
      *
      * @param testName name of the test case
+     * @throws UnsupportedEncodingException 
      */
-    public AppTest( String testName )
+    public AppTest( String testName ) throws UnsupportedEncodingException
     {
         super( testName );
+        
     }
 
     /**
@@ -30,10 +34,20 @@ public class AppTest
 
     /**
      * Rigourous Test :-)
+     * @throws UnsupportedEncodingException 
      */
-    public void testApp()
+    public void testApp() throws UnsupportedEncodingException
     {
-        assertTrue( true );
+        byte type= '1';
+        System.out.println(toBinary(new byte[]{type}));
+    }
+    
+    String toBinary( byte[] bytes )
+    {
+        StringBuilder sb = new StringBuilder(bytes.length * Byte.SIZE);
+        for( int i = 0; i < Byte.SIZE * bytes.length; i++ )
+            sb.append((bytes[i / Byte.SIZE] << i % Byte.SIZE & 0x80) == 0 ? '0' : '1');
+        return sb.toString();
     }
     
     public static void main(String args[]){

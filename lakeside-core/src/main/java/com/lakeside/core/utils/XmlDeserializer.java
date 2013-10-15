@@ -139,8 +139,8 @@ public class XmlDeserializer {
 				if (!Modifier.isPrivate(modifier) || Modifier.isStatic(modifier)) {
 					continue;
 				}
-				String getterMethodName = "get" + org.apache.commons.lang.StringUtils.capitalize(fieldName);
-				String setterMethodName = "set" + org.apache.commons.lang.StringUtils.capitalize(fieldName);
+				String getterMethodName = "get" + StringUtils.capitalize(fieldName);
+				String setterMethodName = "set" + StringUtils.capitalize(fieldName);
 				if (allMethodNames.contains(getterMethodName) && allMethodNames.contains(setterMethodName)) {
 					properties.add(fields[i]);
 				}

@@ -24,9 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.UUID;
-
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.text.StrBuilder;
+import java.util.regex.Pattern;
 
 import com.lakeside.core.regex.CommonPattern;
 
@@ -626,7 +624,7 @@ public class StringUtils {
         int increase = replacement.length() - replLength;
         increase = (increase < 0 ? 0 : increase);
         increase *= (max < 0 ? 16 : (max > 64 ? 64 : max));
-        StrBuilder buf = new StrBuilder(text.length() + increase);
+        StringBuilder buf = new StringBuilder(text.length() + increase);
         while (end != INDEX_NOT_FOUND) {
             buf.append(text.substring(start, end)).append(replacement);
             start = end + replLength;
@@ -653,7 +651,7 @@ public class StringUtils {
 		}
 		return result.toString();
 	}
-
+	
 	/**
 	 * 获取MD5 16位字节信息
 	 * @param strPlain
@@ -667,6 +665,41 @@ public class StringUtils {
 			MessageDigest m= MessageDigest.getInstance("MD5");
 			m.update(strPlain.getBytes("UTF8"));
 			s = m.digest();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		return s;
+	}
+	
+	/**
+	 * SHA-1 加密
+	 * @param strPlain
+	 * @return
+	 * @throws Exception
+	 */
+	public static String shaEncode(String strPlain){
+		byte[] s = sha(strPlain);
+		StringBuilder result = new StringBuilder();
+		for (int i = 0; i < s.length; i++) {
+			result.append(Integer.toHexString((0x000000ff & s[i]) | 0xffffff00).substring(6));
+		}
+		return result.toString();
+	}
+	
+	
+
+	/**
+	 * 获取SHA-1 16位字节信息
+	 * @param strPlain
+	 * @return
+	 * @throws NoSuchAlgorithmException
+	 * @throws UnsupportedEncodingException
+	 */
+	public static byte[] sha(String strPlain){
+		byte s[] = null;
+		try {
+			MessageDigest m= MessageDigest.getInstance("SHA-1");
+			s = m.digest(strPlain.getBytes("utf-8"));
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -837,7 +870,7 @@ public class StringUtils {
 		// handle null, zero and one elements before building a buffer
 		Object first = iterator.next();
 		if (!iterator.hasNext()) {
-			return ObjectUtils.toString(first);
+			return valueOf(first);
 		}
 		// two or more elements
 		StringBuffer buf = new StringBuffer(256); // Java default is 16,
@@ -855,5 +888,23 @@ public class StringUtils {
 			}
 		}
 		return buf.toString();
+	}
+
+	public static String capitalize(String str) {
+		int strLen;
+        if (str == null || (strLen = str.length()) == 0) {
+            return str;
+        }
+        return new StringBuilder(strLen)
+            .append(Character.toTitleCase(str.charAt(0)))
+            .append(str.substring(1))
+            .toString();
+	}
+	
+	private static String SYMBOL_ALL_PATTERN = "^[ …—`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）——+|{}【】‘；：”“’。，、？]*";
+	private static Pattern allPattern = Pattern.compile(SYMBOL_ALL_PATTERN);
+	
+	public static boolean isSymbolOnly(String content){
+		return allPattern.matcher(content).matches();
 	}
 }

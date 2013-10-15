@@ -1,6 +1,6 @@
 package com.lakeside.core.json;
 
-import org.json.simple.JSONObject;
+import net.sf.json.JSONObject;
 
 public class JsonStatus {
 	private String status;
@@ -32,6 +32,6 @@ public class JsonStatus {
 		JSONObject  obj =new JSONObject();
 		obj.put("status", this.status);
 		obj.put("content", this.content);
-		return obj.toJSONString();
+		return obj.toString();
 	}
 }

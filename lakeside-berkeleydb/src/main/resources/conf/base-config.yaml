@@ -1,0 +1,8 @@
+---
+allowCreate: true
+databaseDirectory: data
+databaseName: bdb
+sortedDuplicates: true
+transactional: true
+webServerPort: 1122
+dataBaseServerPort: 1120

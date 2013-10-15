@@ -11,14 +11,18 @@ import java.beans.PropertyDescriptor;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.sql.DataSource;
 
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.metadata.ClassMetadata;
@@ -28,7 +32,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.FatalBeanException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 
 import com.lakeside.core.utils.Assert;
 import com.lakeside.core.utils.ReflectionUtils;
@@ -55,6 +62,9 @@ public class BaseDao<T, PK extends Serializable> {
 	
 	protected NamedParameterJdbcTemplate jdbcTemplate;
 
+	private DataSource dataSource;
+
+	public static final HashMap<String,Object> EMPTY_PARAMETER = null;
 	/**
 	 * 用于Dao层子类使用的构造函数.
 	 * 通过子类的泛型定义取得对象类型Class.
@@ -82,6 +92,14 @@ public class BaseDao<T, PK extends Serializable> {
 	 */
 	public SessionFactory getSessionFactory() {
 		return sessionFactory;
+	}
+	
+	/**
+	 * 采用@Autowired按类型注入SessionFactory, 当有多个SesionFactory的时候Override本函数.
+	 */
+	@Autowired
+	public void setDataSource(final DataSource dataSource) {
+		this.dataSource = dataSource;
 	}
 
 	/**
@@ -359,5 +377,26 @@ public class BaseDao<T, PK extends Serializable> {
 			return null;
 		}
 		return result.get(0);
+	}
+	
+	public long insertWithGeneratedKey(final String sql, final Map<String, ?> paramMap){
+		
+		MapSqlParameterSource mapSqlParameterSource = new MapSqlParameterSource(paramMap);
+		KeyHolder keyHolder = new GeneratedKeyHolder();
+		int row = this.jdbcTemplate.update(sql, mapSqlParameterSource, keyHolder);
+		if (row > 0)
+             return keyHolder.getKey().longValue(); //line 72
+		return -1;
+	}
+	
+	public Transaction begainTransaction(){
+		Session currentSession = this.sessionFactory.openSession();
+		Transaction tran = currentSession.beginTransaction();
+		tran.begin();
+		return tran;
+	}
+	
+	protected Map<String, Object> newParameters(){
+		return new HashMap<String,Object>();
 	}
 }

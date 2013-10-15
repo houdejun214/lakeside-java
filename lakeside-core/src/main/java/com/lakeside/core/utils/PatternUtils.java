@@ -72,6 +72,21 @@ public class PatternUtils {
 		return "";
 	}
 	
+	public static String replaceMatchGroup(String regex,String input,int groupIndex,String replacestr){
+		StringBuilder sb = new StringBuilder();
+		Pattern pat = getPattern(regex);
+		Matcher matcher = pat.matcher(input);
+		if(matcher.find()){
+			 int start = matcher.start(groupIndex);
+			 int end = matcher.end(groupIndex);
+			 sb.append(input.substring(0, start));
+			 sb.append(replacestr);
+			 sb.append(input.substring(end));
+			 return sb.toString();
+		}
+		return "";
+	}
+	
 	
 	public static String[] getMatchPattern(String regex,String input){
 		Pattern pat = getPattern(regex);

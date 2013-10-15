@@ -15,8 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.lakeside.core.resource.DefaultPropertiesPersister;
-import com.lakeside.core.resource.DefaultResourceLoader;
-import com.lakeside.core.resource.ResourceLoader;
 
 /**
  * Properties Util函数.
@@ -29,22 +27,24 @@ public class PropertiesUtils {
 
 	private static DefaultPropertiesPersister propertiesPersister = new DefaultPropertiesPersister();
 	
-	private static ResourceLoader resourceLoader = new DefaultResourceLoader();
-
 	/**
 	 * 载入多个properties文件, 相同的属性最后载入的文件将会覆盖之前的载入.
 	 * @see org.springframework.beans.factory.config.PropertyPlaceholderConfigurer
 	 */
 	public static Properties loadProperties(String... locations) throws IOException {
+		return loadProperties(PropertiesUtils.class,locations);
+	}
+	
+	public static Properties loadProperties(Class<?> classresource,String... locations) throws IOException{
+		ClassLoader classLoader = classresource.getClassLoader();
 		Properties props = new Properties();
-
 		for (String location : locations) {
 
 			logger.debug("Loading properties file from classpath:" + location);
 
 			InputStream is = null;
 			try {
-				is = resourceLoader.getResource(location);
+				is = classLoader.getResourceAsStream(location);
 				propertiesPersister.load(props, new InputStreamReader(is, DEFAULT_ENCODING));
 			} catch (IOException ex) {
 				logger.info("Could not load properties from classpath:" + location + ": " + ex.getMessage());

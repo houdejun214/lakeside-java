@@ -17,4 +17,22 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
 public @interface Protected {
+	
+	/**
+	 * define the require user role
+	 * @return
+	 */
+	String[] role() default "";
+	
+	/**
+	 * define the require role permission
+	 * @return
+	 */
+	String[] permission() default "";
+	
+	/**
+	 * define if can access anonymity
+	 * @return
+	 */
+	boolean allowAnon() default false;
 }

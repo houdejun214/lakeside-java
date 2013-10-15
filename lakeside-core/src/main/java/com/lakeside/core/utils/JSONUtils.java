@@ -8,8 +8,6 @@ import java.util.Map.Entry;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
-import org.apache.commons.lang.StringUtils;
-
 /**
  * some utils for operate Json object
  * 

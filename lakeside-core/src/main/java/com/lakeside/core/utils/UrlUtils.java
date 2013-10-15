@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -89,76 +90,24 @@ public class UrlUtils {
 	 *         map values, and names list.
 	 */
 	public static QueryUrl parseQueryUrlString(String s){
-		if (s == null)
-			return new QueryUrl();
-		// In map we use strings and ArrayLists to collect the parameter
-		// values.
-		HashMap<String, Object> map = new HashMap<String, Object>();
-		ArrayList<String> names = new ArrayList<String>();
-		int index = s.indexOf("?");
-		if(index<0){
-			return new QueryUrl();
-		}
-		String hostName = s.substring(0,index);
-		int p = index+1;
-		int length = s.length();
-		while (p < length) {
-			int p0 = p;
-			while (p < length && s.charAt(p) != '=' && s.charAt(p) != '&')
-				p++;
-			//String name = urlDecode(s.substring(p0, p));
-			String name = s.substring(p0, p);
-			if (p < length && s.charAt(p) == '=')
-				p++;
-			p0 = p;
-			while (p < length && s.charAt(p) != '&')
-				p++;
-			//String value = urlDecode(s.substring(p0, p));
-			String value = s.substring(p0, p);
-			if (p < length && s.charAt(p) == '&')
-				p++;
-			Object x = map.get(name);
-			if (x == null) {
-				// The first value of each name is added directly as a string to
-				// the map.
-				map.put(name, value);
-				names.add(name);
-			} else if (x instanceof String) {
-				// For multiple values, we use an ArrayList.
-				ArrayList<String> a = new ArrayList<String>();
-				a.add((String) x);
-				a.add(value);
-				map.put(name, a);
-			} else {
-				ArrayList<String> a = (ArrayList<String>) x;
-				a.add(value);
-			}
-		}
-		// Copy map1 to map2. Map2 uses string arrays to store the parameter
-		// values.
-		
-		HashMap<String, String[]> map2 = new HashMap<String, String[]>(map.size());
-		for (Map.Entry<String, Object> e : map.entrySet()) {
-			String name = e.getKey();
-			Object x = e.getValue();
-			String[] v;
-			if (x instanceof String) {
-				v = new String[] { (String) x };
-			} else {
-				@SuppressWarnings("unchecked")
-				ArrayList<String> a = (ArrayList<String>) x;
-				v = new String[a.size()];
-				v = a.toArray(v);
-			}
-			map2.put(name, v);
-		}
-		QueryUrl query = new QueryUrl(hostName,map2,names);
-		return query;
+		return new QueryUrl(s);
 	}
 	
-	public static String urlDecode(String s) {
+	public static String decode(String s) {
 		try {
 			return URLDecoder.decode(s, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException("Error in urlDecode.", e);
+		}
+	}
+
+	public static String encode(String s) {
+		return encode(s,"UTF-8");
+	}
+
+	public static String encode(String s,String charset) {
+		try {
+			return URLEncoder.encode(s, charset);
 		} catch (UnsupportedEncodingException e) {
 			throw new RuntimeException("Error in urlDecode.", e);
 		}

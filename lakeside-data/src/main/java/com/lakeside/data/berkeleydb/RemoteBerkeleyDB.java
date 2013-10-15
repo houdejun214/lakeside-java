@@ -46,24 +46,7 @@ public class RemoteBerkeleyDB<PK,T> implements Closeable {
 		}
 	}
 	
-	public void sendSave(PK key,T value){
-		RecordType record = new RecordType();
-		record.setKey(keyBinding.getBytes(key));
-		record.setValue(valueBinding.getBytes(value));
-		try {
-			client.send_insertRecord(record);
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
 	
-	public void executeSave(){
-		try {
-			client.recv_insertRecord();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
 	
 	public T get(PK key){
 		try {

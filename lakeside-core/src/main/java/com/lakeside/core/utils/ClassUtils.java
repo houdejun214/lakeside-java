@@ -1,6 +1,9 @@
 package com.lakeside.core.utils;
 
 import java.lang.reflect.Method;
+import java.util.Set;
+
+import org.reflections.Reflections;
 
 public class ClassUtils {
 	
@@ -51,5 +54,12 @@ public class ClassUtils {
 		catch (NoSuchMethodException ex) {
 			return null;
 		}
+	}
+	
+	public static <T> Set<Class<? extends T>> getSubClass(Class<T> parentClass,String basePath){
+		Reflections reflections = new Reflections(basePath);
+	     Set<Class<? extends T>> subTypes = 
+	               reflections.getSubTypesOf(parentClass);
+	     return subTypes;
 	}
 }

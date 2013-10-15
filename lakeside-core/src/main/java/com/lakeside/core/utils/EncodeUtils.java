@@ -10,10 +10,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 
-import org.apache.commons.codec.DecoderException;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.lang.StringEscapeUtils;
+import com.google.common.io.BaseEncoding;
 
 /**
  * 各种格式的编码加码工具类.
@@ -25,43 +22,90 @@ public class EncodeUtils {
 
 	private static final String DEFAULT_URL_ENCODING = "UTF-8";
 
+    /**
+     * Used to build output as Hex
+     */
+    private static final char[] DIGITS_LOWER = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+
+    /**
+     * Used to build output as Hex
+     */
+    private static final char[] DIGITS_UPPER = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+    
 	/**
 	 * Hex编码.
 	 */
-	public static String hexEncode(byte[] input) {
-		return Hex.encodeHexString(input);
+	public static String hexEncode(byte[] data) {
+		return hexEncode(data,true);
+	}
+	
+	/**
+	 * Hex编码.
+	 */
+	public static String hexEncode(byte[] data,boolean toLowerCase) {
+		char[] toDigits = toLowerCase ? DIGITS_LOWER : DIGITS_UPPER;
+		int l = data.length;
+        char[] out = new char[l << 1];
+        // two characters form the hex value.
+        for (int i = 0, j = 0; i < l; i++) {
+            out[j++] = toDigits[(0xF0 & data[i]) >>> 4];
+            out[j++] = toDigits[0x0F & data[i]];
+        }
+        return new String(out);
 	}
 
 	/**
 	 * Hex解码.
 	 */
 	public static byte[] hexDecode(String input) {
-		try {
-			return Hex.decodeHex(input.toCharArray());
-		} catch (DecoderException e) {
-			throw new IllegalStateException("Hex Decoder exception", e);
-		}
+		char[] data = input.toCharArray();
+		 int len = data.length;
+
+	        if ((len & 0x01) != 0) {
+	            throw new RuntimeException("Odd number of characters.");
+	        }
+
+	        byte[] out = new byte[len >> 1];
+
+	        // two characters form the hex value.
+	        for (int i = 0, j = 0; j < len; i++) {
+	            int f = toDigit(data[j], j) << 4;
+	            j++;
+	            f = f | toDigit(data[j], j);
+	            j++;
+	            out[i] = (byte) (f & 0xFF);
+	        }
+
+	        return out;
 	}
+	
+	 protected static int toDigit(char ch, int index){
+        int digit = Character.digit(ch, 16);
+        if (digit == -1) {
+            throw new RuntimeException("Illegal hexadecimal character " + ch + " at index " + index);
+        }
+        return digit;
+    }
 
 	/**
 	 * Base64编码.
 	 */
 	public static String base64Encode(byte[] input) {
-		return new String(Base64.encodeBase64(input));
+		return new String(BaseEncoding.base64().encode(input));
 	}
 
 	/**
 	 * Base64编码, URL安全(将Base64中的URL非法字符如+,/=转为其他字符, 见RFC3548).
 	 */
 	public static String base64UrlSafeEncode(byte[] input) {
-		return Base64.encodeBase64URLSafeString(input);
+		return BaseEncoding.base64Url().encode(input);
 	}
 
 	/**
 	 * Base64解码.
 	 */
 	public static byte[] base64Decode(String input) {
-		return Base64.decodeBase64(input);
+		return BaseEncoding.base64().decode(input);
 	}
 
 	/**
@@ -98,33 +142,5 @@ public class EncodeUtils {
 		} catch (UnsupportedEncodingException e) {
 			throw new IllegalArgumentException("Unsupported Encoding Exception", e);
 		}
-	}
-
-	/**
-	 * Html 转码.
-	 */
-	public static String htmlEscape(String html) {
-		return StringEscapeUtils.escapeHtml(html);
-	}
-
-	/**
-	 * Html 解码.
-	 */
-	public static String htmlUnescape(String htmlEscaped) {
-		return StringEscapeUtils.unescapeHtml(htmlEscaped);
-	}
-
-	/**
-	 * Xml 转码.
-	 */
-	public static String xmlEscape(String xml) {
-		return StringEscapeUtils.escapeXml(xml);
-	}
-
-	/**
-	 * Xml 解码.
-	 */
-	public static String xmlUnescape(String xmlEscaped) {
-		return StringEscapeUtils.unescapeXml(xmlEscaped);
 	}
 }

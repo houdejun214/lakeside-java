@@ -7,7 +7,7 @@ public class HtmlReformatter {
 	protected static Pattern scriptBlockRE = Pattern.compile("<script.*?</script>", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE| Pattern.DOTALL);
 	protected static Pattern styleBlockRE = Pattern.compile("<style.*?</style>", Pattern.CASE_INSENSITIVE | Pattern.MULTILINE
 					| Pattern.DOTALL);
-	protected static Pattern htmlTagRE = Pattern.compile("<[^<>]+>",Pattern.MULTILINE);
+	protected static Pattern htmlTagRE = Pattern.compile("\\s*<[^<>]+>\\s*",Pattern.MULTILINE);
 	protected static Pattern breakChars = Pattern.compile("[\\n\\t\\r<>]",Pattern.MULTILINE);
 
 	/**
@@ -36,7 +36,7 @@ public class HtmlReformatter {
 	}
 
 	public static void main(String[] args) {
-		String html = "<html><body>teststetsts < <a>fdsdfsdfs</a>df \n\n\n\r\n < > </body></html>";
+		String html = "<s> # </s> erwoirjoe<br><b>sdfsdf sdfsdf</b>";
 		String text = HtmlReformatter.getPlainText(html);
 		System.out.println(text);
 	}

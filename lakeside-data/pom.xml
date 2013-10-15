@@ -2,62 +2,35 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.lakeside</groupId>
   <artifactId>lakeside-data</artifactId>
-  <version>0.0.1</version>
   <packaging>jar</packaging>
-
   <name>lakeside-data</name>
   <url>http://maven.apache.org</url>
   
-
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <sqlite4java.version>0.282</sqlite4java.version>
-    <spring.version>3.1.2.RELEASE</spring.version>
-  </properties>
+  <parent>
+  	<groupId>com.lakeside</groupId>
+  	<artifactId>lakeside-parent</artifactId>
+  	<relativePath>../lakeside-parent</relativePath>
+  	<version>0.0.2</version>
+  </parent>
+  
   <dependencies>
-    <dependency>
-    	<groupId>junit</groupId>
-    	<artifactId>junit</artifactId>
-    	<version>4.8.2</version>
-    	<type>jar</type>
-    	<scope>test</scope>
-    </dependency>
     <!-- hibernate -->
     <dependency>
     	<groupId>org.hibernate</groupId>
     	<artifactId>hibernate-core</artifactId>
     	<version>3.6.6.Final</version>
-    	<type>jar</type>
-    	<scope>compile</scope>
-    </dependency>
-    <dependency>
-    	<groupId>org.hibernate</groupId>
-    	<artifactId>hibernate-annotations</artifactId>
-    	<version>3.5.6-Final</version>
-    	<type>jar</type>
-    	<scope>compile</scope>
     </dependency>
     
     <dependency>
     	<groupId>com.lakeside</groupId>
     	<artifactId>lakeside-core</artifactId>
-    	<version>0.0.1</version>
-    	<type>jar</type>
-    	<scope>compile</scope>
+    	<version>${project.version}</version>
     </dependency>
     
     <dependency>
     	<groupId>org.springframework</groupId>
     	<artifactId>spring-jdbc</artifactId>
-    	<version>${spring.version}</version>
-    	<type>jar</type>
-    	<scope>compile</scope>
-    </dependency>
-    <dependency>
-    	<groupId>org.springframework</groupId>
-    	<artifactId>spring-beans</artifactId>
     	<version>${spring.version}</version>
     	<type>jar</type>
     	<scope>compile</scope>
@@ -74,7 +47,8 @@
       <artifactId>sqlite4java</artifactId>
       <type>jar</type>
       <version>${sqlite4java.version}</version>
-    </dependency>
+      <scope>provided</scope>
+     </dependency>
      <dependency>
      	<groupId>org.mongodb</groupId>
      	<artifactId>mongo-java-driver</artifactId>
@@ -82,11 +56,13 @@
      	<type>jar</type>
      	<scope>compile</scope>
      </dependency>
+     
      <!-- Berkeley DB -->
      <dependency>
      	<artifactId>je</artifactId>
 	  	<groupId>com.sleepycat</groupId>
 	  	<version>5.0.34</version>
+	  	<scope>provided</scope>
      </dependency>
      <dependency>
 		<groupId>com.wordnik</groupId>
@@ -116,8 +92,24 @@
      	<groupId>org.apache.thrift</groupId>
      	<artifactId>libthrift</artifactId>
      	<version>0.9.0</version>
+     	<scope>provided</scope>
      </dependency>
+     <dependency>
+     	<groupId>redis.clients</groupId>
+     	<artifactId>jedis</artifactId>
+     	<version>2.1.0</version>
+     	<type>jar</type>
+     	<scope>provided</scope>
+     </dependency>
+     <dependency>
+		<groupId>com.mchange</groupId>
+		<artifactId>c3p0</artifactId>
+		<version>0.9.2-pre8</version>
+		<type>jar</type>
+		<scope>compile</scope>
+	</dependency>
   </dependencies>
+  
   <repositories>
     <repository>
       <id>oracleReleases</id>
@@ -126,26 +118,4 @@
       <layout>default</layout>
     </repository>
   </repositories>
-  <distributionManagement>    
-    <repository>    
-      <id>local.maven.thirdparty</id>
-	  <name>local.maven.thirdparty</name>   
-      <url>http://172.29.34.116:9000/nexus/content/repositories/thirdparty/</url>    
-    </repository>
-  </distributionManagement>
-   <build>
-	    <plugins>
-	        <plugin>
-	            <groupId>org.apache.maven.plugins</groupId>
-	            <artifactId>maven-source-plugin</artifactId>
-	            <executions>
-	                <execution>
-	                    <goals>
-	                        <goal>jar</goal>
-	                    </goals>
-	                </execution>
-	            </executions>
-	        </plugin>
-	    </plugins>
-	</build>
 </project>

@@ -591,6 +591,27 @@ public class PathUtils {
 	}
 	
 	/**
+	 * append a suffix string to the file name
+	 * 
+	 * for: name.txt, append _en ==> name_en.txt
+	 *  
+	 * 
+	 * @param path
+	 * @param suffix
+	 * @return
+	 */
+	public static String appendFileNameSuffix(String path,String suffix){
+		if(path==null){
+			return "";
+		}
+		int extPos=path.lastIndexOf(".");
+		if(extPos<0){
+			return path+suffix;
+		}
+		return path.substring(0,extPos)+suffix+path.substring(extPos);
+	}
+	
+	/**
 	 * @param path
 	 * @return
 	 */

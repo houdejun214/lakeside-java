@@ -11,6 +11,7 @@ package com.lakeside.core.utils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,10 +19,17 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.Reader;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.SystemUtils;
+
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -464,14 +472,42 @@ public class FileUtils {
 	 */
 	public static String readFileToString(File file, String encoding)
 			throws IOException {
-		InputStream in = null;
-		try {
-			in = openInputStream(file);
-			return IOUtils.toString(in, encoding);
-		} finally {
-			IOUtils.closeQuietly(in);
+		Charset set = Charsets.UTF_8;
+		if(!StringUtils.isEmpty(encoding)){
+			set = Charset.forName(encoding);
 		}
+		return Files.toString(file, set);
 	}
+	
+	/**
+	 * Get the contents of an <code>InputStream</code> as a list of Strings,
+     * one entry per line, using the specified character encoding.
+     * 
+	 * @param file
+	 * @param encoding
+	 * @return
+	 * @throws IOException
+	 */
+    public static List<String> readLines(File file, String encoding) throws IOException {
+    	InputStreamReader reader = null;
+        try {
+        	reader = new InputStreamReader(openInputStream(file), encoding);
+            return readLines(reader);
+        } finally {
+        	reader.close();
+        }
+    }
+	
+    public static List<String> readLines(Reader input) throws IOException {
+        BufferedReader reader = new BufferedReader(input);
+        List<String> list = new ArrayList<String>();
+        String line = reader.readLine();
+        while (line != null) {
+            list.add(line);
+            line = reader.readLine();
+        }
+        return list;
+    }
 
 	/**
 	 * Reads the contents of a file into a String using the default encoding for
