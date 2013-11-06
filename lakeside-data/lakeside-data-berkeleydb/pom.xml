@@ -6,6 +6,7 @@
     <groupId>com.lakeside</groupId>
     <artifactId>lakeside-data</artifactId>
     <version>1.0.0</version>
+    <relativePath>../pom.xml</relativePath>
   </parent>
   <artifactId>lakeside-data-berkeleydb</artifactId>
   <name>lakeside-data-berkeleydb</name>
