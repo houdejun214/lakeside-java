@@ -14,12 +14,10 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.commons.beanutils.converters.DateConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,12 +32,12 @@ public class ReflectionUtils {
 
 	private static Logger logger = LoggerFactory.getLogger(ReflectionUtils.class);
 
-	static {
-		DateConverter dc = new DateConverter();
-		dc.setUseLocaleFormat(true);
-		dc.setPatterns(new String[] { "yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss" });
-		ConvertUtils.register(dc, Date.class);
-	}
+//	static {
+//		DateConverter dc = new DateConverter();
+//		dc.setUseLocaleFormat(true);
+//		dc.setPatterns(new String[] { "yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss" });
+//		ConvertUtils.register(dc, Date.class);
+//	}
 
 	/**
 	 * 调用Getter方法.

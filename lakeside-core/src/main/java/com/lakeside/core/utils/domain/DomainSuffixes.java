@@ -20,8 +20,8 @@ package com.lakeside.core.utils.domain;
 import java.io.InputStream;
 import java.util.HashMap;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.lakeside.core.utils.StringUtils;
 
@@ -31,7 +31,7 @@ import com.lakeside.core.utils.StringUtils;
  * @author Enis Soztutar &lt;enis.soz.nutch@gmail.com&gt;
  */
 public class DomainSuffixes {
-  private static final Log LOG = LogFactory.getLog(DomainSuffixes.class);
+  private static final Logger LOG = LoggerFactory.getLogger(DomainSuffixes.class);
   
   private HashMap<String, DomainSuffix> domains = new HashMap<String, DomainSuffix>(); 
   

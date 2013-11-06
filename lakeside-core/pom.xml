@@ -16,38 +16,6 @@
   </parent>
 
   <dependencies>
-    <!-- start log dependency -->
-    <dependency>
-    	<groupId>org.slf4j</groupId>
-    	<artifactId>slf4j-api</artifactId>
-    	<version>${slf4j.version}</version>
-    	<type>jar</type>
-    	<scope>compile</scope>
-    </dependency>
-    <!--  this should be in the deploy project
-    <dependency>
-    	<groupId>ch.qos.logback</groupId>
-    	<artifactId>logback-core</artifactId>
-    	<version>1.0.6</version>
-    	<type>jar</type>
-    	<scope>compile</scope>
-    </dependency>
-    <dependency>
-    	<groupId>ch.qos.logback</groupId>
-    	<artifactId>logback-classic</artifactId>
-    	<version>1.0.6</version>
-    	<type>jar</type>
-    	<scope>compile</scope>
-    </dependency>
-     -->
-    <!-- end of log dependency -->
-    <dependency>
-    	<groupId>org.jsoup</groupId>
-    	<artifactId>jsoup</artifactId>
-    	<version>${jsoup.version}</version>
-    	<type>jar</type>
-    	<scope>compile</scope>
-    </dependency>
     <dependency>
     	<groupId>javax.mail</groupId>
     	<artifactId>mail</artifactId>
@@ -67,7 +35,22 @@
     			<artifactId>commons-lang</artifactId>
     			<groupId>commons-lang</groupId>
     		</exclusion>
+    		<exclusion>
+    			<artifactId>commons-logging</artifactId>
+    			<groupId>commons-logging</groupId>
+    		</exclusion>
     	</exclusions>
+    </dependency>
+    <dependency>
+    	<groupId>commons-beanutils</groupId>
+	 	<artifactId>commons-beanutils</artifactId>
+		<version>1.8.0</version>
+		<exclusions>
+			<exclusion>
+				<artifactId>commons-logging</artifactId>
+				<groupId>commons-logging</groupId>
+			</exclusion>
+		</exclusions>
     </dependency>
     <dependency>
     	<groupId>commons-lang</groupId>
@@ -86,6 +69,7 @@
          		<groupId>com.google.guava</groupId>
          	</exclusion>
          </exclusions>
+         <scope>provided</scope>
     </dependency>
     <dependency>
     	<groupId>com.google.guava</groupId>

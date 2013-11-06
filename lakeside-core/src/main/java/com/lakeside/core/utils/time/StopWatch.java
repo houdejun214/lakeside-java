@@ -41,7 +41,6 @@ public class StopWatch {
     	return span;
     }
     
-    
     //elaspsed time in seconds
     public long getElapsedTimeSecs() {
         long elapsed;
