@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.lakeside</groupId>
+    <artifactId>lakeside-data</artifactId>
+    <version>1.0.0</version>
+  </parent>
+  <artifactId>lakeside-data-berkeleydb</artifactId>
+  <name>lakeside-data-berkeleydb</name>
+  <url>http://maven.apache.org</url>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+  <dependencies>
+    <!-- Berkeley DB -->
+     <dependency>
+     	<artifactId>je</artifactId>
+	  	<groupId>com.sleepycat</groupId>
+	  	<version>5.0.34</version>
+	  	<scope>provided</scope>
+     </dependency>
+     
+     <dependency>
+     	<groupId>org.apache.thrift</groupId>
+     	<artifactId>libthrift</artifactId>
+     	<version>0.9.0</version>
+     	<scope>provided</scope>
+     </dependency>
+  </dependencies>
+  
+   <repositories>
+    <repository>
+      <id>oracleReleases</id>
+      <name>Oracle Released Java Packages</name>
+      <url>http://download.oracle.com/maven</url>
+      <layout>default</layout>
+    </repository>
+  </repositories>
+</project>

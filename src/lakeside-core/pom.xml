@@ -1,0 +1,105 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <artifactId>lakeside-core</artifactId>
+  <packaging>jar</packaging>
+
+  <name>lakeside-core</name>
+  <url>http://maven.apache.org</url>
+  
+  <parent>
+  	<groupId>com.lakeside</groupId>
+  	<artifactId>lakeside-parent</artifactId>
+  	<relativePath>../lakeside-parent</relativePath>
+  	<version>0.0.2</version>
+  </parent>
+
+  <dependencies>
+    <!-- start log dependency -->
+    <dependency>
+    	<groupId>org.slf4j</groupId>
+    	<artifactId>slf4j-api</artifactId>
+    	<version>${slf4j.version}</version>
+    	<type>jar</type>
+    	<scope>compile</scope>
+    </dependency>
+    <!--  this should be in the deploy project
+    <dependency>
+    	<groupId>ch.qos.logback</groupId>
+    	<artifactId>logback-core</artifactId>
+    	<version>1.0.6</version>
+    	<type>jar</type>
+    	<scope>compile</scope>
+    </dependency>
+    <dependency>
+    	<groupId>ch.qos.logback</groupId>
+    	<artifactId>logback-classic</artifactId>
+    	<version>1.0.6</version>
+    	<type>jar</type>
+    	<scope>compile</scope>
+    </dependency>
+     -->
+    <!-- end of log dependency -->
+    <dependency>
+    	<groupId>org.jsoup</groupId>
+    	<artifactId>jsoup</artifactId>
+    	<version>${jsoup.version}</version>
+    	<type>jar</type>
+    	<scope>compile</scope>
+    </dependency>
+    <dependency>
+    	<groupId>javax.mail</groupId>
+    	<artifactId>mail</artifactId>
+    	<version>1.4.5</version>
+    	<type>jar</type>
+    	<scope>compile</scope>
+    </dependency>
+    <dependency>
+    	<groupId>net.sf.json-lib</groupId>
+    	<artifactId>json-lib</artifactId>
+    	<version>${jsonlib.version}</version>
+    	<type>jar</type>
+    	<classifier>jdk15</classifier>
+    	<scope>compile</scope>
+    	<exclusions>
+    		<exclusion>
+    			<artifactId>commons-lang</artifactId>
+    			<groupId>commons-lang</groupId>
+    		</exclusion>
+    	</exclusions>
+    </dependency>
+    <dependency>
+    	<groupId>commons-lang</groupId>
+    	<artifactId>commons-lang</artifactId>
+    	<version>${commons-lang.version}</version>
+    	<type>jar</type>
+    	<scope>compile</scope>
+    </dependency>
+    <dependency>
+         <groupId>org.reflections</groupId>
+         <artifactId>reflections</artifactId>
+         <version>${reflections.version}</version>
+         <exclusions>
+         	<exclusion>
+         		<artifactId>guava</artifactId>
+         		<groupId>com.google.guava</groupId>
+         	</exclusion>
+         </exclusions>
+    </dependency>
+    <dependency>
+    	<groupId>com.google.guava</groupId>
+    	<artifactId>guava</artifactId>
+    	<version>${guava.version}</version>
+    	<scope>compile</scope>
+    </dependency>
+  </dependencies>
+  
+  <distributionManagement>    
+    <repository>    
+      <id>local.maven.thirdparty</id>
+	  <name>local.maven.thirdparty</name>   
+      <url>http://172.29.34.116:9000/nexus/content/repositories/thirdparty/</url>    
+    </repository>
+  </distributionManagement>
+</project>
