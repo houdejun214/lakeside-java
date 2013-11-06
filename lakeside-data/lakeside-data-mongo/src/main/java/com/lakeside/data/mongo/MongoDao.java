@@ -8,7 +8,6 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.Mongo;
 
-@Deprecated
 public class MongoDao {
 	
 	protected Mongo m = null;
