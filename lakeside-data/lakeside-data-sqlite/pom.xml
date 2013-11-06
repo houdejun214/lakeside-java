@@ -18,16 +18,7 @@
      <dependency>
       <groupId>com.almworks.sqlite4java</groupId>
       <artifactId>sqlite4java</artifactId>
-      <type>jar</type>
       <version>${sqlite4java.version}</version>
-      <scope>provided</scope>
-     </dependency>
-     <dependency>
-     	<groupId>org.mongodb</groupId>
-     	<artifactId>mongo-java-driver</artifactId>
-     	<version>2.7.3</version>
-     	<type>jar</type>
-     	<scope>compile</scope>
      </dependency>
     
   </dependencies>
