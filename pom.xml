@@ -93,8 +93,5 @@
 	    </plugins>
 	</build>
    <modules>
-   	<module>../lakeside-core</module>
-   	<module>../lakeside-data</module>
-   	<module>../lakeside-web</module>
    </modules>
 </project>
