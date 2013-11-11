@@ -91,6 +91,14 @@ public class ArgOptions {
 		return value;
 	}
 	
+	public boolean getBoolean(String key,boolean defaultValue){
+		String value = this.get(key);
+		if(value==null){
+			return defaultValue;
+		}
+		return Boolean.valueOf(value);
+	}
+	
 	public String get(String key,String defaultValue){
 		String value = this.get(key);
 		if(value==null){
