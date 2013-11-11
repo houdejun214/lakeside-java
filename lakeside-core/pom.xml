@@ -69,7 +69,7 @@
          		<groupId>com.google.guava</groupId>
          	</exclusion>
          </exclusions>
-         <scope>provided</scope>
+         <optional>true</optional>
     </dependency>
     <dependency>
     	<groupId>com.google.guava</groupId>
@@ -77,8 +77,13 @@
     	<version>${guava.version}</version>
     	<scope>compile</scope>
     </dependency>
+    <dependency>
+   		<groupId>org.slf4j</groupId>
+   		<artifactId>slf4j-api</artifactId>
+   		<version>${slf4j.version}</version>
+   		<optional>true</optional>
+   	</dependency>
   </dependencies>
-  
   <distributionManagement>    
     <repository>    
       <id>local.maven.thirdparty</id>
