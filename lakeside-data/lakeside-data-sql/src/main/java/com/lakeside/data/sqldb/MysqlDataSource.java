@@ -13,7 +13,7 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 public class MysqlDataSource {
 
-	private DataSource dataSource = null;
+	private ComboPooledDataSource dataSource = null;
 
 	private NamedParameterJdbcTemplate jdbcTemplate;
 	
@@ -68,5 +68,12 @@ public class MysqlDataSource {
 	public MysqlDataSource(String host,String port,String db,String userName,String password){
 		this(StringUtils.format("jdbc:mysql://{0}:{1}/{2}?useUnicode=true&characterEncoding=UTF-8&charSet=UTF-8", host,port,db), userName, password);
 		this.databaseName = db;
+	}
+	
+	/**
+	 * close the data source
+	 */
+	public void close(){
+		this.dataSource.close(true);
 	}
 }
