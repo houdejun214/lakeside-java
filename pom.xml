@@ -11,7 +11,7 @@
   	<repository>    
       <id>local.maven.thirdparty</id>
 	  <name>local.maven.thirdparty</name>   
-      <url>http://172.29.34.116:9000/nexus/content/repositories/thirdparty/</url>    
+      <url>http://172.29.34.116:9000/nexus/content/groups/public/</url>    
     </repository>
   </repositories>
   
@@ -72,7 +72,7 @@
     <repository>    
       <id>local.maven.thirdparty</id>
 	  <name>local.maven.thirdparty</name>   
-      <url>http://172.29.34.116:9000/nexus/content/repositories/thirdparty/</url>    
+      <url>http://172.29.34.116:9000/nexus/content/repositories/snapshots/</url>    
     </repository>
   </distributionManagement>
   

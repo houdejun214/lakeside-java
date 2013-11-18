@@ -79,13 +79,6 @@
             <version>${shiro.version}</version>
        </dependency>
   </dependencies>
-  <distributionManagement>    
-    <repository>    
-      <id>local.maven.thirdparty</id>
-	  <name>local.maven.thirdparty</name>   
-      <url>http://172.29.34.116:9000/nexus/content/repositories/thirdparty/</url>    
-    </repository>
-  </distributionManagement>
    <build>
 	    <plugins>
 	        <plugin>
