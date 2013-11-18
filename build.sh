@@ -12,9 +12,14 @@ fi
         
 set MAVEN_OPTS=$MAVEN_OPTS -XX:MaxPermSize=128m
 
+mvn clean $action -Dmaven.test.skip=true
+
 echo "[Step 1] Install core modules to local maven repository."
 cd lakeside-core
 mvn clean $action -Dmaven.test.skip=true
 
 cd ../lakeside-data
+mvn clean $action -Dmaven.test.skip=true
+
+cd ../lakeside-web
 mvn clean $action -Dmaven.test.skip=true
