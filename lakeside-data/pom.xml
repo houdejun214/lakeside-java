@@ -14,13 +14,10 @@
   </parent>
   
   <dependencies>
-  
     <dependency>
     	<groupId>com.lakeside</groupId>
     	<artifactId>lakeside-core</artifactId>
-    	<version>${project.version}</version>
     </dependency>
-     
   </dependencies>
   
   <packaging>pom</packaging>

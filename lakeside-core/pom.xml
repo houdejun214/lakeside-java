@@ -19,63 +19,27 @@
     <dependency>
     	<groupId>javax.mail</groupId>
     	<artifactId>mail</artifactId>
-    	<version>1.4.5</version>
-    	<type>jar</type>
-    	<scope>compile</scope>
     </dependency>
     <dependency>
     	<groupId>net.sf.json-lib</groupId>
     	<artifactId>json-lib</artifactId>
-    	<version>${jsonlib.version}</version>
-    	<type>jar</type>
     	<classifier>jdk15</classifier>
-    	<scope>compile</scope>
-    	<exclusions>
-    		<exclusion>
-    			<artifactId>commons-lang</artifactId>
-    			<groupId>commons-lang</groupId>
-    		</exclusion>
-    		<exclusion>
-    			<artifactId>commons-logging</artifactId>
-    			<groupId>commons-logging</groupId>
-    		</exclusion>
-    	</exclusions>
     </dependency>
     <dependency>
     	<groupId>commons-beanutils</groupId>
 	 	<artifactId>commons-beanutils</artifactId>
-		<version>1.8.0</version>
-		<exclusions>
-			<exclusion>
-				<artifactId>commons-logging</artifactId>
-				<groupId>commons-logging</groupId>
-			</exclusion>
-		</exclusions>
     </dependency>
     <dependency>
     	<groupId>commons-lang</groupId>
     	<artifactId>commons-lang</artifactId>
-    	<version>${commons-lang.version}</version>
-    	<type>jar</type>
-    	<scope>compile</scope>
     </dependency>
     <dependency>
          <groupId>org.reflections</groupId>
          <artifactId>reflections</artifactId>
-         <version>${reflections.version}</version>
-         <exclusions>
-         	<exclusion>
-         		<artifactId>guava</artifactId>
-         		<groupId>com.google.guava</groupId>
-         	</exclusion>
-         </exclusions>
-         <optional>true</optional>
     </dependency>
     <dependency>
     	<groupId>com.google.guava</groupId>
     	<artifactId>guava</artifactId>
-    	<version>${guava.version}</version>
-    	<scope>compile</scope>
     </dependency>
     <dependency>
    		<groupId>org.slf4j</groupId>
