@@ -1,45 +1,20 @@
 package com.lakeside.download.http;
 
 import java.io.IOException;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.X509TrustManager;
-
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.http.Header;
-import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpException;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.HttpStatus;
-import org.apache.http.HttpVersion;
 import org.apache.http.NoHttpResponseException;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.GzipDecompressingEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.params.ConnRoutePNames;
-import org.apache.http.conn.scheme.PlainSocketFactory;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.conn.ssl.SSLSocketFactory;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.conn.PoolingClientConnectionManager;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.CoreConnectionPNames;
-import org.apache.http.params.CoreProtocolPNames;
-import org.apache.http.params.HttpParams;
-import org.apache.http.params.HttpProtocolParamBean;
-import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EncodingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,79 +31,44 @@ import com.lakeside.download.http.url.URLCanonicalizer;
  * @author zhufb
  * TODO
  */
-public class HttpPageLoader {
+public abstract class HttpPageLoader {
 	
-	private static Logger log = LoggerFactory.getLogger("SdataCrawler.HttpPageLoader");
-	private HttpConfig config;
-	private RobotstxtServer robotstxtServer;
-	private HttpClient httpClient;
-	private static final ThreadLocal<HttpClient> userThreadLocal = new ThreadLocal<HttpClient>();
-	private HttpClient getClient(){
-		DefaultHttpClient client = (DefaultHttpClient)userThreadLocal.get();
-		if(client == null){
-			try{
-				HttpParams params = new BasicHttpParams();
-				HttpProtocolParamBean paramsBean = new HttpProtocolParamBean(params);
-				paramsBean.setVersion(HttpVersion.HTTP_1_1);
-				paramsBean.setContentCharset("UTF-8");
-				paramsBean.setUseExpectContinue(false);
-				params.setParameter(CoreProtocolPNames.USER_AGENT, config.getUserAgentString());
-				params.setIntParameter(CoreConnectionPNames.SO_TIMEOUT, config.getSocketTimeout());
-				params.setIntParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, config.getConnectionTimeout());
-				params.setBooleanParameter("http.protocol.handle-redirects", false);
-				params.setBooleanParameter("http.protocol.single-cookie-header", true);
+	private static Logger log = LoggerFactory.getLogger("HttpPageLoader");
+	protected static Object syn = new Object();
+	protected HttpClient httpClient;
+ 	protected HttpConfig config;
+	protected RobotstxtServer robotstxtServer;
 	
-				SchemeRegistry schemeRegistry = new SchemeRegistry();
-				schemeRegistry.register(new Scheme("http", 80, PlainSocketFactory.getSocketFactory()));
-				if (config.isIncludeHttpsPages()) {
-					 SSLContext sc = SSLContext.getInstance("SSL");
-			         sc.init(null, getTrustingManager(), new java.security.SecureRandom());
-			         SSLSocketFactory socketFactory = new SSLSocketFactory(sc);
-					 schemeRegistry.register(new Scheme("https", 443, socketFactory));
-				}
-				PoolingClientConnectionManager connectionManager = new PoolingClientConnectionManager(schemeRegistry);
-				connectionManager.setMaxTotal(config.getMaxTotalConnections());
-				connectionManager.setDefaultMaxPerRoute(config.getMaxConnectionsPerHost());
-				client = new DefaultHttpClient(connectionManager, params);
-				client.addResponseInterceptor(new HttpResponseInterceptor() {
-			            public void process(final HttpResponse response, final HttpContext context) throws HttpException,
-			                    IOException {
-			                HttpEntity entity = response.getEntity();
-			                Header contentEncoding = entity.getContentEncoding();
-			                if (contentEncoding != null) {
-			                    HeaderElement[] codecs = contentEncoding.getElements();
-			                    for (HeaderElement codec : codecs) {
-			                        if (codec.getName().equalsIgnoreCase("gzip")) {
-			                            response.setEntity(new GzipDecompressingEntity(response.getEntity()));
-			                            return;
-			                        }
-			                    }
-			                }
-			            }
-	
-			        });
-	
-				userThreadLocal.set(client);
-			}catch(Exception e){
-				e.printStackTrace();
-				throw new RuntimeException("Init http client failed ",e);
-			}
-		}
-		return client;
-	}
-	public static HttpPageLoader getDefaultPageLoader(){
-		return new HttpPageLoader(new HttpConfig(),new RobotstxtConfig());
+	protected HttpPageLoader(){
+		this(new HttpConfig(),new RobotstxtConfig());
 	}
 
-	public HttpPageLoader(HttpConfig config){
-		new HttpPageLoader(config,new RobotstxtConfig());
+	protected HttpPageLoader(HttpConfig config,RobotstxtConfig robotstxtConfig){
+		this.config = config;
+		this.robotstxtServer = new RobotstxtServer(robotstxtConfig,this);
+		this.init();
 	}
 	
-	public HttpPageLoader(HttpConfig config,RobotstxtConfig robotstxtConfig){
-		this.config = config;
-		this.httpClient = getClient();
-		this.robotstxtServer = new RobotstxtServer(robotstxtConfig,this);
+	private void init(){
+		if (httpClient == null) {
+			synchronized (syn) {
+				if (httpClient == null) {
+					httpClient = getHttpClient();
+				}
+			}
+		}
 	}
+	
+	protected abstract HttpClient getHttpClient();
+	
+	public static HttpPageLoader getDefaultPageLoader(){
+		return new DefaultPageLoader(); 
+	}
+
+	public static HttpPageLoader getAdvancePageLoader(){
+		return	new AdvancePageLoader(); 
+	}
+
 
 	public HttpPage download(String url){
 		return this.download(new HashMap<String, String>(),url);
@@ -150,13 +90,13 @@ public class HttpPageLoader {
 		return page;
 	}
 	
-	private void setProxy(String url){
-		HttpHost proxyHost = ProxyConfig.getProxyHost(url);
-		if(proxyHost == null){
-			return;
-		}
-		httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxyHost);
-	}
+//	private void setProxy(String url){
+//		HttpHost proxyHost = ProxyConfig.getProxyHost(url);
+//		if(proxyHost == null){
+//			return;
+//		}
+//		httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxyHost);
+//	}
 	
 	private HttpPage downloadPage(Map<String, String> header, String url) throws Exception {
 		HttpPage page = new HttpPage(url);
@@ -173,15 +113,15 @@ public class HttpPageLoader {
 					get.addHeader(entry.getKey(), entry.getValue());
 				}
 			}
-			// Set proxy host if need
-			this.setProxy(url);
+//			HttpHost proxyHost = ProxyConfig.getProxyHost(url);
 			HttpResponse response = null;
 			try{
 				response = httpClient.execute(get);
 			}catch(NoHttpResponseException e){ 
 				HttpGet newGet = new HttpGet(url);
-				DefaultHttpClient client = getCleanClientTrustingAllSSLCerts();
-				response = client.execute(newGet);
+				response = httpClient.execute(newGet);
+//				DefaultHttpClient client = getCleanClientTrustingAllSSLCerts();
+//				response = client.execute(newGet);
 			}catch (IOException e) {
 				log.error("Fatal transport error: " + e.getMessage() + " while fetching " + url);
 				throw e;
@@ -257,8 +197,8 @@ public class HttpPageLoader {
 			return true;
 		}
 		return false;
-		
 	}
+	
 	private void refinePage(HttpPage page){
 		String content = new String(page.getContentData());
 		String redictUrl = PatternUtils.getMatchPattern("HTTP-EQUIV=\"Refresh\".*URL=(.*)\"\\>",
@@ -278,32 +218,4 @@ public class HttpPageLoader {
 			page.setContentHtml(EncodingUtils.getString(page.getContentData(), charset));
 		}
 	}
-
-    private TrustManager[] getTrustingManager() {
-        TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
-            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                return null;
-            }
-
-            public void checkClientTrusted(X509Certificate[] certs, String authType) {
-                // Do nothing
-            }
-
-            public void checkServerTrusted(X509Certificate[] certs, String authType) {
-                // Do nothing
-            }
-
-        } };
-        return trustAllCerts;
-    }
-    
-    private DefaultHttpClient getCleanClientTrustingAllSSLCerts() throws NoSuchAlgorithmException, KeyManagementException {
-        DefaultHttpClient httpclient = new DefaultHttpClient();
-        SSLContext sc = SSLContext.getInstance("SSL");
-        sc.init(null, getTrustingManager(), new java.security.SecureRandom());
-        SSLSocketFactory socketFactory = new SSLSocketFactory(sc);
-        Scheme sch = new Scheme("https", 443, socketFactory);
-        httpclient.getConnectionManager().getSchemeRegistry().register(sch);
-        return httpclient;
-    }
 }
