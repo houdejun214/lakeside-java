@@ -61,10 +61,20 @@ public abstract class HttpPageLoader {
 	
 	protected abstract HttpClient getHttpClient();
 	
+	/**
+	 * default simple page loader  
+	 * 
+	 * @return
+	 */
 	public static HttpPageLoader getDefaultPageLoader(){
 		return new DefaultPageLoader(); 
 	}
 
+	/**
+	 * advance pageloader with pool connection manager
+	 * 
+	 * @return
+	 */
 	public static HttpPageLoader getAdvancePageLoader(){
 		return	new AdvancePageLoader(); 
 	}
