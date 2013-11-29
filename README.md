@@ -1,9 +1,8 @@
-
 lakeside-java
 =============
 
-A java program library, it aim to help us with some simple coding tips. You can consider it as equal with 
-the apache commons libraries except that I added some custome implementation that we need in practical 
+A java program library, it aim to help us with some simple coding tips. You can consider it as equal with
+the apache commons libraries except that I added some custome implementation that we need in practical
 development environment.
 
 Much of the code are extracted from my present work, I hope this library code can help you to get things better.
@@ -18,9 +17,18 @@ Here I would like to thank my guys that help to contribute it.
 2. lakeside-data
 
     java data operation libarary which contain many database access interface, as Mysql, Mongo, Redis, Sqlite...
+    we split into some child projects for each source.
+	* lakeside-data-sql
+	* lakeside-data-mongo
+	* lakeside-data-redis
+	* lakeside-data-sqlite
+	* lakeside-data-ssh
+	* lakeside-data-berkeleydb
 
 3. lakeside-web
 
-    A java web project library , it provide some custom class that will be used to resolve some special java-web project 
-problem, especial integrate with spring framework.
-</pre></body></html>
+    A java web project library , it provide some custom class that will be used to resolve some special java-web project problem, especial integrate with spring framework.
+
+How to use this project
+-----------------------
+* You can fork or clone the project and use it in your project directly.
