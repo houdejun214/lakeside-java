@@ -1,10 +1,13 @@
 package com.lakeside.web.security;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 import org.apache.shiro.config.Ini;
 import org.apache.shiro.config.Ini.Section;
@@ -51,51 +54,23 @@ public class AnnotationDefinitionSectionMetaSource implements FactoryBean<Ini.Se
         	RequestMapping mapping = applicationContext.findAnnotationOnBean(beanName, RequestMapping.class);
         	Class<?> handlerType = applicationContext.getType(beanName);
         	Protected typeProtect = applicationContext.findAnnotationOnBean(beanName, Protected.class);
+			Map<String, Protected> methodUrls = determineMethodsProtected(handlerType, mapping, typeProtect);
+			urls.putAll(methodUrls);
+			
 			Boolean isControllerProtected = typeProtect!=null;
-			if (mapping!=null) {
-				String[] typeLevelPatterns = mapping.value();
-				boolean haveMappingSetting = haveMappingSetting(typeLevelPatterns);
-				
-				// controller 沒有設置protected，或是設置了Protected但沒有具體的Mapping設置
-				// @RequestMapping specifies paths at type level
-				Map<String, Protected> methodLevelPatterns = determineMethodsProtected(
-						handlerType, haveMappingSetting, isControllerProtected);
-				if(typeLevelPatterns==null||typeLevelPatterns.length==0)typeLevelPatterns = new String[]{""};
-				for (String typeLevelPattern : typeLevelPatterns) {
+			boolean haveMappingSetting = (mapping!=null) && haveMappingSetting(mapping.value());
+			if(isControllerProtected && haveMappingSetting){ 
+				// controller 設置了protected 而且有Mapping設置
+				for (String typeLevelPattern : mapping.value()) {
 					if (!typeLevelPattern.startsWith("/")) {
 						typeLevelPattern = "/" + typeLevelPattern;
 					}
-					//boolean hasEmptyMethodLevelMappings = false;
-					for (String methodLevelPattern : methodLevelPatterns
-							.keySet()) {
-						Protected methodProtected = methodLevelPatterns.get(methodLevelPattern);
-						if(methodProtected == null){
-							methodProtected = typeProtect;
-						}
-						if (methodLevelPattern != null) {
-							String combinedPattern = pathMatcher.combine(
-									typeLevelPattern, methodLevelPattern);
-							addUrlsForPath(urls, combinedPattern, methodProtected);
-						}
+					if(!typeLevelPattern.endsWith("/")){
+						typeLevelPattern = typeLevelPattern+"/";
 					}
+					urls.put(typeLevelPattern,typeProtect);
+					urls.put(typeLevelPattern+"**",typeProtect);
 				}
-				if(isControllerProtected && haveMappingSetting){ // controller 設置了protected 而且有Mapping設置
-					for (String typeLevelPattern : typeLevelPatterns) {
-						if (!typeLevelPattern.startsWith("/")) {
-							typeLevelPattern = "/" + typeLevelPattern;
-						}
-						if(!typeLevelPattern.endsWith("/")){
-							typeLevelPattern = typeLevelPattern+"/";
-						}
-						urls.put(typeLevelPattern,typeProtect);
-						urls.put(typeLevelPattern+"**",typeProtect);
-					}
-				}
-			}
-			else {
-				// actual paths specified by @RequestMapping at method level
-				Map<String, Protected> methodUrls = determineMethodsProtected(handlerType, false, isControllerProtected);
-				urls.putAll(methodUrls);
 			}
         }
         for(String url:urls.keySet()){
@@ -175,28 +150,80 @@ public class AnnotationDefinitionSectionMetaSource implements FactoryBean<Ini.Se
     	return false;
     }
     
-    protected Map<String, Protected> determineMethodsProtected(Class<?> handlerType, final boolean hasTypeLevelMapping,final boolean isControllerProtected) {
+    /**
+     * determine protected url patterns from methods
+     * @param handlerType
+     * @param typeLevelMapping
+     * @param typeProtect
+     * @return
+     */
+    protected Map<String, Protected> determineMethodsProtected(Class<?> handlerType, final RequestMapping typeLevelMapping,final Protected typeProtect) {
     	final Map<String,Protected> urls = new LinkedHashMap<String,Protected>();
 		ReflectionUtils.doWithMethods(handlerType, new ReflectionUtils.MethodCallback() {
 			public void doWith(Method method) {
 				RequestMapping mapping = AnnotationUtils.findAnnotation(method, RequestMapping.class);
 				Protected protect = AnnotationUtils.findAnnotation(method, Protected.class);
-				boolean isMethodProtected = protect!=null;
-				if (mapping != null && (isControllerProtected ||isMethodProtected)) {
-					String[] mappedPatterns = mapping.value();
-					if (mappedPatterns.length > 0) {
-						for (String mappedPattern : mappedPatterns) {
-							if (!hasTypeLevelMapping && !mappedPattern.startsWith("/")) {
-								mappedPattern = "/" + mappedPattern;
-							}
-							addUrlsForPath(urls, mappedPattern,protect);
-						}
+				if(protect == null){
+					protect = typeProtect;
+				}
+				if(protect == null){
+					// no protecting in this mapping
+					return;
+				}
+				List<String> patterns = getMappingUrl(typeLevelMapping,mapping);
+				if(patterns!=null){
+					for(String pattern:patterns){
+						addUrlsForPath(urls, pattern, protect);
 					}
 				}
 			}
 		}, ReflectionUtils.USER_DECLARED_METHODS);
 		return urls;
 	}
+    
+    /**
+     * get the mapping urls from spring controller
+     * 
+     * @param typeLevelMapping
+     * @param methodMapping
+     * @return
+     */
+    private List<String> getMappingUrl(RequestMapping typeLevelMapping,RequestMapping methodMapping){
+    	if(methodMapping==null || methodMapping.value()==null){
+    		return null;
+    	}
+    	String[] typeLevelPatterns = null;
+    	if(typeLevelMapping==null || typeLevelMapping.value()==null || typeLevelMapping.value().length==0){
+    		typeLevelPatterns = new String[]{"/"};
+    	}else{
+    		typeLevelPatterns = typeLevelMapping.value();
+    	}
+    	
+    	String[] methodLevelPatterns = methodMapping.value();
+    	if(methodLevelPatterns==null || methodLevelPatterns.length==0){
+    		methodLevelPatterns = new String[]{""};
+    	}
+    	List<String> patterns = new ArrayList<String>();
+    	for(String typePattern:typeLevelPatterns){
+    		if (!typePattern.startsWith("/")) {
+    			typePattern = "/" + typePattern;
+			}
+    		for(String methodPattern:methodLevelPatterns){
+    			String url = pathMatcher.combine(typePattern, methodPattern);
+    			patterns.add(getPathPattern(url));
+    		}
+    	}
+    	return patterns;
+    }
+    
+    private static final Pattern PATH_FIX_PATTERN = Pattern.compile("(\\\\|\\/)+");
+	public static String getPathPattern(String path){
+		if(StringUtils.isEmpty(path)){
+			return "";
+		}
+		return PATH_FIX_PATTERN.matcher(path).replaceAll("/");
+	}
+    
     
     protected void addUrlsForPath(Map<String, Protected> urls, String path, Protected protect) {
 		urls.put(path,protect);
