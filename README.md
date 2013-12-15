@@ -32,3 +32,30 @@ Here I would like to thank my guys that help to contribute it.
 How to use this project
 -----------------------
 * You can fork or clone the project and use it in your project directly.
+* Use our maven repository in your maven project.
+ 
+<repository>
+  <id>dj.mvn.repo</id>
+  <url>https://github.com/houdejun214/mvn-repo/raw/master</url>
+  <!-- use snapshot version -->
+  <snapshots>
+     <enabled>true</enabled>
+     <updatePolicy>always</updatePolicy>
+   </snapshots>
+</repository>
+
+<dependency>
+  <groupId>com.lakeside</groupId>
+  <artifactId>lakeside-core</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+</dependency>
+<dependency>
+  <groupId>com.lakeside</groupId>
+  <artifactId>lakeside-data-sql</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+</dependency>
+<dependency>
+  <groupId>com.lakeside</groupId>
+  <artifactId>lakeside-web</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+</dependency>
