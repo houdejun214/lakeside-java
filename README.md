@@ -33,7 +33,8 @@ How to use this project
 -----------------------
 * You can fork or clone the project and use it in your project directly.
 * Use our maven repository in your maven project.
- 
+
+```
 <repository>
   <id>dj.mvn.repo</id>
   <url>https://github.com/houdejun214/mvn-repo/raw/master</url>
@@ -59,3 +60,4 @@ How to use this project
   <artifactId>lakeside-web</artifactId>
   <version>1.0.0-SNAPSHOT</version>
 </dependency>
+```
