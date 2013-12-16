@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.shiro.config.Ini;
@@ -210,12 +211,17 @@ public class AnnotationDefinitionSectionMetaSource implements FactoryBean<Ini.Se
 			}
     		for(String methodPattern:methodLevelPatterns){
     			String url = pathMatcher.combine(typePattern, methodPattern);
+    			Matcher matcher = PATH_VARIABLE_TEMPLATE.matcher(url);
+    			if(matcher.find()){
+    				url = matcher.replaceAll("**");
+    			}
     			patterns.add(getPathPattern(url));
     		}
     	}
     	return patterns;
     }
     
+    private static final Pattern PATH_VARIABLE_TEMPLATE = Pattern.compile("\\{[^/]*\\}");
     private static final Pattern PATH_FIX_PATTERN = Pattern.compile("(\\\\|\\/)+");
 	public static String getPathPattern(String path){
 		if(StringUtils.isEmpty(path)){
