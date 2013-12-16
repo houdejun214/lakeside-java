@@ -54,7 +54,11 @@
 
 		<!-- Plugin的属性定义 -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<jdk.version>1.6</jdk.version>
+		<java.version>1.7</java.version>
+		<maven-source-plugin.version>2.2.1</maven-source-plugin.version>
+		<maven-compiler-plugin.version>2.5.1</maven-compiler-plugin.version>
+		
+		<internal.repo.path>file:///home/houdejun/working/mvn-repo</internal.repo.path>
 	</properties>
 
 	<dependencyManagement>
@@ -247,14 +251,34 @@
 		</repository>
 	</repositories>
 
-	<distributionManagement>
-		<repository>
-			<id>local.maven.thirdparty</id>
-			<name>local.maven.thirdparty</name>
-			<url>http://172.29.34.116:9000/nexus/content/repositories/snapshots/</url>
-		</repository>
-	</distributionManagement>
-
+	
+	
+	<profiles>
+		<profile>
+			<id>local-deploy</id>
+			<distributionManagement>
+				<repository>
+					<id>internal.repo</id>
+					<name>Internal Repository</name>
+					<url>${internal.repo.path}</url>
+				</repository>
+			</distributionManagement>
+		</profile>
+		<profile>
+			<id>deploy</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<distributionManagement>
+				<repository>
+					<id>local.maven.thirdparty</id>
+					<name>local.maven.thirdparty</name>
+					<url>http://172.29.34.116:9000/nexus/content/repositories/snapshots/</url>
+				</repository>
+			</distributionManagement>
+		</profile>
+	</profiles>
+	
 	<build>
 		<plugins>
 			<plugin>
@@ -269,6 +293,35 @@
 					</execution>
 				</executions>
 			</plugin>
+				<!-- plugin maven-source -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-source-plugin</artifactId>
+					<version>${maven-source-plugin.version}</version>
+					<configuration>
+						<source>${java.version}</source>
+						<target>${java.version}</target>
+					</configuration>
+					<executions>
+						<execution>
+							<goals>
+								<goal>jar</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<!-- plugin maven-compiler -->
+				<plugin>
+	                <groupId>org.apache.maven.plugins</groupId>
+	                <artifactId>maven-compiler-plugin</artifactId>
+	                <version>${maven-compiler-plugin.version}</version>
+	                <inherited>true</inherited>
+	                <configuration>
+	                    <source>${java.version}</source>
+	                    <target>${java.version}</target>
+	                </configuration>
+	            </plugin>
 		</plugins>
 	</build>
+			
 </project>
