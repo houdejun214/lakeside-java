@@ -46,5 +46,11 @@
    		<artifactId>slf4j-api</artifactId>
    		<optional>true</optional>
    	</dependency>
+   	<dependency>
+		<artifactId>logback-classic</artifactId>
+		<groupId>ch.qos.logback</groupId>
+		<version>${logback.version}</version>
+		<optional>true</optional>
+   	</dependency>
   </dependencies>
 </project>
