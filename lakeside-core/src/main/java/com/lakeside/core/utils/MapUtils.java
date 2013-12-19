@@ -88,6 +88,43 @@ public class MapUtils {
 		return null;
 	}
 	
+	public static List<String> getListPattern(Map<String,Object> data,String pattern){
+		List<String> result = new ArrayList<String>();
+		if(data!=null&&data.size()>0)
+			getListPattern(result,data,pattern);
+		return result ;
+	}
+	
+	private static void getListPattern(List<String> result,Map<String,Object> data,String pattern){
+		Iterator<Entry<String, Object>> iterator = data.entrySet().iterator();
+		while(iterator.hasNext()){
+			Entry<String, Object> next = iterator.next();
+			Object value = next.getValue();
+			if(value == null){
+				continue;
+			}else if(value instanceof Map){
+				getListPattern(result,(Map)value,pattern);
+			}else if(value instanceof List){
+				getListPattern(result,(List)value,pattern);
+			}else{
+				String strVal = StringUtils.valueOf(value);
+				if(!result.contains(strVal)&&PatternUtils.matches(pattern, strVal)){
+					result.add(strVal);
+				}
+			}
+		}
+	}
+	
+	private static void getListPattern(List<String> result,List<?> list,String pattern) {
+		for(Object item:list){
+			if(item instanceof Map){
+				getListPattern(result,(Map)item,pattern);
+			}else if(item instanceof List){
+				getListPattern(result,(List)item,pattern);
+			}
+		}
+	}
+	
 	private static Object getList(List<?> list,String name) {
 		Object result = null;
 		for(Object item:list){
