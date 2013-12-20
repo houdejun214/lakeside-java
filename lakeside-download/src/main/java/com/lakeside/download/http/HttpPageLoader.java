@@ -116,7 +116,7 @@ public abstract class HttpPageLoader {
 		}
 		HttpGet get = new HttpGet(url);
 		try {
-			get.addHeader("Accept-Encoding", "gzip");
+			get.addHeader("Accept-Encoding", "gzip,deflate,sdch");
 			get.addHeader("Accept-Charset", "GBK,utf-8");
 			if(header!=null&&header.size()>0){
 				for(Entry<String, String> entry:header.entrySet()){

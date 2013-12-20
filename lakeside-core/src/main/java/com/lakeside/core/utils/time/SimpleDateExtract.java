@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
  * @author houdejun
  *
  */
+@Deprecated
 public class SimpleDateExtract {
 
 	private static final String REGEX_DELIMITER = "[-:\\/.,]";

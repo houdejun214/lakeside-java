@@ -5,9 +5,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import com.lakeside.core.utils.domain.DomainSuffixes;
@@ -99,6 +96,18 @@ public class UrlUtils {
 		} catch (UnsupportedEncodingException e) {
 			throw new RuntimeException("Error in urlDecode.", e);
 		}
+	}
+	
+
+	public static String clean(String url) {
+		url = StringUtils.trim(url);
+		if(StringUtils.isEmpty(url)){
+			return null;
+		}
+		url = url.replaceAll("\\\\", "");
+		url = url.replaceAll("\"", "");
+		url = url.replaceAll("\'", "");
+		return url;
 	}
 
 	public static String encode(String s) {

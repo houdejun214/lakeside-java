@@ -26,6 +26,8 @@ import java.util.StringTokenizer;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
+import org.apache.commons.collections.CollectionUtils;
+
 import com.lakeside.core.regex.CommonPattern;
 
 /**
@@ -889,6 +891,34 @@ public class StringUtils {
 		}
 		return buf.toString();
 	}
+	
+    /**
+     * intersect 
+     * 
+     * @param str1
+     * @param str2
+     * @return
+     */
+    public static String intersect(String str1, String str2) {
+        String targetString = "";
+        // 取出其中较短的字符串(照顾效率)
+        String shorter = str1.length() > str2.length() ? str2 : str1;
+        String longer = shorter.equals(str1) ? str2 : str1;
+        
+        out:
+        // 在较短的字符串中抽取其‘所有长度’的子串，顺序由长到短
+        for(int subLength = shorter.length(); subLength > 0; subLength--){
+            // 子串的起始角标由 0 开始右移，直至子串尾部与母串的尾部-重合为止
+            for(int i = 0; i+subLength <= shorter.length(); i++){
+                String subString = shorter.substring(i, i+subLength); // 取子串
+                if(longer.indexOf(subString) >= 0){ // 注意 ‘=’
+                    targetString = subString;
+                    break out;  // 一旦满足条件，则最大子串即找到，停止循环，
+                }
+            }
+        }
+        return targetString;
+    }
 
 	public static String capitalize(String str) {
 		int strLen;
