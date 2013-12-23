@@ -24,8 +24,11 @@ public class DateFormat {
 	private static final Logger log = LoggerFactory.getLogger("DateFormat");
 
 	public static Date strToDate(Object obj) {
-		if (obj == null || obj instanceof Date) {
+		if (obj == null) {
 			return null;
+		}
+		if(obj instanceof Date){
+			return (Date)obj;
 		}
 		String dateStr = StringUtils.valueOf(obj);
 		if (StringUtils.isEmpty(dateStr)) {
