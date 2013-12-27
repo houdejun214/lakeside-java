@@ -68,7 +68,7 @@ public class DistributeLock {
 			long _expires = current_time + expires + 1;
 			String expires_str = String.valueOf(_expires);
 			// get lock
-			if(db.setnx(key, expires_str) == 1){
+			if(db.setnx(key, expires_str)){
 				thisLockExpire = _expires;
 				return;
 			}
@@ -78,7 +78,7 @@ public class DistributeLock {
 			if(StringUtils.isEmpty(db_value)||Long.valueOf(db_value)<=current_time){
 				//  if db value equals this lock expire value lock successfully, otherwise failed
 				// get set is set current value ,return old value
-				if(db_value.equals(db.getset(key, expires_str))){
+				if(db_value.equals(db.getSet(key, expires_str))){
 					thisLockExpire = _expires;
 					return;
 				}

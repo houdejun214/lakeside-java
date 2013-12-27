@@ -2,10 +2,8 @@ package com.lakeside.data.redis;
 
 import java.util.Map;
 
-import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
-import redis.clients.jedis.Protocol;
 
 import com.lakeside.core.utils.StringUtils;
 
@@ -22,8 +20,12 @@ import com.lakeside.core.utils.StringUtils;
  * 
  */
 public class RedisDB {
+	
+	
 	private String NameSpacPrefix= "";
-	private JedisPool pool;
+	private JedisTemplate template;
+	private static int DefaultMaxIdle = 10;
+	private static int DefaultMaxActive = 10;
 	
 	/**
 	 * 
@@ -33,13 +35,7 @@ public class RedisDB {
 	 * @param nameSpacPrefix,该值是抽象出来的值，将作为命名前缀加到所有的key前面，最后的redis key将是 [nameSpacPrefix]:[key]
 	 */
 	public RedisDB(String host,int port, String password,String nameSpacPrefix){
-		JedisPoolConfig poolConfig = new JedisPoolConfig();
-		pool = new JedisPool(poolConfig,host,port,Protocol.DEFAULT_TIMEOUT,password);
-		if(StringUtils.isEmpty(nameSpacPrefix)){
-			this.NameSpacPrefix = "";
-		}else{
-			this.NameSpacPrefix = nameSpacPrefix+":";
-		}
+		this(host,port,password,JedisUtils.createPoolConfig(DefaultMaxIdle, DefaultMaxActive),nameSpacPrefix);
 	}
 	
 	/**
@@ -51,350 +47,97 @@ public class RedisDB {
 	 * @param nameSpacPrefix,该值是抽象出来的值，将作为命名前缀加到所有的key前面，最后的redis key将是 [nameSpacPrefix]:[key]
 	 */
 	public RedisDB(String host,int port, String password,JedisPoolConfig poolConfig,String nameSpacPrefix){
-		pool = new JedisPool(poolConfig,host,port,Protocol.DEFAULT_TIMEOUT,password);
+		JedisPool pool = new JedisPool(poolConfig,host,port,JedisUtils.DEFAULT_TIMEOUT,password);
+		template = new JedisTemplate(pool);
 		if(StringUtils.isEmpty(nameSpacPrefix)){
 			this.NameSpacPrefix = "";
 		}else{
-			this.NameSpacPrefix = nameSpacPrefix+":";
-		}
-	}
-	
-	public Map<String,String> hgetAll(String key){
-		Jedis jedis=null;
-		Map<String, String> maps;
-		try {
-			jedis = pool.getResource();
-			maps = jedis.hgetAll(NameSpacPrefix+key);
-		} finally {
-			if(jedis!=null){
-				pool.returnResource(jedis);
-			}
-		}
-		return maps;
-	}
-	
-	public String hget(final String key,final String field ){
-		Jedis jedis=null;
-		String value;
-		try {
-			jedis = pool.getResource();
-			value = jedis.hget(NameSpacPrefix+key, field);
-		} finally {
-			if(jedis!=null){
-				pool.returnResource(jedis);
-			} 
-		}
-		return value;
-	}
-	
-	public Boolean hset(final String key,final String field,final String val){
-		Jedis jedis =null;
-		try {
-			jedis = pool.getResource();
-			jedis.hset(NameSpacPrefix+key,field, val);
-		} finally {
-			if(jedis!=null){
-				pool.returnResource(jedis);
-			}
-		}
-		return true;
-	}
-	
-	public boolean hexists(final String key,final String field ){
-		Jedis jedis=null;
-		try {
-			jedis = pool.getResource();
-			boolean value = jedis.hexists(NameSpacPrefix+key, field);
-			return value;
-		} finally {
-			if(jedis!=null){
-				pool.returnResource(jedis);
-			} 
+			this.NameSpacPrefix = nameSpacPrefix.concat(":");
 		}
 	}
 
-	public long hdel(String key,final String field){
-		Jedis jedis =null;
-		try {
-			jedis = pool.getResource();
-			Long ret = jedis.hdel(NameSpacPrefix+key, field);
-			return ret;
-		} finally {
-			if(jedis!=null){
-				pool.returnResource(jedis);
-			}
-		}
-	}
-	
-	public void hincrease(String key,final String field){
-		Jedis jedis =null;
-		try {
-			jedis = pool.getResource();
-			jedis.hincrBy(NameSpacPrefix+key, field, 1);
-		} finally {
-			if(jedis!=null){
-				pool.returnResource(jedis);
-			}
-		}
-	}
-	
-	public void hdecrease(String key,final String field){
-		Jedis jedis =null;
-		try {
-			jedis = pool.getResource();
-			jedis.hincrBy(key, field, -1);
-		} finally {
-			if(jedis!=null){
-				pool.returnResource(jedis);
-			}
-		}
-	}
-	
-	public void decrease(String key){
-		Jedis jedis =null;
-		try {
-			jedis = pool.getResource();
-			jedis.decrBy(NameSpacPrefix+key, 1);
-		} finally {
-			if(jedis!=null){
-				pool.returnResource(jedis);
-			}
-		}
-	}
-	
-	public void increase(String key){
-		Jedis jedis =null;
-		try {
-			jedis = pool.getResource();
-			jedis.decrBy(NameSpacPrefix+key, -1);
-		} finally {
-			if(jedis!=null){
-				pool.returnResource(jedis);
-			}
-		}
+	public String getFullKey(String key){
+		return NameSpacPrefix.concat(key);
 	}
 
+	//*****************String operation*********************
 	
 	public String get(String key){
-		Jedis jedis=null;
-		String value;
-		try {
-			jedis = pool.getResource();
-			value = jedis.get(NameSpacPrefix+key);
-		} finally {
-			if(jedis!=null){
-				pool.returnResource(jedis);
-			} 
-		}
-		return value;
+		return template.get(getFullKey(key));
 	}
 	
-	public String set(String key,final String val){
-		Jedis jedis=null;
-		String value;
-		try {
-			jedis = pool.getResource();
-			value = jedis.set(NameSpacPrefix+key,val);
-		} finally {
-			if(jedis!=null){
-				pool.returnResource(jedis);
-			} 
-		}
-		return value;
+	public void set(String key,final String val){
+		template.set(getFullKey(key), val);
 	}
 	
 	public boolean exists(String key){
-		Jedis jedis=null;
-		try {
-			jedis = pool.getResource();
-			boolean value = jedis.exists(NameSpacPrefix+key);
-			return value;
-		} finally {
-			if(jedis!=null){
-				pool.returnResource(jedis);
-			} 
-		}
+		return template.exists(getFullKey(key));
 	}
 	
-	public long del(String key){
-		Jedis jedis=null;
-		try {
-			jedis = pool.getResource();
-			long value = jedis.del(NameSpacPrefix+key);
-			return value;
-		} finally {
-			if(jedis!=null){
-				pool.returnResource(jedis);
-			} 
-		}
+	public Boolean del(String key){
+		return template.del(getFullKey(key));
 	}
 	
-	/**
-	 * If the field already exists, 0 is returned, otherwise if a new
-     * field is created 1 is returned.
-     *  use to db lock
-	 * @param key
-	 * @param field
-	 * @return
-	 */
-	public long hsetnx(String key,final String field){
-		Jedis jedis=null;
-		Long value;
-		try {
-			jedis = pool.getResource();
-			value = jedis.hsetnx(NameSpacPrefix+key,field,"1");
-		} finally {
-			if(jedis!=null){
-				pool.returnResource(jedis);
-			} 
-		}
-		return value;
+	public Boolean setnx(String key,final String val){
+		return template.setnx(getFullKey(key), val);
 	}
 	
-	/**
-	 * use to distribute lock with getset and del
-	 * 
-	 * @param key
-	 * @param field
-	 * @return
-	 */
-	public long setnx(String key,final String val){
-		Jedis jedis=null;
-		Long value;
-		try {
-			jedis = pool.getResource();
-			value = jedis.setnx(NameSpacPrefix+key,val);
-		} finally {
-			if(jedis!=null){
-				pool.returnResource(jedis);
-			} 
-		}
-		return value;
+	public String getSet(String key,final String val){
+		return template.getSet(getFullKey(key), val);
 	}
 	
-	public String getset(String key,final String val){
-		Jedis jedis=null;
-		String value;
-		try {
-			jedis = pool.getResource();
-			value = jedis.getSet(NameSpacPrefix+key,val);
-		} finally {
-			if(jedis!=null){
-				pool.returnResource(jedis);
-			} 
-		}
-		return value;
+	// ****************hash map operation ********************* 
+	public Map<String,String> hgetAll(String key){
+		return template.hgetAll(getFullKey(key));
 	}
 	
-	public long rpush(String list,final String... val){
-		Jedis jedis=null;
-		Long value;
-		try {
-			jedis = pool.getResource();
-			value = jedis.rpush(NameSpacPrefix+list, val);
-		} finally {
-			if(jedis!=null){
-				pool.returnResource(jedis);
-			} 
-		}
-		return value;
+	public String hget(String key,final String field ){
+		return template.hget(getFullKey(key), field);
+	}
+	
+	public boolean hset(final String key,final String field,final String val){
+		return template.hset(getFullKey(key), field, val);
+	}
+	
+	public Boolean hexists(final String key,final String field ){
+		return template.hexists(getFullKey(key), field);
 	}
 
-	public long rpushx(String list,final String val){
-		Jedis jedis=null;
-		Long value;
-		try {
-			jedis = pool.getResource();
-			value = jedis.rpushx(NameSpacPrefix+list, val);
-		} finally {
-			if(jedis!=null){
-				pool.returnResource(jedis);
-			} 
-		}
-		return value;
-	}
-
-	public String lpop(String list){
-		Jedis jedis=null;
-		String value;
-		try {
-			jedis = pool.getResource();
-			value = jedis.lpop(NameSpacPrefix+list);
-		} finally {
-			if(jedis!=null){
-				pool.returnResource(jedis);
-			} 
-		}
-		return value;
+	public Boolean hdel(String key,final String field){
+		return template.hdel(getFullKey(key), field);
 	}
 	
-	public long lpush(String list,final String... val){
-		Jedis jedis=null;
-		Long value;
-		try {
-			jedis = pool.getResource();
-			value = jedis.lpush(NameSpacPrefix+list, val);
-		} finally {
-			if(jedis!=null){
-				pool.returnResource(jedis);
-			} 
-		}
-		return value;
+	//*****************Queue operation(depend List Structure)*********************
+	public void rpush(String key,final String... val){
+		template.rpush(getFullKey(key), val);
 	}
 
-	public long sadd(String set,final String... val){
-		Jedis jedis=null;
-		Long value;
-		try {
-			jedis = pool.getResource();
-			value = jedis.sadd(NameSpacPrefix+set, val);
-		} finally {
-			if(jedis!=null){
-				pool.returnResource(jedis);
-			} 
-		}
-		return value;
+	public void lpush(String key,final String... val){
+		template.lpush(getFullKey(key), val);
 	}
 
-	public long sremove(String set,final String... val){
-		Jedis jedis=null;
-		Long value;
-		try {
-			jedis = pool.getResource();
-			value = jedis.srem(NameSpacPrefix+set, val);
-		} finally {
-			if(jedis!=null){
-				pool.returnResource(jedis);
-			} 
-		}
-		return value;
+	public String lpop(String key){
+		return template.lpop(getFullKey(key));
+	}
+
+	public String rpop(String key){
+		return template.rpop(getFullKey(key));
+	}
+
+	//*****************Set operation *********************
+	public void sadd(String key,final String... val){
+		template.sadd(getFullKey(key), val);
+	}
+
+	public boolean sremove(String key,final String val){
+		return template.sremove(getFullKey(key), val);
 	}
 	
-	public boolean sismember(String set,final String val){
-		Jedis jedis=null;
-		Boolean value;
-		try {
-			jedis = pool.getResource();
-			value = jedis.sismember(NameSpacPrefix+set, val);
-		} finally {
-			if(jedis!=null){
-				pool.returnResource(jedis);
-			} 
-		}
-		return value;
+	public boolean sismember(String key,final String val){
+		return template.sismember(getFullKey(key), val);
 	}
 
-	public String rpop(String list){
-		Jedis jedis=null;
-		String value;
-		try {
-			jedis = pool.getResource();
-			value = jedis.rpop(NameSpacPrefix+list);
-		} finally {
-			if(jedis!=null){
-				pool.returnResource(jedis);
-			} 
-		}
-		return value;
+	public JedisTemplate getTemplate() {
+		return template;
 	}
 }
