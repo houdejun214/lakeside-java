@@ -302,7 +302,7 @@ public class JedisTemplate {
 			}
 		});
 	}
-
+	
 	public String rpop(final String key) {
 		return execute(new JedisAction<String>() {
 			@Override
