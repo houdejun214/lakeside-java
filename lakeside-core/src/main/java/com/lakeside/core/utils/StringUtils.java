@@ -222,6 +222,43 @@ public class StringUtils {
 		}
 		return temp.format(pattern, args);
 	}
+	/**
+	 * format a long, with zero padding at head
+	 * @param n
+	 * @param digits
+	 * @return
+	 */
+	public static String formatLong(long n, int digits) {
+	    /*
+	          we create a format :
+	           %% : %  the first % is to escape the second %
+	           0  : 0  zero character
+	           %d :    how many '0' we want (specified by digits)
+	           d  : d  the number to format
+	
+	    */
+	    String format = String.format("%%0%dd", digits);
+	    return String.format(format, n);
+	}
+	
+	/**
+	 * format a long, with zero padding at head
+	 * @param n
+	 * @param digits
+	 * @return
+	 */
+	public static String formatInt(int n, int digits) {
+	    /*
+	          we create a format :
+	           %% : %  the first % is to escape the second %
+	           0  : 0  zero character
+	           %d :    how many '0' we want (specified by digits)
+	           d  : d  the number to format
+	
+	    */
+	    String format = String.format("%%0%dd", digits);
+	    return String.format(format, n);
+	}
 
 	/**
 	 * get a string object from native char array
