@@ -119,6 +119,10 @@ public class RedisDB {
 	public String lpop(String key){
 		return template.lpop(getFullKey(key));
 	}
+	
+	public long llen(String key){
+		return template.llen(getFullKey(key));
+	}
 
 	public String rpop(String key){
 		return template.rpop(getFullKey(key));
