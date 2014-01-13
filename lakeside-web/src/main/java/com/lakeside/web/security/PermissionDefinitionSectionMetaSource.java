@@ -1,12 +1,13 @@
 package com.lakeside.web.security;
 
 import java.lang.reflect.Method;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,7 +16,7 @@ import org.apache.shiro.config.Ini.Section;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.FactoryBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -25,12 +26,24 @@ import org.springframework.util.PathMatcher;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.google.common.collect.Maps;
 import com.lakeside.core.utils.StringUtils;
 
-
-public class AnnotationDefinitionSectionMetaSource implements FactoryBean<Ini.Section>,ApplicationContextAware{
+/**
+ * 此类是基于apache shiro 进行安全认证时，元数据定义的自动扫描实现。
+ * @author houdejun
+ *
+ */
+public class PermissionDefinitionSectionMetaSource extends AbstractMap<String,String>  implements  ApplicationContextAware,InitializingBean{
 	
-	protected final Logger log = LoggerFactory.getLogger(this.getClass());
+	private static final Map<String,String> EMPTY_SECTION = Maps.newHashMap();
+	private static final Logger log = LoggerFactory.getLogger(PermissionDefinitionSectionMetaSource.class);
+	
+	private final Ini ini;
+	
+	public PermissionDefinitionSectionMetaSource() {
+		ini = new Ini();
+	}
 
     private String filterChainDefinitions;
 
@@ -39,10 +52,27 @@ public class AnnotationDefinitionSectionMetaSource implements FactoryBean<Ini.Se
 	private PathMatcher pathMatcher = new AntPathMatcher();
 	
 	private boolean protectAll = true;
-    
-    public Section getObject() throws BeansException {
-    	log.info("start detect url filter chain definitions.");
-        Ini ini = new Ini();
+	
+	private Map<String,Protected> sectionUrls;
+	
+	public Map<String, Protected> getSectionUrls() {
+		return sectionUrls;
+	}
+    /**
+     * 通过filterChainDefinitions对默认的url过滤定义
+     * 
+     * @param filterChainDefinitions 默认的url过滤定义
+     */
+    public void setFilterChainDefinitions(String filterChainDefinitions) {
+        this.filterChainDefinitions = filterChainDefinitions;
+    }
+
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+		this.applicationContext = applicationContext;
+	}
+
+	public void afterPropertiesSet() throws Exception {
+		log.info("start detect url filter chain definitions.");
         //加载默认的url
         ini.load(filterChainDefinitions);
         Ini.Section section = ini.getSection(Ini.DEFAULT_SECTION_NAME);
@@ -115,8 +145,9 @@ public class AnnotationDefinitionSectionMetaSource implements FactoryBean<Ini.Se
         if(protectAll){
         	section.put("/**","authc");
         }
-        return section;
-    }
+        // cache the annotation information;
+        this.sectionUrls = urls;
+	}
     
     public boolean isProtectAll() {
 		return protectAll;
@@ -223,6 +254,7 @@ public class AnnotationDefinitionSectionMetaSource implements FactoryBean<Ini.Se
     
     private static final Pattern PATH_VARIABLE_TEMPLATE = Pattern.compile("\\{[^/]*\\}");
     private static final Pattern PATH_FIX_PATTERN = Pattern.compile("(\\\\|\\/)+");
+
 	public static String getPathPattern(String path){
 		if(StringUtils.isEmpty(path)){
 			return "";
@@ -235,47 +267,14 @@ public class AnnotationDefinitionSectionMetaSource implements FactoryBean<Ini.Se
 		urls.put(path,protect);
 	}
     
-    /**
-     * 通过filterChainDefinitions对默认的url过滤定义
-     * 
-     * @param filterChainDefinitions 默认的url过滤定义
-     */
-    public void setFilterChainDefinitions(String filterChainDefinitions) {
-        this.filterChainDefinitions = filterChainDefinitions;
-    }
-
-    
-    public Class<?> getObjectType() {
-        return this.getClass();
-    }
-
-    
-    public boolean isSingleton() {
-        return false;
-    }
-
-	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		this.applicationContext = applicationContext;
+	@Override
+	public Set<java.util.Map.Entry<String, String>> entrySet() {
+		Section section = ini.getSection(Ini.DEFAULT_SECTION_NAME);
+		if(section!=null){
+			return section.entrySet();
+		}else{
+			return EMPTY_SECTION.entrySet();
+		}
 	}
-//	
-//	private static class UrlMap extends HashMap<String,Protected>{
-//
-//		private List<String> urls = new ArrayList<String>();
-//		
-//		@Override
-//		public Protected put(String key, Protected value) {
-//			boolean containKey = this.containsKey(key);
-//			if(!containKey){
-//				urls.add(key);
-//			}
-//			return super.put(key, value);
-//		}
-//
-//		@Override
-//		public Protected remove(Object key) {
-//			urls.remove(key);
-//			return super.remove(key);
-//		}
-//		
-//	}
+
 }
