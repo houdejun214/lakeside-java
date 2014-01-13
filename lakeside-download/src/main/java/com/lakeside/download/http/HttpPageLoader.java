@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -21,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import com.lakeside.core.utils.PatternUtils;
 import com.lakeside.core.utils.StringUtils;
+import com.lakeside.core.utils.UrlUtils;
 import com.lakeside.download.http.proxy.ProxyConfig;
 import com.lakeside.download.http.robots.RobotstxtConfig;
 import com.lakeside.download.http.robots.RobotstxtServer;
@@ -211,16 +214,18 @@ public abstract class HttpPageLoader {
 	
 	private void refinePage(HttpPage page){
 		String content = new String(page.getContentData());
-		String redictUrl = PatternUtils.getMatchPattern("HTTP-EQUIV=\"Refresh\".*URL=(.*)\"\\>",
-				content, 1);
-		if(!StringUtils.isEmpty(redictUrl)){
-			page.setRedictUrl(redictUrl);
-			return;
+		if(content!=null&&!content.contains("body")){
+			String redictUrl = PatternUtils.getMatchPattern("http-equiv=\"refresh\" [a-z]*url=(.*)\"\\/?>",content, 1,Pattern.CASE_INSENSITIVE);
+			if(!StringUtils.isEmpty(redictUrl)){
+				redictUrl = UrlUtils.decode(redictUrl);
+				redictUrl=StringEscapeUtils.unescapeXml(redictUrl);
+				redictUrl= redictUrl.replaceAll("['\"]", "");
+				page.setRedictUrl(redictUrl);
+				return;
+			}
 		}
-		
 		if(StringUtils.isEmpty(page.getContentCharset())){
-			String charset = PatternUtils.getMatchPattern("(?=<meta).*?(?<=charset=[\\'|\\\"]?)([[a-z]|[A-Z]|[0-9]|-]*)",
-						content, 1);
+			String charset = PatternUtils.getMatchPattern("(?=<meta).*?(?<=charset=[\\'|\\\"]?)([[a-z]|[A-Z]|[0-9]|-]*)",content, 1,Pattern.CASE_INSENSITIVE);
 			if(StringUtils.isEmpty(charset)){
 				charset = "UTF-8";
 			}

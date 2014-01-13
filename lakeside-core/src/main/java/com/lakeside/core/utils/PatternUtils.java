@@ -32,10 +32,26 @@ public class PatternUtils {
 	 * @return the pattern
 	 */
 	public static Pattern getPattern(String patternStr) {
+		return getPattern(patternStr,0);
+	}
+	
+	/**
+	 * Gets the pattern.
+	 * @param  flags
+     *         Match flags, a bit mask that may include
+     *         {@link #CASE_INSENSITIVE}, {@link #MULTILINE}, {@link #DOTALL},
+     *         {@link #UNICODE_CASE}, {@link #CANON_EQ}, {@link #UNIX_LINES},
+     *         {@link #LITERAL}, {@link #UNICODE_CHARACTER_CLASS}
+     *         and {@link #COMMENTS}
+	 *
+	 * @param patternStr the pattern str
+	 * @return the pattern
+	 */
+	public static Pattern getPattern(String patternStr,int flags) {
 		if (patterns.containsKey(patternStr)) {
 			return patterns.get(patternStr);
 		}
-		Pattern pattern = Pattern.compile(patternStr);
+		Pattern pattern = Pattern.compile(patternStr,flags);
 		patterns.put(patternStr, pattern);
 		return pattern;
 	}
@@ -64,7 +80,11 @@ public class PatternUtils {
 
 	
 	public static String getMatchPattern(String regex,String input,int groupIndex){
-		Pattern pat = getPattern(regex);
+		return getMatchPattern(regex,input,groupIndex,0);
+	}
+	
+	public static String getMatchPattern(String regex,String input,int groupIndex,int flags){
+		Pattern pat = getPattern(regex,flags);
 		Matcher matcher = pat.matcher(input);
 		if(matcher.find()){
 			return matcher.group(groupIndex);
