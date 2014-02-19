@@ -51,7 +51,8 @@ public class MysqlDataSource {
 			cdataSource.setUser(userName);
 			cdataSource.setPassword(password);
 			//<!-- these are C3P0 properties -->
-			cdataSource.setAcquireIncrement(3);
+			cdataSource.setInitialPoolSize(1);
+			cdataSource.setAcquireIncrement(2);
 			cdataSource.setMaxStatements(50);
 			cdataSource.setMaxIdleTime(200);
 			cdataSource.setIdleConnectionTestPeriod(60);
@@ -69,6 +70,14 @@ public class MysqlDataSource {
 		this(StringUtils.format("jdbc:mysql://{0}:{1}/{2}?useUnicode=true&characterEncoding=UTF-8&charSet=UTF-8", host,port,db), userName, password);
 		this.databaseName = db;
 	}
+	
+	public void setInitialPoolSize( int initialPoolSize ) { 
+	   this.dataSource.setInitialPoolSize( initialPoolSize ); 
+    }
+	
+	public void setAcquireIncrement( int acquireIncrement ) { 
+		 this.dataSource.setAcquireIncrement( acquireIncrement ); 
+    }
 	
 	/**
 	 * close the data source
