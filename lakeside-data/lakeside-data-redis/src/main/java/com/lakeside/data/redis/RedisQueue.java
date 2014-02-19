@@ -54,4 +54,13 @@ public class RedisQueue {
 	public boolean isEmpty() {
 		return db.llen(listQueueKey)<=0;
 	}
+	
+	/**
+	 * get length of queue
+	 * @return
+	 */
+	public long getLength(){
+		long length = db.llen(listQueueKey);
+		return length;
+	}
 }
