@@ -51,12 +51,18 @@ public class MysqlDataSource {
 			cdataSource.setUser(userName);
 			cdataSource.setPassword(password);
 			//<!-- these are C3P0 properties -->
-			cdataSource.setInitialPoolSize(1);
-			cdataSource.setAcquireIncrement(2);
+			cdataSource.setMinPoolSize(1);
+			cdataSource.setInitialPoolSize(2);
+			cdataSource.setAcquireIncrement(1);
 			cdataSource.setMaxStatements(50);
 			cdataSource.setMaxIdleTime(200);
 			cdataSource.setIdleConnectionTestPeriod(60);
 			cdataSource.setTestConnectionOnCheckout(true);
+			//---Configuring To Avoid Memory Leaks On Hot Redeploy Of Clients 
+			// @{http://www.mchange.com/projects/c3p0/#configuring_to_avoid_memory_leaks_on_redeploy}
+			cdataSource.setContextClassLoaderSource("library");
+			cdataSource.setPrivilegeSpawnedThreads(true);
+			/*---------*/
 			this.dataSource = cdataSource;
 			jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 			def = new DefaultTransactionDefinition();
@@ -71,12 +77,17 @@ public class MysqlDataSource {
 		this.databaseName = db;
 	}
 	
+	public void setMinPoolSize( int minPoolSize )
+    { 
+		this.dataSource.setMinPoolSize( minPoolSize ); 
+    }
+	
 	public void setInitialPoolSize( int initialPoolSize ) { 
-	   this.dataSource.setInitialPoolSize( initialPoolSize ); 
+		this.dataSource.setInitialPoolSize( initialPoolSize ); 
     }
 	
 	public void setAcquireIncrement( int acquireIncrement ) { 
-		 this.dataSource.setAcquireIncrement( acquireIncrement ); 
+		this.dataSource.setAcquireIncrement( acquireIncrement ); 
     }
 	
 	/**
