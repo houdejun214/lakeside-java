@@ -18,7 +18,7 @@
     <dependency>
     	<groupId>org.hibernate</groupId>
     	<artifactId>hibernate-core</artifactId>
-    	<version>3.6.6.Final</version>
+    	<version>${hibernate.version}</version>
     </dependency>
     
     <dependency>
@@ -28,13 +28,12 @@
     	<type>jar</type>
     	<scope>compile</scope>
     </dependency>
-    
-    <dependency>
-		<groupId>com.mchange</groupId>
-		<artifactId>c3p0</artifactId>
-		<version>0.9.5-pre6</version>
-		<type>jar</type>
-		<scope>compile</scope>
+	
+	<!-- connection pool -->
+	<dependency>
+		<groupId>org.apache.tomcat</groupId>
+		<artifactId>tomcat-jdbc</artifactId>
+		<version>${tomcat-jdbc.version}</version>
 	</dependency>
   </dependencies>
 </project>

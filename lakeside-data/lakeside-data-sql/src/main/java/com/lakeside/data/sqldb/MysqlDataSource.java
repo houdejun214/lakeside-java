@@ -1,27 +1,17 @@
 package com.lakeside.data.sqldb;
 
-import java.beans.PropertyVetoException;
-
-import javax.sql.DataSource;
-
+import org.apache.tomcat.jdbc.pool.DataSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.lakeside.core.utils.StringUtils;
-import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 public class MysqlDataSource {
 
-	private ComboPooledDataSource dataSource = null;
+	private DataSource dataSource = null;
 
 	private NamedParameterJdbcTemplate jdbcTemplate;
 	
-	private DataSourceTransactionManager transactionManager;
-	
 	private String databaseName;
-	
-	private DefaultTransactionDefinition def;
 	
 	public String getDatabaseName() {
 		return databaseName;
@@ -29,47 +19,31 @@ public class MysqlDataSource {
 	public NamedParameterJdbcTemplate getJdbcTemplate() {
 		return jdbcTemplate;
 	}
-	public DataSourceTransactionManager getTransactionManager() {
-		return transactionManager;
-	}
-	public DefaultTransactionDefinition getTransactionDefinition() {
-		return def;
-	}
 	public DataSource getDataSource() {
 		return dataSource;
 	}
-	public MysqlDataSource(DataSource dataSource,NamedParameterJdbcTemplate jdbcTemplate){
-		def = new DefaultTransactionDefinition();
-		transactionManager = new DataSourceTransactionManager(dataSource);
-	}
 	
 	public MysqlDataSource(String jdbcurl,String userName,String password){
-		try {
-			ComboPooledDataSource cdataSource = new ComboPooledDataSource();
-			cdataSource.setDriverClass("com.mysql.jdbc.Driver");
-			cdataSource.setJdbcUrl(jdbcurl);
-			cdataSource.setUser(userName);
-			cdataSource.setPassword(password);
-			//<!-- these are C3P0 properties -->
-			cdataSource.setMinPoolSize(1);
-			cdataSource.setInitialPoolSize(2);
-			cdataSource.setAcquireIncrement(1);
-			cdataSource.setMaxStatements(50);
-			cdataSource.setMaxIdleTime(200);
-			cdataSource.setIdleConnectionTestPeriod(60);
-			cdataSource.setTestConnectionOnCheckout(true);
-			//---Configuring To Avoid Memory Leaks On Hot Redeploy Of Clients 
-			// @{http://www.mchange.com/projects/c3p0/#configuring_to_avoid_memory_leaks_on_redeploy}
-			cdataSource.setContextClassLoaderSource("library");
-			cdataSource.setPrivilegeSpawnedThreads(true);
-			/*---------*/
-			this.dataSource = cdataSource;
-			jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-			def = new DefaultTransactionDefinition();
-			transactionManager = new DataSourceTransactionManager(dataSource);
-		} catch (PropertyVetoException e) {
-			throw new RuntimeException(e);
-		}
+		DataSource cdataSource = new DataSource();
+		cdataSource.setDriverClassName("com.mysql.jdbc.Driver");
+		cdataSource.setUrl(jdbcurl);
+		cdataSource.setUsername(userName);
+		cdataSource.setPassword(password);
+		cdataSource.setMaxActive(50);
+		cdataSource.setMaxIdle(10);
+		cdataSource.setMinIdle(0);
+		/** 连接Idle10分钟后超时，每1分钟检查一次 **/
+		cdataSource.setTimeBetweenEvictionRunsMillis(60000);
+		cdataSource.setMinEvictableIdleTimeMillis(600000);
+		/** (boolean) The default read-only state of connections created by this pool. 
+		 * If not set then the setReadOnly method will not be called. (Some drivers don't support read only mode, ex: Informix) **/
+		cdataSource.setDefaultReadOnly(true);
+		/** The default auto-commit state of connections created by this pool. 
+		 * If not set, default is JDBC driver default (If not set then the setAutoCommit method will not be called.) **/
+		cdataSource.setDefaultAutoCommit(false);
+		/*---------*/
+		this.dataSource = cdataSource;
+		jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 	
 	public MysqlDataSource(String host,String port,String db,String userName,String password){
@@ -77,19 +51,7 @@ public class MysqlDataSource {
 		this.databaseName = db;
 	}
 	
-	public void setMinPoolSize( int minPoolSize )
-    { 
-		this.dataSource.setMinPoolSize( minPoolSize ); 
-    }
-	
-	public void setInitialPoolSize( int initialPoolSize ) { 
-		this.dataSource.setInitialPoolSize( initialPoolSize ); 
-    }
-	
-	public void setAcquireIncrement( int acquireIncrement ) { 
-		this.dataSource.setAcquireIncrement( acquireIncrement ); 
-    }
-	
+
 	/**
 	 * close the data source
 	 */
