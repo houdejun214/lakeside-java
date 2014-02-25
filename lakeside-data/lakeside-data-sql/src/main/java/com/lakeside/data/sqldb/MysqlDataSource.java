@@ -32,6 +32,7 @@ public class MysqlDataSource {
 		cdataSource.setMaxActive(50);
 		cdataSource.setMaxIdle(10);
 		cdataSource.setMinIdle(0);
+		cdataSource.setInitialSize(2);
 		/** 连接Idle10分钟后超时，每1分钟检查一次 **/
 		cdataSource.setTimeBetweenEvictionRunsMillis(60000);
 		cdataSource.setMinEvictableIdleTimeMillis(600000);
