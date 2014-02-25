@@ -2,17 +2,24 @@ package com.lakeside.data.sqldb;
 
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import com.lakeside.core.utils.StringUtils;
 
+/**
+ * manage the mysql database connections. 
+ * 
+ * @author houdejun
+ *
+ */
 public class MysqlDataSource {
-
+	private static final Object sync = new Object();
 	private DataSource dataSource = null;
-
 	private NamedParameterJdbcTemplate jdbcTemplate;
-	
 	private String databaseName;
-	
+	private DefaultTransactionDefinition def=null;
+	private DataSourceTransactionManager transactionManager=null;
 	public String getDatabaseName() {
 		return databaseName;
 	}
@@ -51,12 +58,44 @@ public class MysqlDataSource {
 		this(StringUtils.format("jdbc:mysql://{0}:{1}/{2}?useUnicode=true&characterEncoding=UTF-8&charSet=UTF-8", host,port,db), userName, password);
 		this.databaseName = db;
 	}
-	
 
 	/**
 	 * close the data source
 	 */
 	public void close(){
 		this.dataSource.close(true);
+	}
+	/**
+	 * init and create resources need by transaction operations.
+	 */
+	private void initAndCreateTransactionResources(){
+		synchronized(sync){
+			if(transactionManager==null){
+				def = new DefaultTransactionDefinition();
+				transactionManager = new DataSourceTransactionManager(dataSource);
+			}
+		}
+	}
+	
+	/**
+	 * get transactionManager object, create new one if not exists.
+	 * @return
+	 */
+	public DataSourceTransactionManager getTransactionManager() {
+		if(transactionManager==null){
+			initAndCreateTransactionResources();
+		}
+		return transactionManager;
+	}
+	
+	/**
+	 * get transactionDefinition object, create new one if not exists.
+	 * @return
+	 */
+	public DefaultTransactionDefinition getTransactionDefinition() {
+		if(def==null){
+			initAndCreateTransactionResources();
+		}
+		return def;
 	}
 }
