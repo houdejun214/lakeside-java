@@ -175,7 +175,7 @@ public class DateTimeUtils {
 		c.set(Calendar.YEAR, year);
 		c.set(Calendar.WEEK_OF_YEAR, week);
 		c.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);// 设置周一
-		c.set(Calendar.HOUR, 0);
+		c.set(Calendar.HOUR_OF_DAY, 0);
 		c.set(Calendar.MINUTE, 0);
 		c.set(Calendar.SECOND, 0);
 		c.set(Calendar.MILLISECOND, 0);
@@ -194,7 +194,8 @@ public class DateTimeUtils {
 		Calendar c = Calendar.getInstance();
 		c.set(Calendar.YEAR, year);
 		c.set(Calendar.WEEK_OF_YEAR, week);
-		c.setFirstDayOfWeek(Calendar.MONDAY);c.set(Calendar.HOUR, 0);
+		c.setFirstDayOfWeek(Calendar.MONDAY);
+		c.set(Calendar.HOUR_OF_DAY, 0);
 		c.set(Calendar.MINUTE, 0);
 		c.set(Calendar.SECOND, 0);
 		c.set(Calendar.MILLISECOND, 0);
@@ -214,7 +215,7 @@ public class DateTimeUtils {
 		c.set(Calendar.YEAR, year);
 		c.set(Calendar.MONTH, month - 1);
 		c.set(Calendar.DAY_OF_MONTH, c.getActualMinimum(Calendar.DAY_OF_MONTH));
-		c.set(Calendar.HOUR, 0);
+		c.set(Calendar.HOUR_OF_DAY, 0);
 		c.set(Calendar.MINUTE, 0);
 		c.set(Calendar.SECOND, 0);
 		c.set(Calendar.MILLISECOND, 0);
@@ -233,7 +234,7 @@ public class DateTimeUtils {
 		c.set(Calendar.YEAR, year);
 		c.set(Calendar.MONTH, month - 1);
 		c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
-		c.set(Calendar.HOUR, 0);
+		c.set(Calendar.HOUR_OF_DAY, 0);
 		c.set(Calendar.MINUTE, 0);
 		c.set(Calendar.SECOND, 0);
 		c.set(Calendar.MILLISECOND, 0);
