@@ -45,7 +45,7 @@ public class MysqlDataSource {
 		cdataSource.setMinEvictableIdleTimeMillis(600000);
 		/** (boolean) The default read-only state of connections created by this pool. 
 		 * If not set then the setReadOnly method will not be called. (Some drivers don't support read only mode, ex: Informix) **/
-		cdataSource.setDefaultReadOnly(true);
+		cdataSource.setDefaultReadOnly(false);
 		/** The default auto-commit state of connections created by this pool. 
 		 * If not set, default is JDBC driver default (If not set then the setAutoCommit method will not be called.) **/
 		cdataSource.setDefaultAutoCommit(false);
