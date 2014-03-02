@@ -1,6 +1,11 @@
 package com.lakeside.data.sqldb;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.tomcat.jdbc.pool.DataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
@@ -14,6 +19,9 @@ import com.lakeside.core.utils.StringUtils;
  *
  */
 public class MysqlDataSource {
+	private static final Logger log = LoggerFactory.getLogger(MysqlDataSource.class);
+	private static final String REPLICATION_DRIVER = "com.mysql.jdbc.ReplicationDriver";
+	private static final String SINGLETON_DRIVER = "com.mysql.jdbc.Driver";
 	private static final Object sync = new Object();
 	private DataSource dataSource = null;
 	private NamedParameterJdbcTemplate jdbcTemplate;
@@ -32,7 +40,11 @@ public class MysqlDataSource {
 	
 	public MysqlDataSource(String jdbcurl,String userName,String password){
 		DataSource cdataSource = new DataSource();
-		cdataSource.setDriverClassName("com.mysql.jdbc.ReplicationDriver");
+		if(isReplicationConnection(jdbcurl)){
+			cdataSource.setDriverClassName(REPLICATION_DRIVER);
+		}else{
+			cdataSource.setDriverClassName(SINGLETON_DRIVER);
+		}
 		cdataSource.setUrl(jdbcurl);
 		cdataSource.setUsername(userName);
 		cdataSource.setPassword(password);
@@ -54,6 +66,30 @@ public class MysqlDataSource {
 		jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
 	
+	protected boolean isReplicationConnection(String jdbcurl){
+		String regex = "jdbc:mysql://([^/]+)/.*";
+		Pattern pattern = Pattern.compile(regex);
+		Matcher matcher = pattern.matcher(jdbcurl);
+		while(matcher.find()){
+			String hosts = matcher.group(1);
+			String[] split = hosts.trim().split(",");
+			if(split.length>1){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	/**
+	 * 
+	 * @param host
+	 * @param port
+	 * @param db
+	 * @param userName
+	 * @param password
+	 * @Deprecated, please use the constructor "MysqlDataSource(String jdbcurl,String userName,String password)" instead.
+	 */
+	@Deprecated
 	public MysqlDataSource(String host,String port,String db,String userName,String password){
 		this(StringUtils.format("jdbc:mysql://{0}:{1}/{2}?useUnicode=true&characterEncoding=UTF-8&charSet=UTF-8", host,port,db), userName, password);
 		this.databaseName = db;
