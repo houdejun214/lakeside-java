@@ -10,6 +10,7 @@
 
 	<modules>
 		<module>lakeside-core</module>
+		<module>lakeside-thrift</module>
 		<module>lakeside-data</module>
 		<module>lakeside-web</module>
 		<module>lakeside-download</module>

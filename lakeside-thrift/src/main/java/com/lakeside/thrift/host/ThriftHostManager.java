@@ -1,8 +1,10 @@
-package com.lakeside.core.thrift;
+package com.lakeside.thrift.host;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import com.lakeside.thrift.ThriftConfig;
 
 /**
  * @author zhufb

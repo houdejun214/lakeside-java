@@ -1,4 +1,4 @@
-package com.lakeside.core.thrift;
+package com.lakeside.thrift;
 
 import java.math.BigDecimal;
 import java.text.ParseException;

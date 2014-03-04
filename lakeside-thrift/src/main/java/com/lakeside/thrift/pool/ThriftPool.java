@@ -1,4 +1,4 @@
-package com.lakeside.core.thrift;
+package com.lakeside.thrift.pool;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -7,7 +7,9 @@ import java.util.Map;
 
 import org.apache.thrift.TServiceClient;
 
-import com.lakeside.core.thrift.ThriftConnection.TServiceValidator;
+import com.lakeside.thrift.ThriftConfig;
+import com.lakeside.thrift.host.ThriftHostLoader;
+import com.lakeside.thrift.pool.ThriftConnection.TServiceValidator;
 
 /**
  * @author zhufb

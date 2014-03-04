@@ -1,8 +1,11 @@
-package com.lakeside.core.thrift;
+package com.lakeside.thrift;
 
 import org.apache.thrift.TServiceClient;
 
-import com.lakeside.core.thrift.ThriftConnection.TServiceValidator;
+import com.lakeside.thrift.exception.ThriftException;
+import com.lakeside.thrift.pool.ThriftConnection;
+import com.lakeside.thrift.pool.ThriftConnectionPool;
+import com.lakeside.thrift.pool.ThriftConnection.TServiceValidator;
 
 
 /**

@@ -1,11 +1,16 @@
-package com.lakeside.core.thrift;
+package com.lakeside.thrift.pool;
 
 import org.apache.commons.pool.PoolableObjectFactory;
 import org.apache.thrift.TServiceClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.lakeside.core.thrift.ThriftConnection.TServiceValidator;
+import com.lakeside.thrift.ThriftConfig;
+import com.lakeside.thrift.exception.ThriftException;
+import com.lakeside.thrift.host.ThriftHost;
+import com.lakeside.thrift.host.ThriftHostLoader;
+import com.lakeside.thrift.host.ThriftHostManager;
+import com.lakeside.thrift.pool.ThriftConnection.TServiceValidator;
 
 /**
  * @author zhufb

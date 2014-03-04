@@ -1,6 +1,8 @@
-package com.lakeside.core.thrift;
+package com.lakeside.thrift.host;
 
 import java.util.List;
+
+import com.lakeside.thrift.ThriftConfig;
 
 /**
  * @author zhufb
