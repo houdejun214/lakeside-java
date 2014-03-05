@@ -10,13 +10,11 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.NoHttpResponseException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.util.EncodingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +22,6 @@ import org.slf4j.LoggerFactory;
 import com.lakeside.core.utils.PatternUtils;
 import com.lakeside.core.utils.StringUtils;
 import com.lakeside.core.utils.UrlUtils;
-import com.lakeside.download.http.proxy.ProxyConfig;
 import com.lakeside.download.http.robots.RobotstxtConfig;
 import com.lakeside.download.http.robots.RobotstxtServer;
 import com.lakeside.download.http.url.URLCanonicalizer;
@@ -119,8 +116,10 @@ public abstract class HttpPageLoader {
 		}
 		HttpGet get = new HttpGet(url);
 		try {
+			get.addHeader("User-Agent","Mozilla/5.0 (Windows; U; Windows NT 6.1; pl; rv:1.9.1) Gecko/20090624 Firefox/3.5 (.NET CLR 3.5.30729)");
 			get.addHeader("Accept-Encoding", "gzip,deflate,sdch");
 			get.addHeader("Accept-Charset", "GBK,utf-8");
+	    	get.addHeader("Connection", "close");
 			if(header!=null&&header.size()>0){
 				for(Entry<String, String> entry:header.entrySet()){
 					get.addHeader(entry.getKey(), entry.getValue());
@@ -225,7 +224,7 @@ public abstract class HttpPageLoader {
 			}
 		}
 		if(StringUtils.isEmpty(page.getContentCharset())){
-			String charset = PatternUtils.getMatchPattern("(?=<meta).*?(?<=charset=[\\'|\\\"]?)([[a-z]|[A-Z]|[0-9]|-]*)",content, 1,Pattern.CASE_INSENSITIVE);
+			String charset = PatternUtils.getMatchPattern("(?=<meta).*?(?<=charset=['\"]?)([a-zA-Z0-9|-]+)",content, 1,Pattern.CASE_INSENSITIVE);
 			if(StringUtils.isEmpty(charset)){
 				charset = "UTF-8";
 			}
