@@ -20,10 +20,12 @@
     	<groupId>javax.mail</groupId>
     	<artifactId>mail</artifactId>
     </dependency>
+    <!-- set json-lib as a optional dependency, we will remove this lib in later-->
     <dependency>
     	<groupId>net.sf.json-lib</groupId>
     	<artifactId>json-lib</artifactId>
     	<classifier>jdk15</classifier>
+    	<optional>true</optional>
     </dependency>
     <dependency>
     	<groupId>commons-beanutils</groupId>
