@@ -53,7 +53,7 @@
 		<httpcomponents.version>4.3</httpcomponents.version>
 		<junit.version>4.11</junit.version>
 		
-		<thrift.version>0.8.0</thrift.version>
+		<thrift.version>0.9.1</thrift.version>
 		<commons-pool.version>1.6</commons-pool.version>
 		<!-- Plugin的属性定义 -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
