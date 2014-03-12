@@ -57,16 +57,22 @@ public class MysqlDataSource {
 		/** 连接Idle10分钟后超时，每1分钟检查一次 **/
 		cdataSource.setTimeBetweenEvictionRunsMillis(60000);
 		cdataSource.setMinEvictableIdleTimeMillis(600000);
-		/** (boolean) The default read-only state of connections created by this pool. 
-		 * If not set then the setReadOnly method will not be called. (Some drivers don't support read only mode, ex: Informix) **/
-		cdataSource.setDefaultReadOnly(false);
-		/** The default auto-commit state of connections created by this pool. 
-		 * If not set, default is JDBC driver default (If not set then the setAutoCommit method will not be called.) **/
-		cdataSource.setDefaultAutoCommit(false);
 		/*---------*/
 		this.dataSource = cdataSource;
 		jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 	}
+	
+	/** (boolean) The default read-only state of connections created by this pool. 
+	 * If not set then the setReadOnly method will not be called. (Some drivers don't support read only mode, ex: Informix) **/
+    public void setDefaultReadOnly(Boolean defaultReadOnly) {
+        this.dataSource.setDefaultReadOnly(defaultReadOnly);
+    }
+	
+	/** The default auto-commit state of connections created by this pool. 
+	 * If not set, default is JDBC driver default (If not set then the setAutoCommit method will not be called.) **/
+    public void setDefaultAutoCommit(Boolean autocommit) {
+        this.dataSource.setDefaultAutoCommit(autocommit);
+    }
 	
 	protected boolean isReplicationConnection(String jdbcurl){
 		String regex = "jdbc:mysql://([^/]+)/.*";
