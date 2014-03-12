@@ -53,12 +53,28 @@ public class PermissionDefinitionSectionMetaSource extends AbstractMap<String,St
 	
 	private boolean protectAll = true;
 	
+	private String defaultAccess = null;
+	
 	private Map<String,Protected> sectionUrls;
 	
 	public Map<String, Protected> getSectionUrls() {
 		return sectionUrls;
 	}
-    /**
+	/**
+	 * default access rules
+	 * @param defaultAccess
+	 */
+    public void setDefaultAccess(String defaultAccess) {
+		this.defaultAccess = defaultAccess;
+	}
+    public boolean isProtectAll() {
+		return protectAll;
+	}
+
+	public void setProtectAll(boolean protectAll) {
+		this.protectAll = protectAll;
+	}
+	/**
      * 通过filterChainDefinitions对默认的url过滤定义
      * 
      * @param filterChainDefinitions 默认的url过滤定义
@@ -144,19 +160,13 @@ public class PermissionDefinitionSectionMetaSource extends AbstractMap<String,St
         }
         if(protectAll){
         	section.put("/**","authc");
+        }else if(StringUtils.isNotEmpty(defaultAccess)){
+        	section.put("/**",defaultAccess);
         }
         // cache the annotation information;
         this.sectionUrls = urls;
 	}
     
-    public boolean isProtectAll() {
-		return protectAll;
-	}
-
-	public void setProtectAll(boolean protectAll) {
-		this.protectAll = protectAll;
-	}
-
 	/**
      * 判断是否为空
      * @param list

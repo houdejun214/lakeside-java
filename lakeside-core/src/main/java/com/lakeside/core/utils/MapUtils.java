@@ -14,8 +14,6 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.sf.json.JSONNull;
-
 public class MapUtils {
 	
 	/**
@@ -39,9 +37,7 @@ public class MapUtils {
 		}
 		
 		Object value = obj.get(key);
-		if(value==null||JSONNull.getInstance().equals(value)){
-			return null;
-		}else if(value instanceof Map){
+		if(value instanceof Map){
 			return getInter((Map)value,next);
 		}else if(value instanceof List){
 			return getInter((List)value, next);
