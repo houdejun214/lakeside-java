@@ -8,7 +8,7 @@ import java.util.Map;
 import org.apache.thrift.TServiceClient;
 
 import com.lakeside.thrift.ThriftConfig;
-import com.lakeside.thrift.host.ThriftHostLoader;
+import com.lakeside.thrift.host.ThriftHostManager;
 import com.lakeside.thrift.pool.ThriftConnection.TServiceValidator;
 
 /**
@@ -41,11 +41,11 @@ public abstract class ThriftPool {
 	 * @param loader thrift host list loader instance (custom)
 	 * @return
 	 */
-	public static <T extends TServiceClient & TServiceValidator> ThriftConnectionPool<T> get(Class<T> cls,ThriftConfig cfg,ThriftHostLoader loader){
+	public static <T extends TServiceClient & TServiceValidator> ThriftConnectionPool<T> get(Class<T> cls,ThriftConfig cfg,ThriftHostManager hostManager){
 		if(!poolMap.containsKey(cfg)){
 			synchronized (poolMap) {
 				if(!poolMap.containsKey(cfg)){
-					poolMap.put(cfg,new ThriftConnectionPool<T>(cls,cfg,loader));
+					poolMap.put(cfg,new ThriftConnectionPool<T>(cls,cfg,hostManager));
 				}
 			}
 		}

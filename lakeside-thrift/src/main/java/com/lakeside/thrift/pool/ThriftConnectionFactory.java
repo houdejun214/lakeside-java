@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 import com.lakeside.thrift.ThriftConfig;
 import com.lakeside.thrift.exception.ThriftException;
 import com.lakeside.thrift.host.ThriftHost;
-import com.lakeside.thrift.host.ThriftHostLoader;
 import com.lakeside.thrift.host.ThriftHostManager;
 import com.lakeside.thrift.pool.ThriftConnection.TServiceValidator;
 
@@ -21,9 +20,9 @@ public class ThriftConnectionFactory<T extends TServiceClient & TServiceValidato
 	private static final Logger log = LoggerFactory.getLogger("ThriftConnectionFactory");
     private ThriftHostManager hostManager;
 	private ThriftConnectionPool<T> pool;
-    public ThriftConnectionFactory(ThriftConnectionPool<T> pool,ThriftConfig cfg,ThriftHostLoader loader){
+    public ThriftConnectionFactory(ThriftConnectionPool<T> pool,ThriftConfig cfg,ThriftHostManager hostManager){
     	this.pool = pool;
-    	this.hostManager = new ThriftHostManager(cfg,loader);
+    	this.hostManager = hostManager;
     }
 
     /**

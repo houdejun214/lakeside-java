@@ -21,10 +21,10 @@ public class ThriftConfig extends HashMap<String,String>{
 		
 	}
 
-	public ThriftConfig(Iterator<Entry<String, String>> iterator) {
+	public ThriftConfig(Iterator<Entry> iterator) {
 		while(iterator.hasNext()){
-			java.util.Map.Entry<String, String> next = iterator.next();
-			this.put(next.getKey(), next.getValue());
+			java.util.Map.Entry<?, ?> next = iterator.next();
+			this.put(String.valueOf(next.getKey()), String.valueOf(next.getValue()));
 		}
 	}
 	

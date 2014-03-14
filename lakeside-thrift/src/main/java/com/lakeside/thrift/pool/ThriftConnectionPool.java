@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import com.lakeside.thrift.ThriftConfig;
 import com.lakeside.thrift.exception.ThriftException;
-import com.lakeside.thrift.host.ThriftHostLoader;
+import com.lakeside.thrift.host.ThriftHostManager;
 import com.lakeside.thrift.pool.ThriftConnection.TServiceValidator;
 
 /**
@@ -54,7 +54,7 @@ public class ThriftConnectionPool<T extends TServiceClient & TServiceValidator> 
 		#当池中对象用完时，请求新的对象所要执行的动作 
 		whenExhaustedAction=1
 	*/
-	public ThriftConnectionPool(Class<T> cls,ThriftConfig cfg,ThriftHostLoader loader) {
+	public ThriftConnectionPool(Class<T> cls,ThriftConfig cfg,ThriftHostManager hostManager) {
 		this.clientClass = cls;
 		this.cfg = cfg;
 		poolConfig = new GenericObjectPool.Config();
@@ -68,7 +68,7 @@ public class ThriftConnectionPool<T extends TServiceClient & TServiceValidator> 
 		poolConfig.timeBetweenEvictionRunsMillis = cfg.getInt("thrift.pool.nonfair.timeBetweenEvictionRunsMillis",3*60*1000);
 		poolConfig.minEvictableIdleTimeMillis = cfg.getInt("thrift.pool.nonfair.minEvictableIdleTimeMillis",5*60*1000);
 		poolConfig.numTestsPerEvictionRun = cfg.getInt("thrift.pool.nonfair.numTestsPerEvictionRun",3);
-		this.factory = new ThriftConnectionFactory<T>(this, cfg,loader);
+		this.factory = new ThriftConnectionFactory<T>(this, cfg,hostManager);
 		this.init();
 	}
 
