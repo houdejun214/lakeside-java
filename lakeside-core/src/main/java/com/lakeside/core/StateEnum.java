@@ -10,7 +10,8 @@ import org.apache.commons.lang.enums.ValuedEnum;
 
 /**
  * 
- * 状态枚举，用于存储系统中使用的状态。
+ * 状态枚举，用于存储系统中使用的状态.
+ * 支持自动将状态值(整数）和枚举值建立一一对应关系.
  * 
  * @author qiumm
  *
