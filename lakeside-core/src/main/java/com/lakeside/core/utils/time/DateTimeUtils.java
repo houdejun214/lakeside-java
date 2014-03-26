@@ -142,6 +142,8 @@ public class DateTimeUtils {
 		return instance.getTime();
 	}
 
+	
+	
 	public static Date getBeginOfDay(Date now) {
 		Calendar instance = Calendar.getInstance();
 		instance.setTime(now);
@@ -222,6 +224,18 @@ public class DateTimeUtils {
 		return c.getTime();
 	}
 
+	public static Date getFirstDayOfMonth(Date date) {
+		Calendar c = Calendar.getInstance();
+		c.setTime(date);
+		c.set(Calendar.YEAR, c.get(Calendar.YEAR));
+		c.set(Calendar.MONTH, c.get(Calendar.MONTH));
+		c.set(Calendar.DAY_OF_MONTH, c.getActualMinimum(Calendar.DAY_OF_MONTH));
+		c.set(Calendar.HOUR_OF_DAY, 0);
+		c.set(Calendar.MINUTE, 0);
+		c.set(Calendar.SECOND, 0);
+		c.set(Calendar.MILLISECOND, 0);
+		return c.getTime();
+	}
 	/**
 	 * 得到某年某月的最后一天
 	 * 
