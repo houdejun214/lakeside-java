@@ -27,8 +27,6 @@ import java.util.StringTokenizer;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-import org.apache.commons.collections.CollectionUtils;
-
 import com.lakeside.core.regex.CommonPattern;
 
 /**

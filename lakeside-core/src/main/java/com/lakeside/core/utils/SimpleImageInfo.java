@@ -6,6 +6,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * used to extract image meta info from image content.
+ * 
+ * @author houdejun
+ *
+ */
 public class SimpleImageInfo {
 	private int height;
 	private int width;

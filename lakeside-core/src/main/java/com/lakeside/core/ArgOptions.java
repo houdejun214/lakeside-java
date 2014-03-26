@@ -8,7 +8,7 @@ import com.lakeside.core.utils.StringUtils;
  * 
  * represent the argument configure setting.
  * 
- * please used this class to parser the java command line arguments setting
+ * please used this class to parse the java command line arguments setting
  * 
  * @author houdejun
  *
@@ -18,7 +18,7 @@ public class ArgOptions {
 	private HashMap<String, String> map = new HashMap<String,String>();
 	
 	/**
-	 * 
+	 * constructor
 	 */
 	public ArgOptions(String[] args){
 		if(args!=null){

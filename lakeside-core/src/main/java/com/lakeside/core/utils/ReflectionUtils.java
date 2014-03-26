@@ -32,13 +32,6 @@ public class ReflectionUtils {
 
 	private static Logger logger = LoggerFactory.getLogger(ReflectionUtils.class);
 
-//	static {
-//		DateConverter dc = new DateConverter();
-//		dc.setUseLocaleFormat(true);
-//		dc.setPatterns(new String[] { "yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss" });
-//		ConvertUtils.register(dc, Date.class);
-//	}
-
 	/**
 	 * 调用Getter方法.
 	 */

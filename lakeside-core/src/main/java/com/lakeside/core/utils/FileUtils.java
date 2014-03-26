@@ -171,9 +171,9 @@ public class FileUtils {
 			throw new RuntimeException("file path is empty!");
 		}
 		path = PathUtils.getPath(path);
-		if (path.endsWith("/")) {
-			path = path.substring(0, path.length() - 1);
-		}
+//		if (path.endsWith("/")) {
+//			path = path.substring(0, path.length() - 1);
+//		}
 		String dir = path;
 		int index = path.lastIndexOf("/");
 		if (index > -1) {
