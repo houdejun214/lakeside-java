@@ -1,11 +1,14 @@
 package com.lakeside.thrift;
 
 import org.apache.thrift.TServiceClient;
+import org.apache.thrift.transport.TTransportException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.lakeside.thrift.exception.ThriftException;
 import com.lakeside.thrift.pool.ThriftConnection;
-import com.lakeside.thrift.pool.ThriftConnectionPool;
 import com.lakeside.thrift.pool.ThriftConnection.TServiceValidator;
+import com.lakeside.thrift.pool.ThriftConnectionPool;
 
 
 /**
@@ -16,6 +19,13 @@ import com.lakeside.thrift.pool.ThriftConnection.TServiceValidator;
  *
  */
 public class ThriftTemplate<T extends TServiceClient & TServiceValidator> {
+	
+	private static final Logger log = LoggerFactory.getLogger(ThriftConnectionPool.class);
+	
+	/**
+	 * retry when network exception
+	 */
+	private static final int RETRY_ON_NET_EXCEPTION = 3;
 
 	private ThriftConnectionPool<T> pool;
 	
@@ -31,14 +41,27 @@ public class ThriftTemplate<T extends TServiceClient & TServiceValidator> {
 	 * @throws ThriftException
 	 */
 	public <R> R execute(ThriftAction<T,R> thriftAction) throws ThriftException {
-		ThriftConnection<T> thriftConnection = pool.get();
-		try {
-			return thriftAction.action(thriftConnection.getClient());
-		} catch (Exception e) {
-			throw new ThriftException(e);
-		} finally {
-			thriftConnection.close();
+		int i=0;
+		R result = null;
+		while(i++<RETRY_ON_NET_EXCEPTION){
+			ThriftConnection<T> thriftConnection = pool.get();
+			try {
+				 return result = thriftAction.action(thriftConnection.getClient());
+			} catch (TTransportException tte) {
+				log.warn("Get connection exception [{}] to server[{}], retry it",tte.getMessage(),thriftConnection.toString());
+				// will lead to a retry.
+				thriftConnection.close();
+				thriftConnection.destroy();
+				thriftConnection = null;
+			} catch (Exception e) {
+				throw new ThriftException(e);
+			} finally {
+				if(thriftConnection!=null){
+					thriftConnection.close();
+				}
+			}
 		}
+		return result;
 	}
 	
 	/**
@@ -48,13 +71,23 @@ public class ThriftTemplate<T extends TServiceClient & TServiceValidator> {
 	 * @throws ThriftException
 	 */
 	public void execute(ThriftActionNoResult<T> thriftAction) throws ThriftException {
-		ThriftConnection<T> thriftConnection = pool.get();
-		try {
-			thriftAction.action(thriftConnection.getClient());
-		} catch (Exception e) {
-			throw new ThriftException(e);
-		} finally {
-			thriftConnection.close();
+		int i=0;
+		while(i++<RETRY_ON_NET_EXCEPTION){
+			ThriftConnection<T> thriftConnection = pool.get();
+			try {
+				thriftAction.action(thriftConnection.getClient());
+				return;
+			} catch (TTransportException tte) {
+				log.warn("Get connection exception [{}] to server[{}], retry it",tte.getMessage(),thriftConnection.toString());
+				// will lead to a retry.
+				thriftConnection.close();
+				thriftConnection.destroy();
+				thriftConnection = null;
+			} catch (Exception e) {
+				throw new ThriftException(e);
+			} finally {
+				thriftConnection.close();
+			}
 		}
 	}
 
@@ -63,7 +96,7 @@ public class ThriftTemplate<T extends TServiceClient & TServiceValidator> {
 	}
 
 	/**
-	 * HBaseAction for hbase 
+	 * ThriftAction without result
 	 * 
 	 * @author zhufb
 	 *
@@ -74,7 +107,7 @@ public class ThriftTemplate<T extends TServiceClient & TServiceValidator> {
 	}
 	
 	/**
-	 * HBaseAction for hbase 
+	 * ThriftAction
 	 * 
 	 * @author zhufb
 	 *

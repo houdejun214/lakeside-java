@@ -16,8 +16,7 @@ import com.lakeside.thrift.pool.ThriftConnection.TServiceValidator;
 
 /**
  * 
- * One Thrift Client represent for a thrift connection to one hbase region server.
- * The thriftClient instance should be got from pool, user can't create the instance manualy
+ * A Thrift Client represent for a thrift connection (thrift socket) to a thrift server.It must be bound with a TServiceClient.
  * 
  * @author zhufb
  *
@@ -34,18 +33,37 @@ public class ThriftConnection<T extends TServiceClient & TServiceValidator> {
 		this.regionHost = rh;
 		this.client = createThriftClient();
 	}
+	
+	/**
+	 * this constructor only available in test
+	 * @param pool
+	 * @param rh
+	 * @param client
+	 */
+	ThriftConnection(ThriftConnectionPool<T> pool, ThriftHost rh,T client) {
+		this.pool = pool;
+		this.regionHost = rh;
+		this.client = client;
+	}
 
 	public T getClient() {
 		return client;
 	}
 
+	/**
+	 * close this connections, this is not real close the connection, only return the connection to pool
+	 */
 	public void close() {
 		pool.put(this);
 	}
 
+	/**
+	 * destroy this connections
+	 */
 	public void destroy() {
 		client.getInputProtocol().getTransport().close();
 		mClosed = true;
+		pool.remove(this);
 	}
 
 	/**
@@ -57,9 +75,17 @@ public class ThriftConnection<T extends TServiceClient & TServiceValidator> {
 		if(mClosed){
 			return false;
 		}
-		return client.validate();
+		try{
+			return client.validate();
+		} catch (Exception e){
+			return false;
+		}
 	}
 	
+	/**
+	 * create thrift client
+	 * @return
+	 */
 	private T createThriftClient() {
 		String host = regionHost.getIp();
 		int port = regionHost.getPort();
@@ -69,15 +95,35 @@ public class ThriftConnection<T extends TServiceClient & TServiceValidator> {
 		try {
 			ThriftConfig cfg = pool.getCfg();
 			Class<T>  type =  (Class<T>)pool.getClientClass();
-			Constructor constructor = type.getConstructor(TProtocol.class,ThriftConfig.class);
-			T t = (T) constructor.newInstance(protocol,cfg);
+			T client = null;
+			Constructor<?> constructor = getConstructor(type,TProtocol.class,ThriftConfig.class);
+			if(constructor!=null){
+				client = (T) constructor.newInstance(protocol,cfg);
+			}else{
+				constructor = getConstructor(type,TProtocol.class);
+				client = (T) constructor.newInstance(protocol);
+			}
 			socket.open();
-			return t;
+			return client;
 		} catch (TTransportException e) {
-			throw new ThriftException("Failed to open the connection.", e);
+			throw new ThriftException("Failed to open the connection to "+regionHost, e);
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw new ThriftException("create thirft client failed", e);
+		}
+	}
+	
+	/**
+	 * get a constructor of a type
+	 * @param type
+	 * @param parameterTypes
+	 * @return
+	 */
+	private Constructor<?> getConstructor(Class<?> type,Class<?>... parameterTypes){
+		try {
+			Constructor<?> constructor = type.getConstructor(parameterTypes);
+			return constructor;
+		} catch (Exception e) {
+			return null;
 		}
 	}
 
@@ -89,7 +135,7 @@ public class ThriftConnection<T extends TServiceClient & TServiceValidator> {
 		return super.toString();
 	}
 	
-	public interface TServiceValidator{
+	public static interface TServiceValidator{
 		public boolean validate();
 	}
 }

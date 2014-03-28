@@ -17,6 +17,7 @@
 package com.lakeside.core;
 
 
+
 public final class Preconditions {
   private Preconditions() {}
 
@@ -32,7 +33,16 @@ public final class Preconditions {
       throw new IllegalArgumentException();
     }
   }
-
+  
+  /**
+  * Ensures the truth of an expression involving one or more parameters to the
+  * calling method.
+  */
+  public static void checkArgument( boolean expression, Object errorMessage) {
+    if (!expression) {
+      throw new IllegalArgumentException(String.valueOf(errorMessage));
+    }
+  }
 
   /**
    * Ensures the truth of an expression involving the state of the calling

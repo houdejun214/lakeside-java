@@ -1,6 +1,10 @@
 package com.lakeside.thrift.pool;
 
-import org.apache.commons.pool.PoolableObjectFactory;
+import java.lang.ref.SoftReference;
+
+import org.apache.commons.pool2.BasePooledObjectFactory;
+import org.apache.commons.pool2.PooledObject;
+import org.apache.commons.pool2.impl.PooledSoftReference;
 import org.apache.thrift.TServiceClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,10 +16,13 @@ import com.lakeside.thrift.host.ThriftHostManager;
 import com.lakeside.thrift.pool.ThriftConnection.TServiceValidator;
 
 /**
+ * ThriftConnection Factory,
+ * 用户创建一个到服务器的连接（thrift socket connection).
+ * 
  * @author zhufb
  *
  */
-public class ThriftConnectionFactory<T extends TServiceClient & TServiceValidator> implements PoolableObjectFactory<ThriftConnection<T>> {
+public class ThriftConnectionFactory<T extends TServiceClient & TServiceValidator> extends BasePooledObjectFactory<ThriftConnection<T>> {
 	
 	private static final Logger log = LoggerFactory.getLogger("ThriftConnectionFactory");
     private ThriftHostManager hostManager;
@@ -32,11 +39,20 @@ public class ThriftConnectionFactory<T extends TServiceClient & TServiceValidato
         return pool;
     }
 
+    /**
+     * 关闭一个连接对象
+     * @param obj
+     */
 	public void destroyObject(ThriftConnection<T> obj) {
 		obj.destroy();
 		obj = null;
 	}
-
+	
+	/**
+	 * 校验连接对象(ThriftConnection)是否可用
+	 * @param obj
+	 * @return
+	 */
 	public boolean validateObject(ThriftConnection<T> obj) {
 		if(obj == null){
 			return false;
@@ -44,27 +60,23 @@ public class ThriftConnectionFactory<T extends TServiceClient & TServiceValidato
 		return obj.validate();
 	}
 
-	public void activateObject(ThriftConnection<T> obj) throws Exception {
-		//nothing
-		
-	}
-
-	public void passivateObject(ThriftConnection<T> obj) throws Exception {
-		//nothing
-		
-	}
-
-	public ThriftConnection<T> makeObject() throws Exception {
+	@Override
+	public ThriftConnection<T> create() throws Exception {
 		ThriftHost host = null;
-		while(true){
-			 try{
-				 host = hostManager.get();
-				 return new ThriftConnection<T>(pool, host);
-			 }catch(ThriftException e){
-				 log.error("This thrift server was not running " + host.getIp());
-			 }catch(Exception e){
-				 log.error("This thrift server make new client failed " + host.getIp());
-			 }
-		}
+		 try{
+			 host = hostManager.get();
+			 return new ThriftConnection<T>(pool, host);
+		 }catch(ThriftException e){
+			 log.error("This thrift server was not running " + host.getIp());
+			 throw e;
+		 }catch(Exception e){
+			 log.error("This thrift server make new client failed " + host.getIp());
+			 throw e;
+		 }
+	}
+
+	@Override
+	public PooledObject<ThriftConnection<T>> wrap(ThriftConnection<T> obj) {
+		return new PooledSoftReference<ThriftConnection<T>>(new SoftReference<ThriftConnection<T>>(obj));
 	}
 }
