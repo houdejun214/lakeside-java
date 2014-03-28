@@ -5,6 +5,12 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLDecoder;
 
+/**
+ * application resource util.
+ * can resolve the resource url(path) related with the current application.
+ * @author houdejun
+ *
+ */
 public class ApplicationResourceUtils {
 	
 	private static String applicationRoot;
@@ -54,15 +60,32 @@ public class ApplicationResourceUtils {
 		return defaultClassLoader.getResourceAsStream(path);
 	}
 	
+	/**
+	 * get the root directory path for current application.
+	 *  will return the root classpath when debug in IDE.
+	 *  will return the application directory when launch in real-env.
+	 * @return
+	 */
+	public static String getRoot(){
+		return getResourceUrl("/");
+	}
+	
+	/**
+	 * return the root classpath
+	 * @return
+	 */
 	public static String getClassRoot(){
 		return applicationClassPathRoot;
 	}
 	
-	public static boolean isWindows() {
+	/**
+	 * helper method to check if is windows.
+	 * @return
+	 */
+	private static boolean isWindows() {
 		String os = System.getProperty("os.name").toLowerCase();
 		// windows
 		return (os.indexOf("win") >= 0);
- 
 	}
 	
 	/**
