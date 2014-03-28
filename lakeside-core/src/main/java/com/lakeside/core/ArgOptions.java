@@ -1,6 +1,7 @@
 package com.lakeside.core;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import com.lakeside.core.utils.StringUtils;
 
@@ -123,6 +124,10 @@ public class ArgOptions {
 		return false;
 	}
 	
+	public Map<String, String> toMap() {
+		return map;
+	}
+
 	private void put(String key,String value){
 		this.map.put(key, value);
 	}

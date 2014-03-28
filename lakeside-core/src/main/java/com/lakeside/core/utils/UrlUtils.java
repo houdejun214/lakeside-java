@@ -118,6 +118,10 @@ public class UrlUtils {
 		url = url.replaceAll("\\\\", "");
 		url = url.replaceAll("\"", "");
 		url = url.replaceAll("\'", "");
+		int index = url.indexOf("#");
+		if(index > 0){
+			url = url.substring(0,index);
+		}
 		return url;
 	}
 
