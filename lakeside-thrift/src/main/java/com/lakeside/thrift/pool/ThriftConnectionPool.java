@@ -146,7 +146,17 @@ public class ThriftConnectionPool<T extends TServiceClient & TServiceValidator> 
 	private void init() {
 		mPool = new GenericObjectPool<ThriftConnection<T>>(factory, poolConfig);
 	}
-
+	
+	protected ThriftConnectionFactory<T> getFactory() {
+		return factory;
+	}
+	
+	void setFactory(ThriftConnectionFactory<T> factory) {
+		this.factory = factory;
+		//binding the factory to this pool
+		this.factory.setPool(this);
+	}
+	
 	/**
 	 * borrow a thrift connection from the pool
 	 * @return
@@ -157,8 +167,6 @@ public class ThriftConnectionPool<T extends TServiceClient & TServiceValidator> 
 			try {
 				ThriftConnection<T> client = mPool.borrowObject();
 				return client;
-			} catch (NoSuchElementException e) {
-				log.warn("Get ThriftConnection timeout,will try again later!");
 			} catch(Exception e){
 				throw new ThriftException("ThriftConnectionPool get connection failed", e);
 			}

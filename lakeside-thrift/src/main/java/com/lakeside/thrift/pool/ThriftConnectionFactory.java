@@ -27,8 +27,13 @@ public class ThriftConnectionFactory<T extends TServiceClient & TServiceValidato
 	private static final Logger log = LoggerFactory.getLogger("ThriftConnectionFactory");
     private ThriftHostManager hostManager;
 	private ThriftConnectionPool<T> pool;
+	
     public ThriftConnectionFactory(ThriftConnectionPool<T> pool,ThriftConfig cfg,ThriftHostManager hostManager){
     	this.pool = pool;
+    	this.hostManager = hostManager;
+    }
+    
+    ThriftConnectionFactory(ThriftConfig cfg,ThriftHostManager hostManager){
     	this.hostManager = hostManager;
     }
 
@@ -38,8 +43,16 @@ public class ThriftConnectionFactory<T extends TServiceClient & TServiceValidato
     protected ThriftConnectionPool<T> getPool() {
         return pool;
     }
-
+    
     /**
+     * this the pool
+     * @param pool
+     */
+    protected void setPool(ThriftConnectionPool<T> pool) {
+		this.pool = pool;
+	}
+
+	/**
      * 关闭一个连接对象
      * @param obj
      */

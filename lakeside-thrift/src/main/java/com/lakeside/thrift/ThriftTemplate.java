@@ -86,7 +86,9 @@ public class ThriftTemplate<T extends TServiceClient & TServiceValidator> {
 			} catch (Exception e) {
 				throw new ThriftException(e);
 			} finally {
-				thriftConnection.close();
+				if(thriftConnection!=null){
+					thriftConnection.close();
+				}
 			}
 		}
 	}
