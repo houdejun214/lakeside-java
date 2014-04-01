@@ -26,7 +26,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.lakeside.core.utils.time.StopWatch;
 import com.lakeside.thrift.HelloClient;
-import com.lakeside.thrift.exception.ThriftException;
+import com.lakeside.thrift.ThriftException;
 import com.lakeside.thrift.host.ThriftHost;
 
 @RunWith(PowerMockRunner.class)

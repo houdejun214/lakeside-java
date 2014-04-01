@@ -1,4 +1,4 @@
-package com.lakeside.thrift.exception;
+package com.lakeside.thrift;
 
 /**
  * @author zhufb

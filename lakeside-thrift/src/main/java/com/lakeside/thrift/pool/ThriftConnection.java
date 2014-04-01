@@ -10,7 +10,7 @@ import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransportException;
 
 import com.lakeside.thrift.ThriftConfig;
-import com.lakeside.thrift.exception.ThriftException;
+import com.lakeside.thrift.ThriftException;
 import com.lakeside.thrift.host.ThriftHost;
 import com.lakeside.thrift.pool.ThriftConnection.TServiceValidator;
 

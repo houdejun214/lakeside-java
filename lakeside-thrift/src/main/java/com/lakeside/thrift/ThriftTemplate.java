@@ -5,7 +5,6 @@ import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.lakeside.thrift.exception.ThriftException;
 import com.lakeside.thrift.pool.ThriftConnection;
 import com.lakeside.thrift.pool.ThriftConnection.TServiceValidator;
 import com.lakeside.thrift.pool.ThriftConnectionPool;
