@@ -37,21 +37,6 @@ public class ThriftConnectionFactory<T extends TServiceClient & TServiceValidato
     	this.hostManager = hostManager;
     }
 
-    /**
-     * @return the pool
-     */
-    protected ThriftConnectionPool<T> getPool() {
-        return pool;
-    }
-    
-    /**
-     * this the pool
-     * @param pool
-     */
-    protected void setPool(ThriftConnectionPool<T> pool) {
-		this.pool = pool;
-	}
-
 	/**
      * 关闭一个连接对象
      * @param obj

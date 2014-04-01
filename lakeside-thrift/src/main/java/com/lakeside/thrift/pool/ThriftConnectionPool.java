@@ -152,12 +152,6 @@ public class ThriftConnectionPool<T extends TServiceClient & TServiceValidator> 
 		return factory;
 	}
 	
-	void setFactory(ThriftConnectionFactory<T> factory) {
-		this.factory = factory;
-		//binding the factory to this pool
-		this.factory.setPool(this);
-	}
-	
 	/**
 	 * borrow a thrift connection from the pool
 	 * @return
