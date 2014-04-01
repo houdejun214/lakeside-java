@@ -2,12 +2,14 @@ package com.lakeside.core.utils.time;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Lists;
 import com.lakeside.core.utils.PatternUtils;
 import com.lakeside.core.utils.StringUtils;
 
@@ -73,5 +75,25 @@ public class DateFormat {
 			}
 		}
 		return null;
+	}
+
+	public static Date findFirstDateInStr(String str) {
+		if(StringUtils.isEmpty(str)){
+			return null;
+		}
+		int start = Integer.MAX_VALUE;
+		Date result = null;
+		for (DatePattern p : DatePattern.values()) {
+			Matcher matcher = p.getPattern().matcher(str);
+			if (matcher.find()) {
+				String strDate = matcher.group(0);
+				Date date = DateFormat.strToDate(strDate);
+				if(date!=null&&matcher.start()<start){
+					result =date;
+					start = matcher.start();
+				}
+			}
+		}
+		return result;
 	}
 }

@@ -78,6 +78,9 @@ public class UrlUtils {
 			if (index > 0) {
 				host = host.substring(0, index);
 			}
+			if(host.toLowerCase().startsWith("www.")){
+				host = host.substring(4);
+			}
 			return host.toLowerCase();
 		} catch (MalformedURLException e) {
 			return "";
