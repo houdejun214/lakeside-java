@@ -1,7 +1,5 @@
 package com.lakeside.thrift.pool;
 
-import java.util.NoSuchElementException;
-
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.apache.thrift.TServiceClient;
@@ -22,13 +20,13 @@ import com.lakeside.thrift.pool.ThriftConnection.TServiceValidator;
  */
 public class ThriftConnectionPool<T extends TServiceClient & TServiceValidator> {
 	
-	private static final int BORROW_RETRY = 3;
 	private static final Logger log = LoggerFactory.getLogger(ThriftConnectionPool.class);
 	private GenericObjectPoolConfig poolConfig;
 	private ThriftConnectionFactory<T> factory;
 	private GenericObjectPool<ThriftConnection<T>> mPool;
 	private Class<T> clientClass;
 	private ThriftConfig cfg;
+	private boolean loop = false;
 	
 	/**
 	 *  【数据库连接池 参数说明】
@@ -84,6 +82,9 @@ public class ThriftConnectionPool<T extends TServiceClient & TServiceValidator> 
 		/**为了提升性能 关闭testOnBorrow**/
 		poolConfig.setTestOnBorrow(false);
 		poolConfig.setTestWhileIdle(true);
+
+		this.loop = cfg.getBoolean("thrift.pool.nonfair.get.loop",false);
+
 		// 开启一个线程执行扫描检测connection
 		poolConfig.setTimeBetweenEvictionRunsMillis(cfg.getInt("thrift.pool.nonfair.timeBetweenEvictionRunsMillis",3*60*1000));
 		poolConfig.setMinEvictableIdleTimeMillis(cfg.getInt("thrift.pool.nonfair.minEvictableIdleTimeMillis",5*60*1000));
@@ -162,16 +163,18 @@ public class ThriftConnectionPool<T extends TServiceClient & TServiceValidator> 
 	 * @return
 	 */
 	public ThriftConnection<T> get() {
-		int i=0;
-		while( i++ < BORROW_RETRY) {
+		Exception ex = null;
+		do{
 			try {
 				ThriftConnection<T> client = mPool.borrowObject();
 				return client;
 			} catch(Exception e){
-				throw new ThriftException("ThriftConnectionPool get connection failed", e);
+				log.error("ThriftConnectionPool get connection failed", e);
+				ex = e;
 			}
 		}
-		throw new ThriftException("ThriftConnectionPool get connection failed, can't connect to any server");
+		while(loop);
+		throw new ThriftException("ThriftConnectionPool get connection failed",ex);
 	}
 	
 	/**

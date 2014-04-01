@@ -44,8 +44,9 @@ public class ThriftTemplate<T extends TServiceClient & TServiceValidator> {
 		int i=0;
 		R result = null;
 		while(i++<RETRY_ON_NET_EXCEPTION){
-			ThriftConnection<T> thriftConnection = pool.get();
+			ThriftConnection<T> thriftConnection = null;
 			try {
+				thriftConnection = pool.get();
 				 return result = thriftAction.action(thriftConnection.getClient());
 			} catch (TTransportException tte) {
 				log.warn("Get connection exception [{}] to server[{}], retry it",tte.getMessage(),thriftConnection.toString());
