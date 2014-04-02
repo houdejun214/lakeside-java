@@ -2,7 +2,7 @@ package com.lakeside.thrift.pool;
 
 import java.lang.ref.SoftReference;
 
-import org.apache.commons.pool2.BasePooledObjectFactory;
+import org.apache.commons.pool2.BaseKeyedPooledObjectFactory;
 import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.impl.PooledSoftReference;
 import org.apache.thrift.TServiceClient;
@@ -11,32 +11,27 @@ import org.slf4j.LoggerFactory;
 
 import com.lakeside.thrift.ThriftConfig;
 import com.lakeside.thrift.ThriftException;
+import com.lakeside.thrift.host.ThriftGroupHostManager;
 import com.lakeside.thrift.host.ThriftHost;
-import com.lakeside.thrift.host.ThriftHostManager;
 import com.lakeside.thrift.pool.ThriftConnection.TServiceValidator;
 
 /**
- * ThriftConnection Factory,
+ * Grouped ThriftConnection object Factory,
  * 用于创建一个到服务器的连接（thrift socket connection).
  * 
- * @author zhufb
- *
+ * @author houdejun
  */
-public class ThriftConnectionFactory<T extends TServiceClient & TServiceValidator> extends BasePooledObjectFactory<ThriftConnection<T>> {
+public class ThriftGroupConnectionFactory<T extends TServiceClient & TServiceValidator> extends BaseKeyedPooledObjectFactory<String,ThriftConnection<T>> {
 	
 	private static final Logger log = LoggerFactory.getLogger("ThriftConnectionFactory");
-    private ThriftHostManager hostManager;
-	private BaseThriftConnectionPool<T> pool;
+    private ThriftGroupHostManager hostManager;
+	private ThriftGroupConnectionPool<T> pool;
 	
-    public ThriftConnectionFactory(BaseThriftConnectionPool<T> pool,ThriftConfig cfg,ThriftHostManager hostManager){
+    public ThriftGroupConnectionFactory(ThriftGroupConnectionPool<T> pool,ThriftConfig cfg,ThriftGroupHostManager hostManager){
     	this.pool = pool;
     	this.hostManager = hostManager;
     }
     
-    ThriftConnectionFactory(ThriftConfig cfg,ThriftHostManager hostManager){
-    	this.hostManager = hostManager;
-    }
-
 	/**
      * 关闭一个连接对象
      * @param obj
@@ -59,11 +54,13 @@ public class ThriftConnectionFactory<T extends TServiceClient & TServiceValidato
 	}
 
 	@Override
-	public ThriftConnection<T> create() throws Exception {
+	public ThriftConnection<T> create(String groupKey) throws Exception {
 		ThriftHost host = null;
 		 try{
-			 host = hostManager.get();
-			 return new ThriftConnection<T>(pool, host);
+			 host = hostManager.get(groupKey);
+			 ThriftConnection<T> conn = new ThriftConnection<T>(pool, host);
+			 conn.setGroupKey(groupKey);
+			return conn;
 		 }catch(ThriftException e){
 			 log.error("This thrift server was not running " + host.getIp());
 			 throw e;

@@ -1,11 +1,13 @@
 package com.lakeside.thrift.host;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.common.base.Objects;
 import com.google.common.base.Strings;
-
-import static com.google.common.base.Preconditions.*;
 
 /**
  * An immutable representation of a host and port of a thrift server.
@@ -58,6 +60,32 @@ public class ThriftHost {
 		return new ThriftHost(host, port);
 	}
 	
+	@Override
+	public int hashCode() {
+		return Objects.hashCode(ip,port);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ThriftHost other = (ThriftHost) obj;
+		if (ip == null) {
+			if (other.ip != null)
+				return false;
+		} else if (!ip.equals(other.ip))
+			return false;
+		if (port != other.port)
+			return false;
+		return true;
+	}
+
+
+
 	/**
 	 * ipv6 match patterns
 	 */
