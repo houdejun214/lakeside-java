@@ -26,6 +26,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.lakeside.core.utils.time.StopWatch;
 import com.lakeside.thrift.HelloClient;
+import com.lakeside.thrift.ThriftConfig;
 import com.lakeside.thrift.ThriftException;
 import com.lakeside.thrift.host.ThriftHost;
 
@@ -113,6 +114,9 @@ public class ThriftConnectionPoolTest {
 	
 	@Test(expected=ThriftException.class)
 	public void testGetMaxActive() throws Exception {
+		ThriftConfig conf = new ThriftConfig();
+		conf.put("thrift.pool.nonfair.maxWait","2000");
+		pool = new ThriftConnectionPool<HelloClient>(HelloClient.class,conf, "localhost:8080");
 		StopWatch watch = StopWatch.newWatch();
 		for(int i=0;i<10;i++){
 			ThriftConnection<HelloClient> con1 = pool.get();
@@ -123,7 +127,7 @@ public class ThriftConnectionPoolTest {
 		verify(connectionFactory,never()).validateObject(Mockito.any(ThriftConnection.class));
 		
 		ThriftConnection<HelloClient> con = pool.get();
-		assertTrue(watch.getTime()>20000);
+		assertTrue(watch.getTime()>2000);
 	}
 
 	@Test

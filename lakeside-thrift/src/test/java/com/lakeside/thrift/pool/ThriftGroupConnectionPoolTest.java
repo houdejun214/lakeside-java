@@ -28,6 +28,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import com.lakeside.core.utils.time.StopWatch;
 import com.lakeside.thrift.HelloClient;
 import com.lakeside.thrift.SimpleThriftGroupHostManager;
+import com.lakeside.thrift.ThriftConfig;
 import com.lakeside.thrift.ThriftException;
 import com.lakeside.thrift.host.ThriftHost;
 
@@ -39,6 +40,7 @@ public class ThriftGroupConnectionPoolTest {
 	private ThriftGroupConnectionPool<HelloClient> pool=null;
 	private ThriftGroupConnectionFactory<HelloClient> connectionFactory=Mockito.mock(ThriftGroupConnectionFactory.class);
 	private HelloClient client = Mockito.mock(HelloClient.class);
+	private SimpleThriftGroupHostManager manager;
 	
 	@Before
 	public void init() throws Exception{
@@ -65,7 +67,7 @@ public class ThriftGroupConnectionPoolTest {
 			
 		});
 		
-		SimpleThriftGroupHostManager manager = new SimpleThriftGroupHostManager();
+		manager = new SimpleThriftGroupHostManager();
 		manager.addHost("host1", "host1:8080");
 		manager.addHost("host2", "host2:8080");
 		// init pool object
@@ -123,6 +125,9 @@ public class ThriftGroupConnectionPoolTest {
 	
 	@Test(expected=ThriftException.class)
 	public void testGetMaxActive() throws Exception {
+		ThriftConfig conf = new ThriftConfig();
+		conf.put("thrift.pool.nonfair.maxWait","2000");
+		pool = new ThriftGroupConnectionPool<HelloClient>(HelloClient.class,conf,manager);
 		StopWatch watch = StopWatch.newWatch();
 		for(int i=0;i<10;i++){
 			ThriftConnection<HelloClient> con1 = pool.get("host1");
@@ -133,7 +138,7 @@ public class ThriftGroupConnectionPoolTest {
 		verify(connectionFactory,never()).validateObject(Mockito.any(ThriftConnection.class));
 		
 		ThriftConnection<HelloClient> con = pool.get("host1");
-		assertTrue(watch.getTime()>20000);
+		assertTrue(watch.getTime()>2000);
 	}
 
 	@Test
