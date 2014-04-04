@@ -117,7 +117,7 @@ public class ThriftConnectionPoolTest {
 	@Test(expected=ThriftException.class)
 	public void testGetMaxActive() throws Exception {
 		ThriftConfig conf = new ThriftConfig();
-		conf.put("thrift.pool.nonfair.maxWait","2000");
+		conf.put("thrift.pool.maxWait","2000");
 		pool = new ThriftConnectionPool<HelloClient>(HelloClient.class,conf, "localhost:8080");
 		StopWatch watch = StopWatch.newWatch();
 		for(int i=0;i<10;i++){
@@ -125,7 +125,6 @@ public class ThriftConnectionPoolTest {
 			assertNotNull(con1);
 		}
 		assertTrue(pool.size()<=10);
-		doThrow(new TTransportException()).when(connectionFactory.makeObject());
 		verify(connectionFactory,times(10)).makeObject();
 		verify(connectionFactory,never()).validateObject(Mockito.any(ThriftConnection.class));
 		
@@ -133,7 +132,7 @@ public class ThriftConnectionPoolTest {
 		assertTrue(watch.getTime()>2000);
 	}
 	
-	@Test
+	@Test(expected=ThriftException.class)
 	public void testGetMaxActiveException() throws Exception {
 		StopWatch watch = StopWatch.newWatch();
 		when(connectionFactory.makeObject()).then(new Answer<Object>(){

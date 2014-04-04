@@ -58,10 +58,10 @@ public class ThriftGroupConnectionPool<T extends TServiceClient & TServiceValida
 		this.clientClass = cls;
 		this.cfg = cfg;
 		poolConfig = new GenericKeyedObjectPoolConfig();
-		poolConfig.setLifo(cfg.getBoolean("thrift.pool.nonfair.lifo", false));
-		poolConfig.setMaxTotal(cfg.getInt("thrift.pool.nonfair.maxActive", 10));
-		poolConfig.setMaxIdlePerKey(cfg.getInt("thrift.pool.nonfair.maxIdlePerKey", 1));
-		poolConfig.setMinIdlePerKey(cfg.getInt("thrift.pool.nonfair.minIdlePerKey", 0));
+		poolConfig.setLifo(cfg.getBoolean("thrift.pool.lifo", false));
+		poolConfig.setMaxTotal(cfg.getInt("thrift.pool.maxActive", 10));
+		poolConfig.setMaxIdlePerKey(cfg.getInt("thrift.pool.maxIdlePerKey", 1));
+		poolConfig.setMinIdlePerKey(cfg.getInt("thrift.pool.minIdlePerKey", 0));
 		
 		/**
 		 set the maximum amount of time (in milliseconds) the
@@ -69,7 +69,7 @@ public class ThriftGroupConnectionPool<T extends TServiceClient & TServiceValida
 		 exception when the pool is exhausted and {@link #getBlockWhenExhausted} is true. 
 		 When less than 0, the <code>borrowObject()</code> method may block indefinitely.
 		 */
-		poolConfig.setMaxWaitMillis(cfg.getInt("thrift.pool.nonfair.maxWait",20 * 1000));
+		poolConfig.setMaxWaitMillis(cfg.getInt("thrift.pool.maxWait",20 * 1000));
 		/**
 		 Sets whether to block when the <code>borrowObject()</code> method is
      	 invoked when the pool is exhausted (the maximum number of "active"
@@ -80,12 +80,12 @@ public class ThriftGroupConnectionPool<T extends TServiceClient & TServiceValida
 		poolConfig.setTestOnBorrow(false);
 		poolConfig.setTestWhileIdle(true);
 
-		this.loop = cfg.getBoolean("thrift.pool.nonfair.get.loop",false);
+		this.loop = cfg.getBoolean("thrift.pool.get.loop",false);
 
 		// 开启一个线程执行扫描检测connection
-		poolConfig.setTimeBetweenEvictionRunsMillis(cfg.getInt("thrift.pool.nonfair.timeBetweenEvictionRunsMillis",3*60*1000));
-		poolConfig.setMinEvictableIdleTimeMillis(cfg.getInt("thrift.pool.nonfair.minEvictableIdleTimeMillis",5*60*1000));
-		poolConfig.setNumTestsPerEvictionRun(cfg.getInt("thrift.pool.nonfair.numTestsPerEvictionRun",3));
+		poolConfig.setTimeBetweenEvictionRunsMillis(cfg.getInt("thrift.pool.timeBetweenEvictionRunsMillis",3*60*1000));
+		poolConfig.setMinEvictableIdleTimeMillis(cfg.getInt("thrift.pool.minEvictableIdleTimeMillis",5*60*1000));
+		poolConfig.setNumTestsPerEvictionRun(cfg.getInt("thrift.pool.numTestsPerEvictionRun",3));
 		this.factory = new ThriftGroupConnectionFactory<T>(this, cfg, hostManager);
 		this.init();
 	}
