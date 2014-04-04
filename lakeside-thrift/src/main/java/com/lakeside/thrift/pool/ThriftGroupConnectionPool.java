@@ -1,31 +1,30 @@
 package com.lakeside.thrift.pool;
 
-import java.util.NoSuchElementException;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.apache.commons.pool2.impl.GenericObjectPool;
-import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
+import org.apache.commons.pool2.impl.GenericKeyedObjectPool;
+import org.apache.commons.pool2.impl.GenericKeyedObjectPoolConfig;
 import org.apache.thrift.TServiceClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.lakeside.thrift.ThriftConfig;
 import com.lakeside.thrift.ThriftException;
-import com.lakeside.thrift.host.SingleThriftHostManager;
-import com.lakeside.thrift.host.ThriftHostManager;
+import com.lakeside.thrift.host.ThriftGroupHostManager;
 import com.lakeside.thrift.pool.ThriftConnection.TServiceValidator;
 
 /**
- * ThriftConnection连接池
+ * Grouped ThriftConnection 连接池
  * 
- * @author zhufb
+ * @author houdejun
  * @param <T>
  */
-public class ThriftConnectionPool<T extends TServiceClient & TServiceValidator> extends BaseThriftConnectionPool<T> {
+public class ThriftGroupConnectionPool<T extends TServiceClient & TServiceValidator> extends BaseThriftConnectionPool<T>{
 	
-	private static final Logger log = LoggerFactory.getLogger(ThriftConnectionPool.class);
-	private GenericObjectPoolConfig poolConfig;
-	private ThriftConnectionFactory<T> factory;
-	private GenericObjectPool<ThriftConnection<T>> mPool;
+	private static final Logger log = LoggerFactory.getLogger(ThriftGroupConnectionPool.class);
+	private GenericKeyedObjectPoolConfig poolConfig;
+	private ThriftGroupConnectionFactory<T> factory;
+	private GenericKeyedObjectPool<String,ThriftConnection<T>> mPool;
 	private boolean loop = false;
 	
 	/**
@@ -55,14 +54,15 @@ public class ThriftConnectionPool<T extends TServiceClient & TServiceValidator> 
 		#当池中对象用完时，请求新的对象所要执行的动作 
 		whenExhaustedAction=1
 	*/
-	public ThriftConnectionPool(Class<T> cls,ThriftConfig cfg,ThriftHostManager hostManager) {
+	public ThriftGroupConnectionPool(Class<T> cls,ThriftConfig cfg,ThriftGroupHostManager hostManager) {
 		this.clientClass = cls;
 		this.cfg = cfg;
-		poolConfig = new GenericObjectPoolConfig();
+		poolConfig = new GenericKeyedObjectPoolConfig();
 		poolConfig.setLifo(cfg.getBoolean("thrift.pool.nonfair.lifo", false));
 		poolConfig.setMaxTotal(cfg.getInt("thrift.pool.nonfair.maxActive", 10));
-		poolConfig.setMaxIdle(cfg.getInt("thrift.pool.nonfair.maxIdle", 2));
-		poolConfig.setMinIdle(cfg.getInt("thrift.pool.nonfair.minIdle", 1));
+		poolConfig.setMaxIdlePerKey(cfg.getInt("thrift.pool.nonfair.maxIdlePerKey", 1));
+		poolConfig.setMinIdlePerKey(cfg.getInt("thrift.pool.nonfair.minIdlePerKey", 0));
+		
 		/**
 		 set the maximum amount of time (in milliseconds) the
 		 <code>borrowObject()</code> method should block before throwing an
@@ -86,7 +86,7 @@ public class ThriftConnectionPool<T extends TServiceClient & TServiceValidator> 
 		poolConfig.setTimeBetweenEvictionRunsMillis(cfg.getInt("thrift.pool.nonfair.timeBetweenEvictionRunsMillis",3*60*1000));
 		poolConfig.setMinEvictableIdleTimeMillis(cfg.getInt("thrift.pool.nonfair.minEvictableIdleTimeMillis",5*60*1000));
 		poolConfig.setNumTestsPerEvictionRun(cfg.getInt("thrift.pool.nonfair.numTestsPerEvictionRun",3));
-		this.factory = new ThriftConnectionFactory<T>(this, cfg,hostManager);
+		this.factory = new ThriftGroupConnectionFactory<T>(this, cfg, hostManager);
 		this.init();
 	}
 	/**
@@ -94,99 +94,43 @@ public class ThriftConnectionPool<T extends TServiceClient & TServiceValidator> 
 	 * @param cls
 	 * @param hostManager
 	 */
-	public ThriftConnectionPool(Class<T> cls,ThriftHostManager hostManager) {
+	public ThriftGroupConnectionPool(Class<T> cls,ThriftGroupHostManager hostManager) {
 		this(cls,new ThriftConfig(), hostManager);
 	}
 	
 	/**
-	 * with specify host and port
-	 * @param cls
-	 * @param cfg
-	 * @param host
-	 * @param port
-	 */
-	public ThriftConnectionPool(Class<T> cls,ThriftConfig cfg,String host,int port) {
-		this(cls,cfg, new SingleThriftHostManager(host,port));
-	}
-	
-	/**
-	 * with default thrift configuration
-	 * @param cls
-	 * @param host
-	 * @param port
-	 */
-	public ThriftConnectionPool(Class<T> cls,String host,int port) {
-		this(cls,new ThriftConfig(), new SingleThriftHostManager(host,port));
-	}
-	
-	/**
-	 *  with specify host address (like as host:port)
-	 * @param cls
-	 * @param cfg
-	 * @param address
-	 */
-	public ThriftConnectionPool(Class<T> cls,ThriftConfig cfg,String address) {
-		this(cls,cfg, new SingleThriftHostManager(address));
-	}
-	
-	/**
-	 * with default thrift configuration
-	 * @param cls
-	 * @param address
-	 */
-	public ThriftConnectionPool(Class<T> cls,String address) {
-		this(cls,new ThriftConfig(), new SingleThriftHostManager(address));
-	}
-
-	/**
 	 * init the pool
 	 */
 	private void init() {
-		mPool = new GenericObjectPool<ThriftConnection<T>>(factory, poolConfig);
-	}
-	
-	protected ThriftConnectionFactory<T> getFactory() {
-		return factory;
+		mPool = new GenericKeyedObjectPool<String,ThriftConnection<T>>(factory, poolConfig);
 	}
 	
 	/**
 	 * borrow a thrift connection from the pool
 	 * @return
 	 */
-	public ThriftConnection<T> get() {
+	public ThriftConnection<T> get(String groupKey) {
 		Exception ex = null;
 		do{
 			try {
-				ThriftConnection<T> client = mPool.borrowObject();
+				ThriftConnection<T> client = mPool.borrowObject(groupKey);
 				return client;
 			} catch(Exception e){
 				log.error("ThriftConnectionPool get connection failed", e);
 				ex = e;
 			}
 		}
-		while(loop && wait(5));
+		while(loop);
 		throw new ThriftException("ThriftConnectionPool get connection failed",ex);
 	}
 	
 	/**
-	 * @param s
-	 * @return
-	 */
-	public boolean wait(int s){
-		try {
-			Thread.sleep(s*1000);
-		} catch (InterruptedException e) {
-			
-		}
-		return true;
-	}
-	/**
 	 * return a thrift connection from the pool
 	 * @param connection
 	 */
-	public void put(ThriftConnection<T> connection) {
+	public void put(String groupKey,ThriftConnection<T> connection) {
 		try {
-			mPool.returnObject(connection);
+			mPool.returnObject(groupKey,connection);
 		} catch (Exception e) {
 			throw new ThriftException("Put ThriftConnection back failed", e);
 		}
@@ -197,9 +141,9 @@ public class ThriftConnectionPool<T extends TServiceClient & TServiceValidator> 
 	 * @param connection
 	 * @return
 	 */
-	public boolean remove(ThriftConnection<T> connection) {
+	public boolean remove(String groupKey,ThriftConnection<T> connection) {
 		try {
-			mPool.invalidateObject(connection);
+			mPool.invalidateObject(groupKey,connection);
 			return true;
 		} catch (Exception e) {
 			throw new ThriftException("Remove ThriftConnection failed", e);
@@ -230,5 +174,18 @@ public class ThriftConnectionPool<T extends TServiceClient & TServiceValidator> 
 	 */
 	public int size() {
 		return mPool.getNumIdle();
+	}
+
+	@Override
+	public void put(ThriftConnection<T> connection) {
+		String groupKey = connection.getGroupKey();
+		checkNotNull(groupKey);
+		this.put(groupKey, connection);
+	}
+	@Override
+	public boolean remove(ThriftConnection<T> connection) {
+		String groupKey = connection.getGroupKey();
+		checkNotNull(groupKey);
+		return this.remove(groupKey, connection);
 	}
 }

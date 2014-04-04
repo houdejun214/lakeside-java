@@ -7,10 +7,11 @@ import org.apache.thrift.TServiceClient;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
+import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
 
 import com.lakeside.thrift.ThriftConfig;
-import com.lakeside.thrift.exception.ThriftException;
+import com.lakeside.thrift.ThriftException;
 import com.lakeside.thrift.host.ThriftHost;
 import com.lakeside.thrift.pool.ThriftConnection.TServiceValidator;
 
@@ -22,13 +23,13 @@ import com.lakeside.thrift.pool.ThriftConnection.TServiceValidator;
  *
  */
 public class ThriftConnection<T extends TServiceClient & TServiceValidator> {
-
+	private String groupKey = null;
 	private boolean mClosed = false;
 	private final T client;
-	private final ThriftConnectionPool<T> pool;
+	private final BaseThriftConnectionPool<T> pool;
 	private final ThriftHost regionHost;
 
-	public ThriftConnection(ThriftConnectionPool<T> pool, ThriftHost rh) {
+	public ThriftConnection(BaseThriftConnectionPool<T> pool, ThriftHost rh) {
 		this.pool = pool;
 		this.regionHost = rh;
 		this.client = createThriftClient();
@@ -40,7 +41,7 @@ public class ThriftConnection<T extends TServiceClient & TServiceValidator> {
 	 * @param rh
 	 * @param client
 	 */
-	ThriftConnection(ThriftConnectionPool<T> pool, ThriftHost rh,T client) {
+	ThriftConnection(BaseThriftConnectionPool<T> pool, ThriftHost rh,T client) {
 		this.pool = pool;
 		this.regionHost = rh;
 		this.client = client;
@@ -61,7 +62,11 @@ public class ThriftConnection<T extends TServiceClient & TServiceValidator> {
 	 * destroy this connections
 	 */
 	public void destroy() {
-		client.getInputProtocol().getTransport().close();
+		TProtocol protocol = client.getInputProtocol();
+		if(protocol!=null){
+			TTransport transport = protocol.getTransport();
+			if(transport!=null)transport.close();
+		}
 		mClosed = true;
 		pool.remove(this);
 	}
@@ -135,6 +140,23 @@ public class ThriftConnection<T extends TServiceClient & TServiceValidator> {
 		return super.toString();
 	}
 	
+	protected String getGroupKey() {
+		return groupKey;
+	}
+
+	/**
+	 * set the groupKey when work with ThriftGroupConnectionPool
+	 * @param groupKey
+	 */
+	protected void setGroupKey(String groupKey) {
+		this.groupKey = groupKey;
+	}
+
+	/**
+	 * get the groupKey when work with ThriftGroupConnectionPool
+	 * @author houdejun
+	 *
+	 */
 	public static interface TServiceValidator{
 		public boolean validate();
 	}

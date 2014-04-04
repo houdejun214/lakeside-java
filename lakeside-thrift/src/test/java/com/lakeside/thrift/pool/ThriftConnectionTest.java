@@ -52,6 +52,7 @@ public class ThriftConnectionTest {
 		ThriftConnection<HelloClient> conn = new ThriftConnection<HelloClient>(pool, host,client);
 		when(client.validate()).thenReturn(true);
 		assertTrue(conn.validate());
+		verify(client).validate();
 	}
 	
 	@Test

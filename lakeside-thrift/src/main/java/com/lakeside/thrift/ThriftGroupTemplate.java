@@ -1,25 +1,26 @@
 package com.lakeside.thrift;
 
-import java.net.SocketTimeoutException;
-
 import org.apache.thrift.TServiceClient;
 import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.lakeside.thrift.ThriftTemplate.ThriftAction;
+import com.lakeside.thrift.ThriftTemplate.ThriftActionNoResult;
 import com.lakeside.thrift.pool.ThriftConnection;
 import com.lakeside.thrift.pool.ThriftConnection.TServiceValidator;
 import com.lakeside.thrift.pool.ThriftConnectionPool;
+import com.lakeside.thrift.pool.ThriftGroupConnectionPool;
 
 
 /**
  * 
- * ThriftTemplate 提供了一个template方法，负责对thrift连接的获取与归还。
+ * Grouped thrift connection template 提供了一个template方法，负责对thrift连接的获取与归还。
  * 
- * @author zhufb
+ * @author houdejun
  *
  */
-public class ThriftTemplate<T extends TServiceClient & TServiceValidator> {
+public class ThriftGroupTemplate<T extends TServiceClient & TServiceValidator> {
 	
 	private static final Logger log = LoggerFactory.getLogger(ThriftConnectionPool.class);
 	
@@ -28,9 +29,9 @@ public class ThriftTemplate<T extends TServiceClient & TServiceValidator> {
 	 */
 	private static final int RETRY_ON_NET_EXCEPTION = 3;
 
-	private ThriftConnectionPool<T> pool;
+	private ThriftGroupConnectionPool<T> pool;
 	
-	public ThriftTemplate(ThriftConnectionPool<T> pool) {
+	public ThriftGroupTemplate(ThriftGroupConnectionPool<T> pool) {
 		this.pool = pool;
 	}
 	
@@ -41,22 +42,16 @@ public class ThriftTemplate<T extends TServiceClient & TServiceValidator> {
 	 * @return
 	 * @throws ThriftException
 	 */
-	public <R> R execute(ThriftAction<T,R> thriftAction) throws ThriftException {
+	public <R> R execute(String groupkey,ThriftAction<T,R> thriftAction) throws ThriftException {
 		int i=0;
 		R result = null;
 		while(i++<RETRY_ON_NET_EXCEPTION){
 			ThriftConnection<T> thriftConnection = null;
 			try {
-				 thriftConnection = pool.get();
+				thriftConnection = pool.get(groupkey);
 				 return result = thriftAction.action(thriftConnection.getClient());
-			} catch (TTransportException tte ) {
+			} catch (TTransportException tte) {
 				log.warn("Get connection exception [{}] to server[{}], retry it",tte.getMessage(),thriftConnection.toString());
-				// will lead to a retry.
-				thriftConnection.close();
-				thriftConnection.destroy();
-				thriftConnection = null;
-			} catch (SocketTimeoutException ste ) {
-				log.warn("Get connection exception [{}] to server[{}], retry it",ste.getMessage(),thriftConnection.toString());
 				// will lead to a retry.
 				thriftConnection.close();
 				thriftConnection.destroy();
@@ -78,10 +73,10 @@ public class ThriftTemplate<T extends TServiceClient & TServiceValidator> {
 	 * @param thriftAction
 	 * @throws ThriftException
 	 */
-	public void execute(ThriftActionNoResult<T> thriftAction) throws ThriftException {
+	public void execute(String groupkey,ThriftActionNoResult<T> thriftAction) throws ThriftException {
 		int i=0;
 		while(i++<RETRY_ON_NET_EXCEPTION){
-			ThriftConnection<T> thriftConnection = pool.get();
+			ThriftConnection<T> thriftConnection = pool.get(groupkey);
 			try {
 				thriftAction.action(thriftConnection.getClient());
 				return;
@@ -100,31 +95,5 @@ public class ThriftTemplate<T extends TServiceClient & TServiceValidator> {
 			}
 		}
 	}
-
-	public ThriftConnectionPool<T> getPool() {
-		return pool;
-	}
-
-	/**
-	 * ThriftAction without result
-	 * 
-	 * @author zhufb
-	 *
-	 * @param <T>
-	 */
-	public interface ThriftActionNoResult<T> {
-		public void action(T client) throws Exception;
-	}
-	
-	/**
-	 * ThriftAction
-	 * 
-	 * @author zhufb
-	 *
-	 */
-	public interface ThriftAction<T,R> {
-		public R action(T client) throws Exception;
-	}
-
 }
 
