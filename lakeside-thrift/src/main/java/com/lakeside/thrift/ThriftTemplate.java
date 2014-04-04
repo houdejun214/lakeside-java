@@ -1,5 +1,7 @@
 package com.lakeside.thrift;
 
+import java.net.SocketTimeoutException;
+
 import org.apache.thrift.TServiceClient;
 import org.apache.thrift.transport.TTransportException;
 import org.slf4j.Logger;
@@ -46,10 +48,16 @@ public class ThriftTemplate<T extends TServiceClient & TServiceValidator> {
 		while(i++<RETRY_ON_NET_EXCEPTION){
 			ThriftConnection<T> thriftConnection = null;
 			try {
-				thriftConnection = pool.get();
+				 thriftConnection = pool.get();
 				 return result = thriftAction.action(thriftConnection.getClient());
-			} catch (TTransportException tte) {
+			} catch (TTransportException tte ) {
 				log.warn("Get connection exception [{}] to server[{}], retry it",tte.getMessage(),thriftConnection.toString());
+				// will lead to a retry.
+				thriftConnection.close();
+				thriftConnection.destroy();
+				thriftConnection = null;
+			} catch (SocketTimeoutException ste ) {
+				log.warn("Get connection exception [{}] to server[{}], retry it",ste.getMessage(),thriftConnection.toString());
 				// will lead to a retry.
 				thriftConnection.close();
 				thriftConnection.destroy();

@@ -3,6 +3,7 @@ package com.lakeside.thrift.pool;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -13,6 +14,7 @@ import java.lang.ref.SoftReference;
 
 import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.impl.PooledSoftReference;
+import org.apache.thrift.transport.TTransportException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -123,9 +125,23 @@ public class ThriftConnectionPoolTest {
 			assertNotNull(con1);
 		}
 		assertTrue(pool.size()<=10);
+		doThrow(new TTransportException()).when(connectionFactory.makeObject());
 		verify(connectionFactory,times(10)).makeObject();
 		verify(connectionFactory,never()).validateObject(Mockito.any(ThriftConnection.class));
 		
+		ThriftConnection<HelloClient> con = pool.get();
+		assertTrue(watch.getTime()>20000);
+	}
+	
+	@Test
+	public void testGetMaxActiveException() throws Exception {
+		StopWatch watch = StopWatch.newWatch();
+		when(connectionFactory.makeObject()).then(new Answer<Object>(){
+			@Override
+			public Object answer(InvocationOnMock invocation) throws Throwable {
+				throw new TTransportException();
+			}
+		});
 		ThriftConnection<HelloClient> con = pool.get();
 		assertTrue(watch.getTime()>20000);
 	}

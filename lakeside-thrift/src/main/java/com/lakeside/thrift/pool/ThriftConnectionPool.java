@@ -1,5 +1,7 @@
 package com.lakeside.thrift.pool;
 
+import java.util.NoSuchElementException;
+
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.apache.thrift.TServiceClient;
@@ -173,10 +175,22 @@ public class ThriftConnectionPool<T extends TServiceClient & TServiceValidator> 
 				ex = e;
 			}
 		}
-		while(loop);
+		while(loop && wait(5));
 		throw new ThriftException("ThriftConnectionPool get connection failed",ex);
 	}
 	
+	/**
+	 * @param s
+	 * @return
+	 */
+	public boolean wait(int s){
+		try {
+			Thread.sleep(s*1000);
+		} catch (InterruptedException e) {
+			
+		}
+		return true;
+	}
 	/**
 	 * return a thrift connection from the pool
 	 * @param connection
