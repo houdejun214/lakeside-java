@@ -120,8 +120,21 @@ public class ThriftGroupConnectionPool<T extends TServiceClient & TServiceValida
 				ex = e;
 			}
 		}
-		while(loop);
+		while(loop&&wait(5));
 		throw new ThriftException("ThriftConnectionPool get connection failed",ex);
+	}
+	
+	/**
+	 * @param s
+	 * @return
+	 */
+	private boolean wait(int s){
+		try {
+			Thread.sleep(s*1000);
+		} catch (InterruptedException e) {
+			
+		}
+		return true;
 	}
 	
 	/**

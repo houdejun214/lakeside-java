@@ -5,7 +5,9 @@ import java.lang.reflect.Constructor;
 
 import org.apache.thrift.TServiceClient;
 import org.apache.thrift.protocol.TBinaryProtocol;
+import org.apache.thrift.protocol.TCompactProtocol;
 import org.apache.thrift.protocol.TProtocol;
+import org.apache.thrift.transport.TFramedTransport;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
@@ -28,10 +30,16 @@ public class ThriftConnection<T extends TServiceClient & TServiceValidator> {
 	private final T client;
 	private final BaseThriftConnectionPool<T> pool;
 	private final ThriftHost regionHost;
+	private boolean compact = true;
+	private boolean framed = true;
+	private int timeout = 5*60*1000;
 
 	public ThriftConnection(BaseThriftConnectionPool<T> pool, ThriftHost rh) {
 		this.pool = pool;
 		this.regionHost = rh;
+		this.compact = pool.getCfg().getBoolean("thrift.pool.protocol.compact",true);
+		this.framed = pool.getCfg().getBoolean("thrift.pool.transport.framed",true);
+		this.timeout = pool.getCfg().getInt("thrift.pool.transport.timeout",5*60*1000);
 		this.client = createThriftClient();
 	}
 	
@@ -92,11 +100,7 @@ public class ThriftConnection<T extends TServiceClient & TServiceValidator> {
 	 * @return
 	 */
 	private T createThriftClient() {
-		String host = regionHost.getIp();
-		int port = regionHost.getPort();
-		int timeout = 5*60*1000;
-		TSocket socket = new TSocket(host, port,timeout);
-	    TProtocol protocol = new TBinaryProtocol(socket, true, true);
+	    TProtocol protocol = newTProtocol();
 		try {
 			ThriftConfig cfg = pool.getCfg();
 			Class<T>  type =  (Class<T>)pool.getClientClass();
@@ -108,7 +112,7 @@ public class ThriftConnection<T extends TServiceClient & TServiceValidator> {
 				constructor = getConstructor(type,TProtocol.class);
 				client = (T) constructor.newInstance(protocol);
 			}
-			socket.open();
+			protocol.getTransport().open();
 			return client;
 		} catch (TTransportException e) {
 			throw new ThriftException("Failed to open the connection to "+regionHost, e);
@@ -117,6 +121,15 @@ public class ThriftConnection<T extends TServiceClient & TServiceValidator> {
 		}
 	}
 	
+	private TProtocol newTProtocol(){
+		String host = regionHost.getIp();
+		int port = regionHost.getPort();
+		TTransport transport = new TSocket(host, port,timeout);
+		if(framed){
+			transport = new TFramedTransport(transport);
+		}
+		return compact?new TCompactProtocol(transport):new TBinaryProtocol(transport);
+	}
 	/**
 	 * get a constructor of a type
 	 * @param type

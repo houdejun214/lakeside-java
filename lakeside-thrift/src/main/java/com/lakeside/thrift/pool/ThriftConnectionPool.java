@@ -1,7 +1,5 @@
 package com.lakeside.thrift.pool;
 
-import java.util.NoSuchElementException;
-
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.apache.thrift.TServiceClient;
@@ -59,17 +57,17 @@ public class ThriftConnectionPool<T extends TServiceClient & TServiceValidator> 
 		this.clientClass = cls;
 		this.cfg = cfg;
 		poolConfig = new GenericObjectPoolConfig();
-		poolConfig.setLifo(cfg.getBoolean("thrift.pool.nonfair.lifo", false));
-		poolConfig.setMaxTotal(cfg.getInt("thrift.pool.nonfair.maxActive", 10));
-		poolConfig.setMaxIdle(cfg.getInt("thrift.pool.nonfair.maxIdle", 2));
-		poolConfig.setMinIdle(cfg.getInt("thrift.pool.nonfair.minIdle", 1));
+		poolConfig.setLifo(cfg.getBoolean("thrift.pool.lifo", false));
+		poolConfig.setMaxTotal(cfg.getInt("thrift.pool.maxActive", 10));
+		poolConfig.setMaxIdle(cfg.getInt("thrift.pool.maxIdle", 2));
+		poolConfig.setMinIdle(cfg.getInt("thrift.pool.minIdle", 1));
 		/**
 		 set the maximum amount of time (in milliseconds) the
 		 <code>borrowObject()</code> method should block before throwing an
 		 exception when the pool is exhausted and {@link #getBlockWhenExhausted} is true. 
 		 When less than 0, the <code>borrowObject()</code> method may block indefinitely.
 		 */
-		poolConfig.setMaxWaitMillis(cfg.getInt("thrift.pool.nonfair.maxWait",20 * 1000));
+		poolConfig.setMaxWaitMillis(cfg.getInt("thrift.pool.maxWait",20 * 1000));
 		/**
 		 Sets whether to block when the <code>borrowObject()</code> method is
      	 invoked when the pool is exhausted (the maximum number of "active"
@@ -80,12 +78,12 @@ public class ThriftConnectionPool<T extends TServiceClient & TServiceValidator> 
 		poolConfig.setTestOnBorrow(false);
 		poolConfig.setTestWhileIdle(true);
 
-		this.loop = cfg.getBoolean("thrift.pool.nonfair.get.loop",false);
+		this.loop = cfg.getBoolean("thrift.pool.get.loop",false);
 
 		// 开启一个线程执行扫描检测connection
-		poolConfig.setTimeBetweenEvictionRunsMillis(cfg.getInt("thrift.pool.nonfair.timeBetweenEvictionRunsMillis",3*60*1000));
-		poolConfig.setMinEvictableIdleTimeMillis(cfg.getInt("thrift.pool.nonfair.minEvictableIdleTimeMillis",5*60*1000));
-		poolConfig.setNumTestsPerEvictionRun(cfg.getInt("thrift.pool.nonfair.numTestsPerEvictionRun",3));
+		poolConfig.setTimeBetweenEvictionRunsMillis(cfg.getInt("thrift.pool.timeBetweenEvictionRunsMillis",3*60*1000));
+		poolConfig.setMinEvictableIdleTimeMillis(cfg.getInt("thrift.pool.minEvictableIdleTimeMillis",5*60*1000));
+		poolConfig.setNumTestsPerEvictionRun(cfg.getInt("thrift.pool.numTestsPerEvictionRun",3));
 		this.factory = new ThriftConnectionFactory<T>(this, cfg,hostManager);
 		this.init();
 	}
@@ -172,7 +170,7 @@ public class ThriftConnectionPool<T extends TServiceClient & TServiceValidator> 
 	 * @param s
 	 * @return
 	 */
-	public boolean wait(int s){
+	private boolean wait(int s){
 		try {
 			Thread.sleep(s*1000);
 		} catch (InterruptedException e) {
@@ -188,6 +186,7 @@ public class ThriftConnectionPool<T extends TServiceClient & TServiceValidator> 
 		try {
 			mPool.returnObject(connection);
 		} catch (Exception e) {
+			connection.destroy();
 			throw new ThriftException("Put ThriftConnection back failed", e);
 		}
 	}

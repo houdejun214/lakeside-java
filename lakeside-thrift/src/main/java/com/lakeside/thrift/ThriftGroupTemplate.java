@@ -22,7 +22,7 @@ import com.lakeside.thrift.pool.ThriftGroupConnectionPool;
  */
 public class ThriftGroupTemplate<T extends TServiceClient & TServiceValidator> {
 	
-	private static final Logger log = LoggerFactory.getLogger(ThriftConnectionPool.class);
+	private static final Logger log = LoggerFactory.getLogger(ThriftGroupTemplate.class);
 	
 	/**
 	 * retry when network exception
