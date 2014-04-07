@@ -3,7 +3,6 @@ package com.lakeside.thrift.pool;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -38,7 +37,7 @@ import com.lakeside.thrift.host.ThriftHost;
 public class ThriftConnectionPoolTest {
 	
 	private ThriftConnectionPool<HelloClient> pool=null;
-	private ThriftConnectionFactory<HelloClient> connectionFactory=Mockito.mock(ThriftConnectionFactory.class);
+	private ThriftConnectionFactory<HelloClient> connectionFactory= Mockito.mock(ThriftConnectionFactory.class);
 	private HelloClient client = Mockito.mock(HelloClient.class);
 	
 	@Before
@@ -93,7 +92,7 @@ public class ThriftConnectionPoolTest {
 		pool.put(con3);
 		assertEquals(2,pool.size());
 		verify(connectionFactory,times(2)).makeObject();
-		verify(connectionFactory,never()).validateObject(Mockito.any(ThriftConnection.class));
+		verify(connectionFactory,never()).validateObject(Mockito.any(PooledObject.class));
 	}
 	
 	@Test
@@ -111,7 +110,7 @@ public class ThriftConnectionPoolTest {
 		pool.put(con3);
 		assertEquals(1,pool.size());
 		verify(connectionFactory,times(1)).makeObject();
-		verify(connectionFactory,never()).validateObject(Mockito.any(ThriftConnection.class));
+		verify(connectionFactory,never()).validateObject(Mockito.any(PooledObject.class));
 	}
 	
 	@Test(expected=ThriftException.class)
@@ -126,7 +125,7 @@ public class ThriftConnectionPoolTest {
 		}
 		assertTrue(pool.size()<=10);
 		verify(connectionFactory,times(10)).makeObject();
-		verify(connectionFactory,never()).validateObject(Mockito.any(ThriftConnection.class));
+		verify(connectionFactory,never()).validateObject(Mockito.any(PooledObject.class));
 		
 		ThriftConnection<HelloClient> con = pool.get();
 		assertTrue(watch.getTime()>2000);
@@ -153,12 +152,22 @@ public class ThriftConnectionPoolTest {
 	}
 
 	@Test
+	public void testValidate() throws Exception {
+		ThriftConnection<HelloClient> con = pool.get();
+		assertNotNull(con);
+		pool.put(con);
+		pool.getGenericPool().evict();
+		verify(connectionFactory).makeObject();
+		verify(connectionFactory).validateObject(Mockito.any(PooledObject.class));;
+	}
+	
+	@Test
 	public void testRemove() throws Exception {
 		ThriftConnection<HelloClient> con = pool.get();
 		assertNotNull(con);
+		pool.put(con);
 		pool.remove(con);
-		
-		
+		assertEquals(0,pool.size());
 		verify(connectionFactory).makeObject();
 		verify(connectionFactory).destroyObject(Mockito.any(PooledObject.class));;
 	}
@@ -167,8 +176,9 @@ public class ThriftConnectionPoolTest {
 	public void testDestroy() throws Exception {
 		ThriftConnection<HelloClient> con = pool.get();
 		assertNotNull(con);
-		pool.remove(con);
+		con.destroy();
+		assertEquals(0,pool.size());
 		verify(connectionFactory).makeObject();
-		verify(connectionFactory).destroyObject(Mockito.any(PooledObject.class));;
+		verify(connectionFactory).destroyObject(Mockito.any(PooledObject.class));
 	}
 }

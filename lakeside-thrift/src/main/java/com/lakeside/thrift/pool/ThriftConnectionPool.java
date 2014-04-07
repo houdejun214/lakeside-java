@@ -230,4 +230,9 @@ public class ThriftConnectionPool<T extends TServiceClient & TServiceValidator> 
 	public int size() {
 		return mPool.getNumIdle();
 	}
+	
+	
+	public GenericObjectPool<ThriftConnection<T>> getGenericPool() {
+		return mPool;
+	}
 }

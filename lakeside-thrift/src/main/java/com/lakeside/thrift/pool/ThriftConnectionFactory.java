@@ -41,21 +41,22 @@ public class ThriftConnectionFactory<T extends TServiceClient & TServiceValidato
      * 关闭一个连接对象
      * @param obj
      */
-	public void destroyObject(ThriftConnection<T> obj) {
-		obj.destroy();
+    @Override
+	public void destroyObject(PooledObject<ThriftConnection<T>> obj) {
+		obj.getObject().destroy();
 		obj = null;
 	}
 	
-	/**
-	 * 校验连接对象(ThriftConnection)是否可用
-	 * @param obj
-	 * @return
-	 */
-	public boolean validateObject(ThriftConnection<T> obj) {
-		if(obj == null){
+	 /**
+	  * 校验连接对象(ThriftConnection)是否可用
+	  * 
+	  */
+	@Override
+	public boolean validateObject(PooledObject<ThriftConnection<T>> obj) {
+		if (obj == null) {
 			return false;
 		}
-		return obj.validate();
+		return obj.getObject().validate();
 	}
 
 	@Override
