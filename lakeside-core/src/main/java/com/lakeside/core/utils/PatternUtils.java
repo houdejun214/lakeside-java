@@ -107,6 +107,17 @@ public class PatternUtils {
 		return "";
 	}
 	
+	public static String replace(String regex,String input,String replacestr){
+		StringBuffer sb = new StringBuffer();
+		Pattern pat = getPattern(regex);
+		Matcher matcher = pat.matcher(input);
+		while(matcher.find()){
+			 matcher.appendReplacement(sb, replacestr);
+		}
+		matcher.appendTail(sb);
+		return sb.toString();
+	}
+	
 	
 	public static String[] getMatchPattern(String regex,String input){
 		Pattern pat = getPattern(regex);
