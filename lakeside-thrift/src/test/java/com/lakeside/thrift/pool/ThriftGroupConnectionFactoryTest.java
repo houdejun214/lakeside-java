@@ -77,6 +77,7 @@ public class ThriftGroupConnectionFactoryTest {
 		assertNotNull(conn);
 		conn.destroy();
 		verify(pool).remove(conn);
+        assertTrue(pool.size()==0);
 	}
 	
 	@Test
@@ -84,7 +85,7 @@ public class ThriftGroupConnectionFactoryTest {
 		PooledObject<ThriftConnection<HelloClient>> makeObject = factory.makeObject("host1");
 		assertNotNull(makeObject);
 		ThriftConnection<HelloClient> conn = makeObject.getObject();
-		factory.validateObject(conn);
+		factory.validateObject(makeObject);
 		verify(client).validate();
 	}
 }

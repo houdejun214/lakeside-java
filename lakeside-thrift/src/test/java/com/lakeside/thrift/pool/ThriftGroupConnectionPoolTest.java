@@ -102,7 +102,7 @@ public class ThriftGroupConnectionPoolTest {
 		assertEquals(2,pool.size());
 		verify(connectionFactory,times(1)).makeObject("host1");
 		verify(connectionFactory,times(1)).makeObject("host2");
-		verify(connectionFactory,never()).validateObject(Mockito.any(ThriftConnection.class));
+		verify(connectionFactory,never()).validateObject(Mockito.any(PooledObject.class));
 	}
 	
 	@Test
@@ -120,7 +120,7 @@ public class ThriftGroupConnectionPoolTest {
 		pool.put(con3);
 		assertEquals(1,pool.size());
 		verify(connectionFactory,times(1)).makeObject(anyString());
-		verify(connectionFactory,never()).validateObject(Mockito.any(ThriftConnection.class));
+		verify(connectionFactory,never()).validateObject(Mockito.any(PooledObject.class));
 	}
 	
 	@Test(expected=ThriftException.class)
@@ -135,7 +135,7 @@ public class ThriftGroupConnectionPoolTest {
 		}
 		assertTrue(pool.size()<=10);
 		verify(connectionFactory,times(10)).makeObject(anyString());
-		verify(connectionFactory,never()).validateObject(Mockito.any(ThriftConnection.class));
+		verify(connectionFactory,never()).validateObject(Mockito.any(PooledObject.class));
 		
 		ThriftConnection<HelloClient> con = pool.get("host1");
 		assertTrue(watch.getTime()>2000);

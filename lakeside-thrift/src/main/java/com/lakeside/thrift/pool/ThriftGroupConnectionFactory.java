@@ -36,8 +36,8 @@ public class ThriftGroupConnectionFactory<T extends TServiceClient & TServiceVal
      * 关闭一个连接对象
      * @param obj
      */
-	public void destroyObject(ThriftConnection<T> obj) {
-		obj.destroy();
+	public void destroyObject(PooledObject<ThriftConnection<T>> obj) {
+		obj.getObject().destroy();
 		obj = null;
 	}
 	
@@ -46,11 +46,11 @@ public class ThriftGroupConnectionFactory<T extends TServiceClient & TServiceVal
 	 * @param obj
 	 * @return
 	 */
-	public boolean validateObject(ThriftConnection<T> obj) {
+	public boolean validateObject(PooledObject<ThriftConnection<T>> obj) {
 		if(obj == null){
 			return false;
 		}
-		return obj.validate();
+		return obj.getObject().validate();
 	}
 
 	@Override
