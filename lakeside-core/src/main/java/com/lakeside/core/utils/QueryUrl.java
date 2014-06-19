@@ -144,18 +144,18 @@ public class QueryUrl {
 		int length = s.length();
 		while (p < length) {
 			int p0 = p;
-			while (p < length && s.charAt(p) != '=' && s.charAt(p) != '&')
+			while (p < length && s.charAt(p) != '=' && s.charAt(p) != '&' && s.charAt(p) != '?')
 				p++;
 			//String name = urlDecode(s.substring(p0, p));
 			String name = s.substring(p0, p);
 			if (p < length && s.charAt(p) == '=')
 				p++;
 			p0 = p;
-			while (p < length && s.charAt(p) != '&')
+			while (p < length && s.charAt(p) != '&' && s.charAt(p) != '?')
 				p++;
 			//String value = urlDecode(s.substring(p0, p));
 			String value = s.substring(p0, p);
-			if (p < length && s.charAt(p) == '&')
+			if (p < length && (s.charAt(p) == '&' || s.charAt(p) == '?'))
 				p++;
 			
 			ParamKeyVal param = new ParamKeyVal(name,value);
