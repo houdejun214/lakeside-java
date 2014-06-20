@@ -1,11 +1,9 @@
 package com.lakeside.core.utils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
+
+import java.util.*;
 
 /**
  * http查询url类,该类会解析出url中的所有的查询参数，以方便进一步的url处理
@@ -174,6 +172,31 @@ public class QueryUrl {
 			n.add(param);
 		}
 	}
+
+    /**
+     * remove duplicated parameters, and keep the last one
+     */
+    public void removeDuplicated(){
+        Iterator<Map.Entry<String, List<ParamKeyVal>>> iterator = name2Params.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, List<ParamKeyVal>> entry = iterator.next();
+            List<ParamKeyVal> values = entry.getValue();
+            if (values.size() > 1) {
+                ArrayList<Object> removed = Lists.newArrayList();
+                Set<Object> set = Sets.newHashSet();
+                for (int i = 0; i < values.size(); i++) {
+                    ParamKeyVal o = values.get(i);
+                    if (set.contains(o.getValue())) {
+                        removed.add(o);
+                        this.paramList.remove(o);
+                    }else {
+                        set.add(o.getValue());
+                    }
+                }
+                values.removeAll(removed);
+            }
+        }
+    }
 
 	@Override
 	public String toString() {
