@@ -37,7 +37,7 @@ How to use this project
 ```
 <repository>
   <id>dj.mvn.repo</id>
-  <url>https://github.com/houdejun214/mvn-repo/raw/master</url>
+  <url>https://raw.githubusercontent.com/houdejun214/mvn-repo/master/</url>
   <!-- use snapshot version -->
   <snapshots>
      <enabled>true</enabled>
