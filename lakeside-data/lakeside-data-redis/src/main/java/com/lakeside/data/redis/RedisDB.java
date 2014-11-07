@@ -26,6 +26,17 @@ public class RedisDB {
 	private JedisTemplate template;
 	private static int DefaultMaxIdle = 10;
 	private static int DefaultMaxActive = 10;
+
+
+    /**
+     *
+     * @param host
+     * @param port
+     * @param nameSpacPrefix,该值是抽象出来的值，将作为命名前缀加到所有的key前面，最后的redis key将是 [nameSpacPrefix]:[key]
+     */
+    public RedisDB(String host,int port, String nameSpacPrefix){
+        this(host,port,null,JedisUtils.createPoolConfig(DefaultMaxIdle, DefaultMaxActive),nameSpacPrefix);
+    }
 	
 	/**
 	 * 
@@ -47,7 +58,12 @@ public class RedisDB {
 	 * @param nameSpacPrefix,该值是抽象出来的值，将作为命名前缀加到所有的key前面，最后的redis key将是 [nameSpacPrefix]:[key]
 	 */
 	public RedisDB(String host,int port, String password,JedisPoolConfig poolConfig,String nameSpacPrefix){
-		JedisPool pool = new JedisPool(poolConfig,host,port,JedisUtils.DEFAULT_TIMEOUT,password);
+        JedisPool pool = null;
+        if(StringUtils.isEmpty(password)){
+            pool = new JedisPool(poolConfig,host,port,JedisUtils.DEFAULT_TIMEOUT);
+        }else {
+            pool = new JedisPool(poolConfig, host, port, JedisUtils.DEFAULT_TIMEOUT, password);
+        }
 		template = new JedisTemplate(pool);
 		if(StringUtils.isEmpty(nameSpacPrefix)){
 			this.NameSpacPrefix = "";

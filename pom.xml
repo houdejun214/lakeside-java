@@ -63,7 +63,7 @@
 		<tomcat-jdbc.version>7.0.50</tomcat-jdbc.version>
 		<mockito.version>1.9.5</mockito.version>
 		<powermock.version>1.5.4</powermock.version>
-		<internal.repo.path>file:///home/houdejun/working/mvn-repo</internal.repo.path>
+		<internal.repo.path>file:///home/dejun/working/mvn-repo</internal.repo.path>
 	</properties>
 
 	<dependencyManagement>
@@ -296,37 +296,17 @@
 		</dependency>
 	</dependencies>
 
-	<repositories>
-		<repository>
-			<id>local.maven.thirdparty</id>
-			<name>local.maven.thirdparty</name>
-			<url>http://172.29.34.116:9000/nexus/content/groups/public/</url>
-		</repository>
-	</repositories>
-
-	
-	
 	<profiles>
 		<profile>
 			<id>local-deploy</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
 			<distributionManagement>
 				<repository>
 					<id>internal.repo</id>
 					<name>Internal Repository</name>
 					<url>${internal.repo.path}</url>
-				</repository>
-			</distributionManagement>
-		</profile>
-		<profile>
-			<id>deploy</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<distributionManagement>
-				<repository>
-					<id>local.maven.thirdparty</id>
-					<name>local.maven.thirdparty</name>
-					<url>http://172.29.34.116:9000/nexus/content/repositories/snapshots/</url>
 				</repository>
 			</distributionManagement>
 		</profile>
