@@ -14,7 +14,8 @@
 		<module>lakeside-data</module>
 		<module>lakeside-web</module>
 		<module>lakeside-http</module>
-  </modules>
+		<module>lakeside-conf</module>
+	</modules>
 
 	<properties>
 		<!-- 主要依赖库的版本定义 -->
