@@ -1,18 +1,26 @@
 package com.lakeside.core.resource;
 
+
 import com.lakeside.core.utils.ClassUtils;
 import com.lakeside.core.utils.StringUtils;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Properties;
+
 
 public class DefaultPropertiesPersister{
 
 	// Determine whether Properties.load(Reader) is available (on JDK 1.6+)
 	private static final boolean loadFromReaderAvailable =
-			ClassUtils.hasMethod(Properties.class, "load", new Class[] {Reader.class});
+			ClassUtils.hasMethod(Properties.class, "load", new Class[]{Reader.class});
 
 	// Determine whether Properties.store(Writer, String) is available (on JDK 1.6+)
 	private static final boolean storeToWriterAvailable =

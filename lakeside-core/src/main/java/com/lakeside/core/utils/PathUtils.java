@@ -10,6 +10,8 @@
 package com.lakeside.core.utils;
 
 import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 
@@ -20,6 +22,14 @@ import java.util.regex.Pattern;
  * the code come from 
  */
 public class PathUtils {
+
+    private static final String FOLDER_SEPARATOR = "/";
+
+    private static final String WINDOWS_FOLDER_SEPARATOR = "\\";
+
+    private static final String TOP_PATH = "..";
+
+    private static final String CURRENT_PATH = ".";
 	
 	/**
      * Determines the relative path of a filename from a base directory.
@@ -269,7 +279,6 @@ public class PathUtils {
     * PathTool.getRelativeFilePath( null, "/usr/local/java/bin" )                  = ""
     * PathTool.getRelativeFilePath( "/usr/local", null )                           = ""
     * PathTool.getRelativeFilePath( "/usr/local", "/usr/local/java/bin" )          = "java/bin"
-    * PathTool.getRelativeFilePath( "/usr/local", "/usr/local/java/bin/" )         = "java/bin"
     * PathTool.getRelativeFilePath( "/usr/local/java/bin", "/usr/local/" )         = "../.."
     * PathTool.getRelativeFilePath( "/usr/local/", "/usr/local/java/bin/java.sh" ) = "java/bin/java.sh"
     * PathTool.getRelativeFilePath( "/usr/local/java/bin/java.sh", "/usr/local/" ) = "../../.."
@@ -479,38 +488,38 @@ public class PathUtils {
            fromTokeniser.nextToken();
            toTokeniser.nextToken();
        }
- 
-       String relativePath = "";
- 
+
+       StringBuilder relativePath = new StringBuilder("");
+
        // add back refs for the rest of from location.
        while ( fromTokeniser.hasMoreTokens() )
        {
            fromTokeniser.nextToken();
  
-           relativePath += "..";
+           relativePath.append("..");
  
            if ( fromTokeniser.hasMoreTokens() )
            {
-               relativePath += separatorChar;
+               relativePath.append(separatorChar);
            }
        }
  
        if ( relativePath.length() != 0 && toTokeniser.hasMoreTokens() )
        {
-           relativePath += separatorChar;
+           relativePath.append(separatorChar);
        }
  
        // add fwd fills for whatevers left of newPath.
        while ( toTokeniser.hasMoreTokens() )
        {
-           relativePath += toTokeniser.nextToken();
+           relativePath.append(toTokeniser.nextToken());
  
            if ( toTokeniser.hasMoreTokens() )
            {
-               relativePath += separatorChar;
+               relativePath.append(separatorChar);
            }
        }
-       return relativePath;
+       return relativePath.toString();
    }
 
    /**
@@ -546,20 +555,6 @@ public class PathUtils {
 	}
 
 	/**
-	 * get the file's name of the specify path with parent path
-	 * @param path
-	 * @return
-	 */
-	public static String getFileNameWithParentPath(String path){
-		path =getPath(path);
-		int lastDirPos=path.lastIndexOf("/");
-		int begin = path.substring(0,lastDirPos).lastIndexOf("/");
-		if(lastDirPos == -1||begin==-1 ){
-			return path;
-		}
-		return path.substring(begin+1,lastDirPos).concat(".jpg");
-	}
-	/**
 	 *  get the specify path file's name which not contain extension name
 	 * @param path
 	 * @return
@@ -583,6 +578,9 @@ public class PathUtils {
 		if(path==null){
 			return "";
 		}
+        if(StringUtils.isEmpty(newExtension)){
+            return path;
+        }
 		int extPos=path.lastIndexOf(".");
 		if(extPos<0){
 			return path+"."+newExtension;
@@ -642,4 +640,87 @@ public class PathUtils {
 	   }
 	   return path;
    }
+
+    /**
+     * Normalize the path by suppressing sequences like "path/.." and
+     * inner simple dots.
+     * <p>The result is convenient for path comparison. For other uses,
+     * notice that Windows separators ("\") are replaced by simple slashes.
+     * @param path the original path
+     * @return the normalized path
+     */
+    public static String cleanPath(String path) {
+        if (path == null) {
+            return null;
+        }
+        String pathToUse = StringUtils.replace(path, WINDOWS_FOLDER_SEPARATOR, FOLDER_SEPARATOR);
+
+        // Strip prefix from path to analyze, to not treat it as part of the
+        // first path element. This is necessary to correctly parse paths like
+        // "file:core/../core/io/Resource.class", where the ".." should just
+        // strip the first "core" directory while keeping the "file:" prefix.
+        int prefixIndex = pathToUse.indexOf(":");
+        String prefix = "";
+        if (prefixIndex != -1) {
+            prefix = pathToUse.substring(0, prefixIndex + 1);
+            pathToUse = pathToUse.substring(prefixIndex + 1);
+        }
+        if (pathToUse.startsWith(FOLDER_SEPARATOR)) {
+            prefix = prefix + FOLDER_SEPARATOR;
+            pathToUse = pathToUse.substring(1);
+        }
+
+        String[] pathArray = StringUtils.delimitedListToStringArray(pathToUse, FOLDER_SEPARATOR);
+        List<String> pathElements = new LinkedList<String>();
+        int tops = 0;
+
+        for (int i = pathArray.length - 1; i >= 0; i--) {
+            String element = pathArray[i];
+            if (CURRENT_PATH.equals(element)) {
+                // Points to current directory - drop it.
+            }
+            else if (TOP_PATH.equals(element)) {
+                // Registering top path found.
+                tops++;
+            }
+            else {
+                if (tops > 0) {
+                    // Merging path element with element corresponding to top path.
+                    tops--;
+                }
+                else {
+                    // Normal path element found.
+                    pathElements.add(0, element);
+                }
+            }
+        }
+        // Remaining top paths need to be retained.
+        for (int i = 0; i < tops; i++) {
+            pathElements.add(0, TOP_PATH);
+        }
+        return prefix + StringUtils.join(pathElements, FOLDER_SEPARATOR);
+    }
+
+    /**
+     * Apply the given relative path to the given path,
+     * assuming standard Java folder separation (i.e. "/" separators).
+     * @param path the path to start from (usually a full file path)
+     * @param relativePath the relative path to apply
+     * (relative to the full file path above)
+     * @return the full file path that results from applying the relative path
+     */
+    public static String applyRelativePath(String path, String relativePath) {
+        int separatorIndex = path.lastIndexOf(FOLDER_SEPARATOR);
+        if (separatorIndex != -1) {
+            String newPath = path.substring(0, separatorIndex);
+            if (!relativePath.startsWith(FOLDER_SEPARATOR)) {
+                newPath += FOLDER_SEPARATOR;
+            }
+            return newPath + relativePath;
+        }
+        else {
+            return relativePath;
+        }
+    }
+
 }

@@ -9,17 +9,22 @@
  */
 package com.lakeside.core.utils;
 
+
 import com.lakeside.core.regex.CommonPattern;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.regex.Pattern;
+
 
 /**
  * String procesing tools class.
@@ -29,6 +34,8 @@ import java.util.regex.Pattern;
 public class StringUtils {
 	
 	public static final int INDEX_NOT_FOUND = -1;
+
+    private static final String EMPTY_STR = "";
 
 	/**
 	 * Check that the given CharSequence is neither <code>null</code> nor of length 0.
@@ -72,7 +79,7 @@ public class StringUtils {
 	 * @param str the CharSequence to check (may be <code>null</code>)
 	 * @return <code>true</code> if the CharSequence is not <code>null</code>,
 	 * its length is greater than 0, and it does not contain whitespace only
-	 * @see java.lang.Character#isWhitespace
+	 * @see Character#isWhitespace
 	 */
 	public static boolean hasText(CharSequence str) {
 		if (!hasLength(str)) {
@@ -175,7 +182,7 @@ public class StringUtils {
 	 */
 	public static long toLong(final String s) {
 		if (isInt(s)) {
-			return Long.valueOf(s);
+			return Long.valueOf(s).longValue();
 		}
 		return 0;
 	}
@@ -183,8 +190,7 @@ public class StringUtils {
 	/**
 	 * parser a string to an double type .
 	 * 
-	 * @param s
-	 *            需要转换的字符串
+	 * @param s 需要转换的字符串
 	 * @return 符合数字格式返回对应的数字 不符合则返回0
 	 */
 	public static double toDouble(final String s) {
@@ -194,8 +200,8 @@ public class StringUtils {
 		return Double.parseDouble(s);
 	}
 
-	private static Map<String,MessageFormat> formats=new HashMap<String,MessageFormat>();
-	
+	private static final Map<String,MessageFormat> Formats =new WeakHashMap<>();
+
 	/**
 	 * format the given pattern with given arguments
 	 * 
@@ -206,13 +212,27 @@ public class StringUtils {
 	 * @return
 	 */
 	public static String format(String pattern, Object... args) {
-		MessageFormat temp = formats.get(pattern);
+		MessageFormat temp = Formats.get(pattern);
 		if(temp==null){
 		  temp = new MessageFormat(pattern);
-		  formats.put(pattern, temp);
+		  Formats.put(pattern, temp);
 		}
 		return temp.format(pattern, args);
 	}
+
+    /**
+     * format the given pattern with given arguments
+     *
+     * @param pattern
+     *            pattern string
+     * @param args
+     *            format arguments
+     * @return
+     */
+    public static String formatByMap(String pattern, Map<String,?> args) {
+       return MapFormat.format(pattern,args);
+    }
+
 	/**
 	 * format a long, with zero padding at head
 	 * @param n
@@ -279,7 +299,7 @@ public class StringUtils {
 	 * String, handling <code>null</code> by returning <code>null</code>.
 	 * </p>
 	 * 
-	 * @see java.lang.String#trim()
+	 * @see String#trim()
 	 * @param str
 	 *            the String to check
 	 * @return the trimmed text (or <code>null</code>)
@@ -529,7 +549,28 @@ public class StringUtils {
 		}
 		return reStr.toString();
 	}
-	
+
+    public static String deleteLastChar(String str) {
+        return str.substring(0, str.length() - 1);
+    }
+
+    /**
+     * @param str
+     * @param separator the delimiting regular expression
+     * @return
+     */
+    public static List<String> split2List(String str, String separator) {
+        List<String> list = new ArrayList<String>();
+        if (str != null) {
+            for (String user : str.split(separator)) {
+                if (user != null && !"".equals(user.trim())) {
+                    list.add(user);
+                }
+            }
+        }
+        return list;
+    }
+
 	public static String trim(String str,String chars){
 		if(str==null || "".equals(str)){
 			return "";
@@ -579,7 +620,7 @@ public class StringUtils {
 	 * Trim leading whitespace from the given String.
 	 * @param str the String to check
 	 * @return the trimmed String
-	 * @see java.lang.Character#isWhitespace
+	 * @see Character#isWhitespace
 	 */
 	public static String trimLeadingWhitespace(String str) {
 		if (!hasLength(str)) {
@@ -596,7 +637,7 @@ public class StringUtils {
 	 * Trim trailing whitespace from the given String.
 	 * @param str the String to check
 	 * @return the trimmed String
-	 * @see java.lang.Character#isWhitespace
+	 * @see Character#isWhitespace
 	 */
 	public static String trimTrailingWhitespace(String str) {
 		if (!hasLength(str)) {
@@ -782,13 +823,13 @@ public class StringUtils {
 		}
 		return result.toString();
 	}
-	
+
 	/**
 	 * 获取MD5 16位字节信息
 	 * @param strPlain
 	 * @return
-	 * @throws NoSuchAlgorithmException
-	 * @throws UnsupportedEncodingException
+	 * @throws java.security.NoSuchAlgorithmException
+	 * @throws java.io.UnsupportedEncodingException
 	 */
 	public static byte[] md5(String strPlain){
 		byte s[] = null;
@@ -823,8 +864,8 @@ public class StringUtils {
 	 * 获取SHA-1 16位字节信息
 	 * @param strPlain
 	 * @return
-	 * @throws NoSuchAlgorithmException
-	 * @throws UnsupportedEncodingException
+	 * @throws java.security.NoSuchAlgorithmException
+	 * @throws java.io.UnsupportedEncodingException
 	 */
 	public static byte[] sha(String strPlain){
 		byte s[] = null;
@@ -836,9 +877,9 @@ public class StringUtils {
 		}
 		return s;
 	}
-	
-	
-	/**
+
+
+    /**
 	 * Hash
 	 * @param strPlain
 	 * @return
@@ -846,16 +887,6 @@ public class StringUtils {
 	 */
 	public static String hash(String strPlain){
 		return String.valueOf(strPlain.hashCode());
-//		MessageDigest md;
-//		try {
-//			md = MessageDigest.getInstance("SHA");
-//			BASE64Encoder  base = new BASE64Encoder ();
-//			String pwdAfter = base.encode(md.digest(strPlain.getBytes()));
-//			return pwdAfter;
-//		} catch (NoSuchAlgorithmException e) {
-//			;
-//		}
-//		return "";
 	}
 
 	/**
@@ -895,7 +926,7 @@ public class StringUtils {
     if (str == null)
       return values;
     StringTokenizer tokenizer = new StringTokenizer (str,",");
-    values = new ArrayList<String>();
+    values = new ArrayList<>();
     while (tokenizer.hasMoreTokens()) {
       values.add(tokenizer.nextToken());
     }
@@ -910,7 +941,7 @@ public class StringUtils {
    */
   
   public static String arrayToString(String[] strs) {
-    if (strs.length == 0) { return ""; }
+    if (strs==null || strs.length == 0) { return ""; }
     StringBuffer sbuf = new StringBuffer();
     sbuf.append(strs[0]);
     for (int idx = 1; idx < strs.length; idx++) {
@@ -935,9 +966,9 @@ public class StringUtils {
    * @param hex
    * @return
    */
-  public static Number getLongFromHex(String hex){
+  public static Long getLongFromHex(String hex){
 		BigInteger bigInt = new BigInteger(hex, 16);
-		return bigInt;
+		return bigInt.longValue();
   }
   
   /**
@@ -994,12 +1025,15 @@ public class StringUtils {
 	}
 	
 	public static String join(String[] arrays, String separator) {
+        if(arrays==null || arrays.length==0){
+            return EMPTY_STR;
+        }
 		return join(Arrays.asList(arrays),separator);
 	}
 
 	public static String join(Collection<?> list, String separator) {
-		if(list==null){
-			return null;
+		if(list==null || list.size()==0){
+			return EMPTY_STR;
 		}
 		Iterator<?> iterator = list.iterator();
 		// handle null, zero and one elements before building a buffer
@@ -1070,4 +1104,171 @@ public class StringUtils {
 	public static boolean isSymbolOnly(String content){
 		return allPattern.matcher(content).matches();
 	}
+
+
+    /**
+     * Copy the given Collection into a String array.
+     * The Collection must contain String elements only.
+     * @param collection the Collection to copy
+     * @return the String array (<code>null</code> if the passed-in
+     * Collection was <code>null</code>)
+     */
+    public static String[] toStringArray(Collection<String> collection) {
+        if (collection == null) {
+            return null;
+        }
+        return collection.toArray(new String[collection.size()]);
+    }
+
+    /**
+     * Copy the given Enumeration into a String array.
+     * The Enumeration must contain String elements only.
+     * @param enumeration the Enumeration to copy
+     * @return the String array (<code>null</code> if the passed-in
+     * Enumeration was <code>null</code>)
+     */
+    public static String[] toStringArray(Enumeration<String> enumeration) {
+        if (enumeration == null) {
+            return null;
+        }
+        List<String> list = Collections.list(enumeration);
+        return list.toArray(new String[list.size()]);
+    }
+
+    /**
+     * Delete any character in a given String.
+     * @param inString the original String
+     * @param charsToDelete a set of characters to delete.
+     * E.g. "az\n" will delete 'a's, 'z's and new lines.
+     * @return the resulting String
+     */
+    public static String deleteAny(String inString, String charsToDelete) {
+        if (!hasLength(inString) || !hasLength(charsToDelete)) {
+            return inString;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < inString.length(); i++) {
+            char c = inString.charAt(i);
+            if (charsToDelete.indexOf(c) == -1) {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
+
+    /**
+     * Tokenize the given String into a String array via a StringTokenizer.
+     * Trims tokens and omits empty tokens.
+     * <p>The given delimiters string is supposed to consist of any number of
+     * delimiter characters. Each of those characters can be used to separate
+     * tokens. A delimiter is always a single character; for multi-character
+     * delimiters, consider using <code>delimitedListToStringArray</code>
+     * @param str the String to tokenize
+     * @param delimiters the delimiter characters, assembled as String
+     * (each of those characters is individually considered as delimiter).
+     * @return an array of the tokens
+     * @see java.util.StringTokenizer
+     * @see String#trim()
+     * @see #delimitedListToStringArray
+     */
+    public static String[] tokenizeToStringArray(String str, String delimiters) {
+        return tokenizeToStringArray(str, delimiters, true, true);
+    }
+
+    /**
+     * Tokenize the given String into a String array via a StringTokenizer.
+     * <p>The given delimiters string is supposed to consist of any number of
+     * delimiter characters. Each of those characters can be used to separate
+     * tokens. A delimiter is always a single character; for multi-character
+     * delimiters, consider using <code>delimitedListToStringArray</code>
+     * @param str the String to tokenize
+     * @param delimiters the delimiter characters, assembled as String
+     * (each of those characters is individually considered as delimiter)
+     * @param trimTokens trim the tokens via String's <code>trim</code>
+     * @param ignoreEmptyTokens omit empty tokens from the result array
+     * (only applies to tokens that are empty after trimming; StringTokenizer
+     * will not consider subsequent delimiters as token in the first place).
+     * @return an array of the tokens (<code>null</code> if the input String
+     * was <code>null</code>)
+     * @see java.util.StringTokenizer
+     * @see String#trim()
+     * @see #delimitedListToStringArray
+     */
+    public static String[] tokenizeToStringArray(
+            String str, String delimiters, boolean trimTokens, boolean ignoreEmptyTokens) {
+
+        if (str == null) {
+            return null;
+        }
+        StringTokenizer st = new StringTokenizer(str, delimiters);
+        List<String> tokens = new ArrayList<String>();
+        while (st.hasMoreTokens()) {
+            String token = st.nextToken();
+            if (trimTokens) {
+                token = token.trim();
+            }
+            if (!ignoreEmptyTokens || token.length() > 0) {
+                tokens.add(token);
+            }
+        }
+        return toStringArray(tokens);
+    }
+
+
+    /**
+     * Take a String which is a delimited list and convert it to a String array.
+     * <p>A single delimiter can consists of more than one character: It will still
+     * be considered as single delimiter string, rather than as bunch of potential
+     * delimiter characters - in contrast to <code>tokenizeToStringArray</code>.
+     * @param str the input String
+     * @param delimiter the delimiter between elements (this is a single delimiter,
+     * rather than a bunch individual delimiter characters)
+     * @return an array of the tokens in the list
+     * @see #tokenizeToStringArray
+     */
+    public static String[] delimitedListToStringArray(String str, String delimiter) {
+        return delimitedListToStringArray(str, delimiter, null);
+    }
+
+    /**
+     * Take a String which is a delimited list and convert it to a String array.
+     * <p>A single delimiter can consists of more than one character: It will still
+     * be considered as single delimiter string, rather than as bunch of potential
+     * delimiter characters - in contrast to <code>tokenizeToStringArray</code>.
+     * @param str the input String
+     * @param delimiter the delimiter between elements (this is a single delimiter,
+     * rather than a bunch individual delimiter characters)
+     * @param charsToDelete a set of characters to delete. Useful for deleting unwanted
+     * line breaks: e.g. "\r\n\f" will delete all new lines and line feeds in a String.
+     * @return an array of the tokens in the list
+     * @see #tokenizeToStringArray
+     */
+    public static String[] delimitedListToStringArray(String str, String delimiter, String charsToDelete) {
+        if (str == null) {
+            return new String[0];
+        }
+        if (delimiter == null) {
+            return new String[] {str};
+        }
+        List<String> result = new ArrayList<String>();
+        if ("".equals(delimiter)) {
+            for (int i = 0; i < str.length(); i++) {
+                result.add(deleteAny(str.substring(i, i + 1), charsToDelete));
+            }
+        }
+        else {
+            int pos = 0;
+            int delPos;
+            while ((delPos = str.indexOf(delimiter, pos)) != -1) {
+                result.add(deleteAny(str.substring(pos, delPos), charsToDelete));
+                pos = delPos + delimiter.length();
+            }
+            if (str.length() > 0 && pos <= str.length()) {
+                // Add rest of String, but not in case of empty input.
+                result.add(deleteAny(str.substring(pos), charsToDelete));
+            }
+        }
+        return toStringArray(result);
+    }
 }
