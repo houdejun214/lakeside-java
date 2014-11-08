@@ -6,12 +6,11 @@
 
 package com.lakeside.web;
 
-import java.text.MessageFormat;
-import java.util.Locale;
-
+import com.lakeside.core.utils.StringUtils;
 import org.springframework.context.MessageSource;
 
-import com.lakeside.core.utils.StringUtils;
+import java.text.MessageFormat;
+import java.util.Locale;
 
 /**
  * 本地资源消息处理类

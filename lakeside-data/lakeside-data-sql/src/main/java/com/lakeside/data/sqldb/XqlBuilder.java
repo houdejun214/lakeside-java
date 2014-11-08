@@ -1,10 +1,10 @@
 package com.lakeside.data.sqldb;
 
+import com.lakeside.core.utils.StringUtils;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-
-import com.lakeside.core.utils.StringUtils;
 
 public class XqlBuilder {
 	/** 属性比较类型. */

@@ -6,11 +6,11 @@
  */
 package com.lakeside.core.utils;
 
+import com.google.common.io.BaseEncoding;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-
-import com.google.common.io.BaseEncoding;
 
 /**
  * 各种格式的编码加码工具类.

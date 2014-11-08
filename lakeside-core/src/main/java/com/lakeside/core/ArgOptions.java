@@ -1,15 +1,11 @@
 package com.lakeside.core;
 
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import com.google.common.collect.Lists;
 import com.lakeside.core.utils.StringUtils;
+
+import java.io.PrintStream;
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  * 
@@ -225,7 +221,7 @@ public class ArgOptions {
 	 */
 	public void printHelp(PrintStream out){
 		ArrayList<Entry<String, ArgOption>> entries = Lists.newArrayList(options.entrySet());
-		Collections.sort(entries, new Comparator<Map.Entry<String, ArgOption>>() {
+		Collections.sort(entries, new Comparator<Entry<String, ArgOption>>() {
 			public int compare(Entry<String, ArgOption> o1, Entry<String, ArgOption> o2) {
 				return o1.getValue().compareTo(o2.getValue());
 			}

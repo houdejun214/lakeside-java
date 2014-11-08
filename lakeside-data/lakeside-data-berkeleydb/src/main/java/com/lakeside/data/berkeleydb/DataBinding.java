@@ -1,13 +1,13 @@
 package com.lakeside.data.berkeleydb;
 
+import com.lakeside.core.utils.UUIDUtils;
+
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import com.lakeside.core.utils.UUIDUtils;
 
 public abstract class DataBinding<E> {
 	abstract ByteBuffer getBytes(E obj);

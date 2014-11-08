@@ -1,71 +1,86 @@
 package com.lakeside.thrift.pool;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import com.google.common.net.HostAndPort;
+import com.lakeside.thrift.HelloClient;
+import org.apache.thrift.protocol.TProtocol;
+import org.apache.thrift.transport.TSocket;
+import org.apache.thrift.transport.TTransport;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
 
-import org.apache.thrift.protocol.TProtocol;
-import org.apache.thrift.transport.TTransport;
-import org.junit.Test;
-import org.mockito.Mockito;
 
-import com.lakeside.thrift.HelloClient;
-import com.lakeside.thrift.host.ThriftHost;
-
-@SuppressWarnings("unchecked")
+@RunWith(PowerMockRunner.class)
+@PrepareForTest( { ThriftConnection.class,ThriftConnectionPool.class})
+@PowerMockIgnore("javax.management.*")
 public class ThriftConnectionTest {
-	
-	ThriftConnectionPool<HelloClient> pool = Mockito.mock(ThriftConnectionPool.class);
-	HelloClient client = Mockito.mock(HelloClient.class);
-	ThriftHost host = ThriftHost.from("localhost:8080");
-	
 
-	@Test
-	public void testThriftConnection() throws Exception {
-		ThriftConnection<HelloClient> conn = new ThriftConnection<HelloClient>(pool, host,client);
-		assertEquals(client,conn.getClient());
-	}
+    ThriftConnectionPool<HelloClient> pool = null;
+    TSocket transport = null;
+    HelloClient client = null;
+    HostAndPort host = null;
 
-	@Test
-	public void testClose() {
-		ThriftConnection<HelloClient> conn = new ThriftConnection<HelloClient>(pool, host,client);
-		conn.close();
-		verify(pool).put(conn);
-	}
+    @Before
+    public void setup() throws Exception {
+        pool = PowerMockito.spy(new ThriftConnectionPool(HelloClient.class));
+        transport = Mockito.mock(TSocket.class);
+        client = Mockito.mock(HelloClient.class);
+        host = HostAndPort.fromString("localhost:8080");
+        whenNew(TSocket.class).withAnyArguments().thenReturn(transport);
+    }
 
-	@Test
-	public void testDestroy() {
-		TProtocol prot = Mockito.mock(TProtocol.class);
-		when(prot.getTransport()).thenReturn(Mockito.mock(TTransport.class));
-		when(client.getInputProtocol()).thenReturn(prot);
-		
-		ThriftConnection<HelloClient> conn = new ThriftConnection<HelloClient>(pool, host,client);
-		conn.destroy();
-		verify(pool).remove(conn);
-	}
+    @Test
+    public void testThriftConnection() throws Exception {
+        ThriftConnection<HelloClient> conn = new ThriftConnection<>(pool, host);
+        assertEquals(transport, conn.get());
+    }
 
-	@Test
-	public void testValidate() {
-		
-		ThriftConnection<HelloClient> conn = new ThriftConnection<HelloClient>(pool, host,client);
-		when(client.validate()).thenReturn(true);
-		assertTrue(conn.validate());
-		verify(client).validate();
-	}
-	
-	@Test
-	public void testValidateWithException() {
-		ThriftConnection<HelloClient> conn = new ThriftConnection<HelloClient>(pool, host,client);
-		when(client.validate()).thenThrow(Exception.class);
-		assertFalse(conn.validate());
-	}
+    @Test
+    public void testClose() {
+        ThriftConnection<HelloClient> conn = new ThriftConnection<>(pool, host);
+        conn.close();
+        verify(pool).put(conn);
+    }
 
-	@Test
-	public void testToString() {
-		ThriftConnection<HelloClient> conn = new ThriftConnection<HelloClient>(pool, host,client);
-		assertEquals("localhost:8080",conn.toString());
-	}
+    @Test
+    public void testDestroy() {
+        TProtocol prot = Mockito.mock(TProtocol.class);
+        when(prot.getTransport()).thenReturn(Mockito.mock(TTransport.class));
+        when(client.getInputProtocol()).thenReturn(prot);
+
+        ThriftConnection<HelloClient> conn = new ThriftConnection<>(pool, host);
+        conn.destroy();
+        verify(pool).remove(conn);
+    }
+
+    @Test
+    public void testValidate() {
+        ThriftConnection<HelloClient> conn = new ThriftConnection<>(pool, host);
+        when(transport.isOpen()).thenReturn(true);
+        assertTrue(conn.validate());
+    }
+
+    @Test
+    public void testValidateWithException() {
+        ThriftConnection<HelloClient> conn = new ThriftConnection<>(pool, host);
+        when(transport.isOpen()).thenReturn(false);
+        assertFalse(conn.validate());
+    }
+
+    @Test
+    public void testToString() {
+        ThriftConnection<HelloClient> conn = new ThriftConnection<>(pool, host);
+        assertEquals("localhost:8080", conn.toString());
+    }
 
 }

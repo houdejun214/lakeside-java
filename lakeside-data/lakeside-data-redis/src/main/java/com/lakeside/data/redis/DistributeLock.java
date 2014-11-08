@@ -2,8 +2,6 @@ package com.lakeside.data.redis;
 
 import org.apache.commons.lang.StringUtils;
 
-import com.lakeside.data.redis.RedisDB;
-
 /**
  * @author zhufb
  *

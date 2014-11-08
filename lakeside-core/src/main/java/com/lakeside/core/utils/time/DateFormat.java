@@ -1,15 +1,14 @@
 package com.lakeside.core.utils.time;
 
+import com.lakeside.core.utils.PatternUtils;
+import com.lakeside.core.utils.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.regex.Matcher;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.lakeside.core.utils.PatternUtils;
-import com.lakeside.core.utils.StringUtils;
 
 /**
  * DateFormat for str to Date with DatePattern support

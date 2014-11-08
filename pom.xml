@@ -13,7 +13,7 @@
 		<module>lakeside-thrift</module>
 		<module>lakeside-data</module>
 		<module>lakeside-web</module>
-		<module>lakeside-download</module>
+		<module>lakeside-http</module>
   </modules>
 
 	<properties>
@@ -64,6 +64,11 @@
 		<mockito.version>1.9.5</mockito.version>
 		<powermock.version>1.5.4</powermock.version>
 		<internal.repo.path>file:///home/dejun/working/mvn-repo</internal.repo.path>
+
+		<!-- lakeside versions -->
+		<lakeside.core.version>1.1.0-SNAPSHOT</lakeside.core.version>
+		<lakeside.parent.version>1.1.0-SNAPSHOT</lakeside.parent.version>
+		<lakeside.thrift.version>1.2.0-SNAPSHOT</lakeside.thrift.version>
 	</properties>
 
 	<dependencyManagement>
@@ -71,7 +76,7 @@
 			<dependency>
 				<groupId>com.lakeside</groupId>
 				<artifactId>lakeside-core</artifactId>
-				<version>${project.version}</version>
+				<version>${lakeside.core.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>

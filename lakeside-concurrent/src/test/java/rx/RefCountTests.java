@@ -14,18 +14,9 @@ package rx; /**
  * limitations under the License.
  */
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.MockitoAnnotations;
-
 import rx.Observable;
 import rx.Observer;
 import rx.Subscription;
@@ -33,6 +24,14 @@ import rx.functions.Action0;
 import rx.functions.Action1;
 import rx.schedulers.TestScheduler;
 import rx.subscriptions.Subscriptions;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 public class RefCountTests {
 

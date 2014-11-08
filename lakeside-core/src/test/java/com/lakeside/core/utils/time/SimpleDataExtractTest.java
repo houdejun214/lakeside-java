@@ -1,7 +1,5 @@
 package com.lakeside.core.utils.time;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
 
 public class SimpleDataExtractTest {

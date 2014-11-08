@@ -1,10 +1,10 @@
 package com.lakeside.data.mongo;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.mongodb.DB;
 import com.mongodb.Mongo;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class MongoDBConnectionManager {
 	

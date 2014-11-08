@@ -1,21 +1,16 @@
 package com.lakeside.data.berkeleydb;
 
+import com.lakeside.core.utils.FileUtils;
+import com.sleepycat.je.*;
+import com.sleepycat.persist.EntityStore;
+import com.sleepycat.persist.StoreConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.lakeside.core.utils.FileUtils;
-import com.sleepycat.je.Database;
-import com.sleepycat.je.DatabaseConfig;
-import com.sleepycat.je.DatabaseException;
-import com.sleepycat.je.Environment;
-import com.sleepycat.je.EnvironmentConfig;
-import com.sleepycat.persist.EntityStore;
-import com.sleepycat.persist.StoreConfig;
 
 public class BerkeleyDB implements Closeable {
 	

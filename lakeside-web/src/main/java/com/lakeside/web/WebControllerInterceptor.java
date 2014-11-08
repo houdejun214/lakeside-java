@@ -1,13 +1,12 @@
 package com.lakeside.web;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.lakeside.core.utils.StringUtils;
+import com.lakeside.core.utils.UrlUtils;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import com.lakeside.core.utils.StringUtils;
-import com.lakeside.core.utils.UrlUtils;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author houdj

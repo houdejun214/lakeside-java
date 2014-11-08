@@ -1,10 +1,6 @@
 package com.lakeside.core.nativeload;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 
 public class LsJniExtractor implements JniExtractor{
 	 private static boolean debug = false;

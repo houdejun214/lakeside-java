@@ -1,8 +1,8 @@
 package com.lakeside.core.utils;
 
-import java.net.MalformedURLException;
-
 import org.junit.Test;
+
+import java.net.MalformedURLException;
 
 public class UrlUtilsTest {
 

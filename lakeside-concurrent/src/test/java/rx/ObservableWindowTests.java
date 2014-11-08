@@ -14,16 +14,15 @@ package rx; /**
  * limitations under the License.
  */
 
-import static org.junit.Assert.*;
+import org.junit.Test;
+import rx.Observable;
+import rx.functions.Action1;
+import rx.functions.Func1;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
-
-import rx.Observable;
-import rx.functions.Action1;
-import rx.functions.Func1;
+import static org.junit.Assert.*;
 
 public class ObservableWindowTests {
 

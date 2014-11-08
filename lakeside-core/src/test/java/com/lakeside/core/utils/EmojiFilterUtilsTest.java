@@ -1,7 +1,5 @@
 package com.lakeside.core.utils;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
 
 public class EmojiFilterUtilsTest {

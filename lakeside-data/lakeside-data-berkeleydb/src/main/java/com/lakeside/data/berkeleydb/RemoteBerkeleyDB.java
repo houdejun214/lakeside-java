@@ -1,15 +1,14 @@
 package com.lakeside.data.berkeleydb;
 
-import java.io.Closeable;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-
+import com.hajo.thrift.HajoService;
+import com.hajo.thrift.RecordType;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransportException;
 
-import com.hajo.thrift.HajoService;
-import com.hajo.thrift.RecordType;
+import java.io.Closeable;
+import java.io.IOException;
+import java.nio.ByteBuffer;
 
 public class RemoteBerkeleyDB<PK,T> implements Closeable {
 	

@@ -1,13 +1,12 @@
 package com.lakeside.web.taglib;
 
-import java.io.IOException;
-import java.util.Map;
+import com.lakeside.core.utils.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
-
-import com.lakeside.core.utils.StringUtils;
+import java.io.IOException;
+import java.util.Map;
 
 public class ContentWebPager extends TagSupport{
 	/**

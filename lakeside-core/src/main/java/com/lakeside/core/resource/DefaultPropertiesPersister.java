@@ -1,18 +1,12 @@
 package com.lakeside.core.resource;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Reader;
-import java.io.Writer;
+import com.lakeside.core.utils.ClassUtils;
+import com.lakeside.core.utils.StringUtils;
+
+import java.io.*;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Properties;
-
-import com.lakeside.core.utils.ClassUtils;
-import com.lakeside.core.utils.StringUtils;
 
 public class DefaultPropertiesPersister{
 

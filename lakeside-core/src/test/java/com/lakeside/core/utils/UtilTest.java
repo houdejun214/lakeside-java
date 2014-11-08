@@ -1,10 +1,8 @@
 package com.lakeside.core.utils;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 import java.util.Arrays;
-
-import org.junit.Test;
 
 public class UtilTest {
 

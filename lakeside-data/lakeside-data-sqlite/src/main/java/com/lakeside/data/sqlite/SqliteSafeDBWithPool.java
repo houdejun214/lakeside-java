@@ -1,14 +1,14 @@
 package com.lakeside.data.sqlite;
 
-import java.io.Closeable;
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-
 import com.almworks.sqlite4java.SQLiteConnection;
 import com.almworks.sqlite4java.SQLiteException;
 import com.almworks.sqlite4java.SQLiteStatement;
 import com.lakeside.core.utils.FileUtils;
+
+import java.io.Closeable;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
 
 public class SqliteSafeDBWithPool implements Closeable {
 	

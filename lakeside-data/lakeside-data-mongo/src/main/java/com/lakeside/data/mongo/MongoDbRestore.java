@@ -12,31 +12,20 @@
 
 package com.lakeside.data.mongo;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.zip.GZIPInputStream;
-
+import com.mongodb.*;
+import com.wordnik.system.mongodb.CollectionInfo;
+import com.wordnik.system.mongodb.MongoUtil;
+import com.wordnik.util.PrintFormat;
 import org.bson.BSONDecoder;
 import org.bson.BSONObject;
 import org.bson.BasicBSONObject;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
-import com.mongodb.DefaultDBDecoder;
-import com.wordnik.system.mongodb.CollectionInfo;
-import com.wordnik.system.mongodb.MongoUtil;
-import com.wordnik.util.PrintFormat;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.*;
+import java.util.zip.GZIPInputStream;
 
 public class MongoDbRestore extends MongoUtil{
 	protected static String INPUT_DIR;

@@ -1,12 +1,15 @@
 package com.lakeside.thrift;
 
+import com.lakeside.thrift.pool.ThriftConnection;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TProtocol;
 
-import com.lakeside.thrift.pool.ThriftConnection.TServiceValidator;
+public class HelloClient extends Hello.Client implements ThriftConnection.TServiceValidator {
 
-public class HelloClient extends Hello.Client implements TServiceValidator {
-	
+    public HelloClient() {
+       super(null);
+    }
+
 	public HelloClient(TProtocol prot) {
 		super(prot);
 	}

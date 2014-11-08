@@ -1,14 +1,12 @@
 package com.lakeside.data.ssh;
 
-import java.util.HashSet;
-
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.Session;
-import com.jcraft.jsch.SftpATTRS;
 import com.jcraft.jsch.SftpException;
-import com.lakeside.core.utils.FileUtils;
 import com.lakeside.core.utils.PathUtils;
 import com.lakeside.core.utils.StringUtils;
+
+import java.util.HashSet;
 
 
 /**

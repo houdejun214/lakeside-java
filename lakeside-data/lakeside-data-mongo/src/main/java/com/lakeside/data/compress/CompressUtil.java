@@ -1,16 +1,12 @@
 package com.lakeside.data.compress;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.zip.GZIPOutputStream;
-
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.apache.commons.compress.utils.IOUtils;
+
+import java.io.*;
+import java.util.zip.GZIPOutputStream;
 
 public class CompressUtil {
 	public static void createArchive(String outputFilename, String inputFile)

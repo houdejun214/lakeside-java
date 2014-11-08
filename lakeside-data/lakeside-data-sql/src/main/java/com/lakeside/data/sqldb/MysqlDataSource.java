@@ -1,8 +1,6 @@
 package com.lakeside.data.sqldb;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import com.lakeside.core.utils.StringUtils;
 import org.apache.tomcat.jdbc.pool.DataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +8,8 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import com.lakeside.core.utils.StringUtils;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * manage the mysql database connections. 

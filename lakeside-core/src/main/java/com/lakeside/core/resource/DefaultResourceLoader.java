@@ -1,9 +1,9 @@
 package com.lakeside.core.resource;
 
+import com.lakeside.core.utils.ClassUtils;
+
 import java.io.IOException;
 import java.io.InputStream;
-
-import com.lakeside.core.utils.ClassUtils;
 
 public class DefaultResourceLoader implements ResourceLoader{
 	private ClassLoader classLoader;

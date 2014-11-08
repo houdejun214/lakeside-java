@@ -14,14 +14,13 @@ package rx; /**
  * limitations under the License.
  */
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.junit.Test;
-
 import rx.EventStream.Event;
 import rx.functions.Action1;
 import rx.functions.Func2;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ScanTests {
 

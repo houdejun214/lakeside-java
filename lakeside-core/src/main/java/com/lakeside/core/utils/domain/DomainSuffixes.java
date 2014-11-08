@@ -17,13 +17,12 @@
 
 package com.lakeside.core.utils.domain;
 
-import java.io.InputStream;
-import java.util.HashMap;
-
+import com.lakeside.core.utils.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.lakeside.core.utils.StringUtils;
+import java.io.InputStream;
+import java.util.HashMap;
 
 /**
  * Storage class for <code>DomainSuffix</code> objects 

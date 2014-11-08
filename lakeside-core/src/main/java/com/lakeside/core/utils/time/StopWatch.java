@@ -1,10 +1,10 @@
 package com.lakeside.core.utils.time;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DurationFormatUtils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * <p>

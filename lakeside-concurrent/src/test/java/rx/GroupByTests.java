@@ -15,7 +15,6 @@ package rx; /**
  */
 
 import org.junit.Test;
-
 import rx.EventStream.Event;
 import rx.functions.Action1;
 import rx.functions.Func1;

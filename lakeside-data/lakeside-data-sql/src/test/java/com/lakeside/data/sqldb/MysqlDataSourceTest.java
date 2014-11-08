@@ -1,11 +1,12 @@
 package com.lakeside.data.sqldb;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.junit.Test;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class MysqlDataSourceTest {
 

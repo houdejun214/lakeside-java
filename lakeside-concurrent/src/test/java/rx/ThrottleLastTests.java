@@ -14,16 +14,15 @@ package rx; /**
  * limitations under the License.
  */
 
-import static org.mockito.Mockito.*;
-
-import java.util.concurrent.TimeUnit;
-
 import org.junit.Test;
 import org.mockito.InOrder;
-
 import rx.Observer;
 import rx.schedulers.TestScheduler;
 import rx.subjects.PublishSubject;
+
+import java.util.concurrent.TimeUnit;
+
+import static org.mockito.Mockito.*;
 
 public class ThrottleLastTests {
 

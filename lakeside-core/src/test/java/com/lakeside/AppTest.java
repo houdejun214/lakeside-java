@@ -1,10 +1,10 @@
 package com.lakeside;
 
-import java.io.UnsupportedEncodingException;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
+import java.io.UnsupportedEncodingException;
 
 /**
  * Unit test for simple App.

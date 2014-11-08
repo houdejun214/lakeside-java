@@ -1,14 +1,10 @@
 package com.lakeside.core.utils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.lakeside.core.utils.QueryUrl.ParamKeyVal;
+
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.lakeside.core.utils.QueryUrl.ParamKeyVal;
 
 /**
  * url 格式化处理器

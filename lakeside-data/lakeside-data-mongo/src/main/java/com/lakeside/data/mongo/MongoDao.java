@@ -1,12 +1,12 @@
 package com.lakeside.data.mongo;
 
-import java.util.Map;
-import java.util.Set;
-
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.Mongo;
+
+import java.util.Map;
+import java.util.Set;
 
 public class MongoDao {
 	

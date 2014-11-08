@@ -1,11 +1,11 @@
 package com.lakeside.core.utils;
 
+import org.junit.Test;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.SortedSet;
-
-import org.junit.Test;
 
 public class MapUtilsTest {
 

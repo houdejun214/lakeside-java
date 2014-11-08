@@ -1,7 +1,6 @@
 package com.lakeside.thrift;
 
 /**
- * @author zhufb
  *
  */
 public class ThriftException extends RuntimeException {

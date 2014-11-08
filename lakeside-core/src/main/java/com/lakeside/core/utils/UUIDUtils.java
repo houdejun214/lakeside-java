@@ -9,12 +9,12 @@
  */
 package com.lakeside.core.utils;
 
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.UUID;
-
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
 
 /**
  * UUID

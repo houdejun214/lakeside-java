@@ -14,10 +14,6 @@ package rx; /**
  * limitations under the License.
  */
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import rx.Observable;
 import rx.Observable.OnSubscribeFunc;
 import rx.Observer;
@@ -25,6 +21,10 @@ import rx.Scheduler.Inner;
 import rx.Subscription;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
+
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Utility for retrieving a mock eventstream for testing.

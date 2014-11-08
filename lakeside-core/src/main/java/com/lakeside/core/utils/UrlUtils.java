@@ -1,13 +1,13 @@
 package com.lakeside.core.utils;
 
+import com.lakeside.core.utils.domain.DomainSuffixes;
+
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.regex.Pattern;
-
-import com.lakeside.core.utils.domain.DomainSuffixes;
 
 public class UrlUtils {
 

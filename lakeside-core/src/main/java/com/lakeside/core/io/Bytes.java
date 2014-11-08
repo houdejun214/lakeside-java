@@ -1,5 +1,8 @@
 package com.lakeside.core.io;
 
+import com.google.common.annotations.VisibleForTesting;
+import sun.misc.Unsafe;
+
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -12,10 +15,6 @@ import java.nio.ByteOrder;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Iterator;
-
-import sun.misc.Unsafe;
-
-import com.google.common.annotations.VisibleForTesting;
 
 /**
  * Utility class that handles byte arrays, conversions to/from other types,

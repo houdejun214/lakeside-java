@@ -1,13 +1,13 @@
 package com.lakeside.data.sqlite;
 
-import java.io.File;
-import java.io.IOException;
-
 import com.almworks.sqlite4java.SQLiteConnection;
 import com.almworks.sqlite4java.SQLiteException;
 import com.almworks.sqlite4java.SQLiteJob;
 import com.almworks.sqlite4java.SQLiteQueue;
 import com.lakeside.core.utils.FileUtils;
+
+import java.io.File;
+import java.io.IOException;
 
 public class SqliteSafeDB extends SqliteDB {
 	

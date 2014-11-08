@@ -1,14 +1,13 @@
 package com.lakeside.web.taglib;
 
+import com.lakeside.core.utils.StringUtils;
+
+import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.text.NumberFormat;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import com.lakeside.core.utils.StringUtils;
 
 public class WebPagerParam {
 	

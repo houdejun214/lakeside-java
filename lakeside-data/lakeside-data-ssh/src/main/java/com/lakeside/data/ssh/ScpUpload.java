@@ -1,12 +1,12 @@
 package com.lakeside.data.ssh;
 
+import com.jcraft.jsch.ChannelExec;
+import com.jcraft.jsch.Session;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import com.jcraft.jsch.ChannelExec;
-import com.jcraft.jsch.Session;
 
 /**
  * please use sftp channel to upload or download files;

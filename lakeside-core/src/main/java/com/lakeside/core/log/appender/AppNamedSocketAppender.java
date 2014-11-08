@@ -1,9 +1,9 @@
 package com.lakeside.core.log.appender;
 
-import java.util.Map;
-
 import ch.qos.logback.classic.net.SocketAppender;
 import ch.qos.logback.classic.spi.ILoggingEvent;
+
+import java.util.Map;
 
 public class AppNamedSocketAppender extends SocketAppender {
 	private static final String DEFAULT_APPNAME = "none";
