@@ -66,6 +66,10 @@
 		<powermock.version>1.5.4</powermock.version>
 		<internal.repo.path>file:///home/dejun/working/mvn-repo</internal.repo.path>
 
+		<!--mongo-->
+		<mongo.java.driver.version>2.12.2</mongo.java.driver.version>
+		<morphia.version>0.107</morphia.version>
+
 		<!-- lakeside versions -->
 		<lakeside.core.version>1.1.0-SNAPSHOT</lakeside.core.version>
 		<lakeside.parent.version>1.1.0-SNAPSHOT</lakeside.parent.version>

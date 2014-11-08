@@ -1,71 +1,129 @@
 package com.lakeside.data.mongo;
 
-import com.mongodb.DB;
-import com.mongodb.Mongo;
+import com.lakeside.core.utils.*;
+import com.mongodb.*;
+import org.mongodb.morphia.Datastore;
+import org.mongodb.morphia.Morphia;
 
-/**
- * 
- * Mongodb 数据源描述累
- * 
- * @author qiumm
- *
- */
+import java.util.Arrays;
+import java.util.WeakHashMap;
+
 public class MongoDataSource {
-	
-	private Mongo m = null;
-	private DB db = null;
-	private String host;
-	private int port = 27017;
-	private String dbName;
-	private static final Object sync = new Object();
 
-	private void initDb() {
-		synchronized(sync){
-			if(m!=null || db!=null){
-				return;
-			}
-			try {
-				m = new Mongo( host , port );
-			} catch (Exception e) {
-				throw new RuntimeException(e.getMessage(),e);
-			}
-			db = m.getDB( dbName );
-		}
-	}
-	
-	public DB getMongoDb(){
-		if(db==null){
-			initDb();
-		}
-		return this.db;
-	}
+    private Mongo m = null;
+    private String host;
+    private int port = 27017;
+    private String defaultDBName;
+    private static final Object sync = new Object();
+    private Datastore defaultDatastore;
+    private volatile WeakHashMap<String, Datastore> datastores = new WeakHashMap<>();
+    private DB defaultDB;
+    private Morphia ds;
+    private String userName;
+    private String password;
 
-	public Mongo getM() {
-		return m;
-	}
+    /**
+     * initialize the defaultDB
+     */
+    public void initDb() {
+        synchronized (sync) {
+            Assert.hasText(host);
+            Assert.hasText(defaultDBName);
+            if (m != null) {
+                return;
+            }
+            try {
+                if (StringUtils.isNotEmpty(userName) && StringUtils.isNotEmpty(password)) {
+                    MongoCredential credential = MongoCredential.createMongoCRCredential(userName, defaultDBName, this.password.toCharArray());
+                    m = new MongoClient(new ServerAddress(host, port), Arrays.asList(credential));
+                } else {
+                    m = new MongoClient(host, port);
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e.getMessage(), e);
+            }
+            ds = new Morphia();
+            defaultDatastore = doGetDatastore(this.defaultDBName);
+            defaultDB = defaultDatastore.getDB();
+        }
+    }
 
-	public String getHost() {
-		return host;
-	}
+    /**
+     * get dataStore of the db.
+     * @param dbName
+     * @return
+     */
+    private Datastore doGetDatastore(String dbName) {
+        Datastore datastore = datastores.get(dbName);
+        if (datastore == null) {
+            synchronized (MongoDataSource.class) {
+                datastore = datastores.get(dbName);
+                if (datastore == null) {
+                    datastore = ds.createDatastore(m, dbName);
+                    if (StringUtils.isNotEmpty(userName) && StringUtils.isNotEmpty(password)) {
+                        DB db = datastore.getDB();
+                        if (db != null) {
+                            db.authenticate(userName,this.password.toCharArray());
+                        }
+                    }
+                    datastores.put(dbName, datastore);
+                }
+            }
+        }
+        return datastore;
+    }
 
-	public int getPort() {
-		return port;
-	}
+    public Mongo getM() {
+        return m;
+    }
 
-	public String getDbName() {
-		return dbName;
-	}
+    public String getHost() {
+        return host;
+    }
 
-	public void setHost(String host) {
-		this.host = host;
-	}
+    public int getPort() {
+        return port;
+    }
 
-	public void setPort(int port) {
-		this.port = port;
-	}
+    public String getDefaultDBName() {
+        return defaultDBName;
+    }
 
-	public void setDbName(String dbName) {
-		this.dbName = dbName;
-	}
-	
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public void setDefaultDBName(String defaultDBName) {
+        this.defaultDBName = defaultDBName;
+    }
+
+    public DB getDefaultDB() {
+        return defaultDB;
+    }
+
+    public DB getDb(String dbName) {
+        Datastore datastore = doGetDatastore(dbName);
+        return datastore.getDB();
+    }
+
+    public Datastore getDefaultDatastore() {
+        return defaultDatastore;
+    }
+
+    public Datastore getDatastore(String dbName) {
+        Datastore datastore = doGetDatastore(dbName);
+        return datastore;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }
