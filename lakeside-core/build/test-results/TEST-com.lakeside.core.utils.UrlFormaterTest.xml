@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.lakeside.core.utils.UrlFormaterTest" tests="8" skipped="0" failures="0" errors="0" timestamp="2014-11-09T08:04:20" hostname="dejun" time="0.006">
+  <properties/>
+  <testcase name="testFormat1" classname="com.lakeside.core.utils.UrlFormaterTest" time="0.001"/>
+  <testcase name="testFormat2" classname="com.lakeside.core.utils.UrlFormaterTest" time="0.0"/>
+  <testcase name="testFormat3" classname="com.lakeside.core.utils.UrlFormaterTest" time="0.001"/>
+  <testcase name="testFormat4" classname="com.lakeside.core.utils.UrlFormaterTest" time="0.0"/>
+  <testcase name="testFormat5" classname="com.lakeside.core.utils.UrlFormaterTest" time="0.0"/>
+  <testcase name="testFormat6" classname="com.lakeside.core.utils.UrlFormaterTest" time="0.001"/>
+  <testcase name="testFormat" classname="com.lakeside.core.utils.UrlFormaterTest" time="0.0"/>
+  <testcase name="testUrlFormater" classname="com.lakeside.core.utils.UrlFormaterTest" time="0.0"/>
+  <system-out><![CDATA[http://www.google.com/?q={query}&q1={query}{loc}&m=abc&loc={loc}&n=12&loc1={loc}
+loc
+query
+http://www.google.com/?q=queryValue&m=abc&n=12
+http://www.google.com/?q={query}&q1={query}{loc}&m=abc&loc={loc}&n=12&loc1={loc}
+loc
+query
+http://www.google.com/?q=queryValue&q1=queryValuelocValue&m=abc&loc=locValue&n=12&loc1=locValue
+http://www.google.com/{path}/?q={query}&q1={query}{loc}&m=abc&loc={loc}&n=12&loc1={loc}
+path
+loc
+query
+http://www.google.com/{path}/?q={query}&q1={query}{loc}&m=abc&loc={loc}&n=12&loc1={loc}
+path
+loc
+query
+http://www.google.com/path1/?q=queryValue&q1=queryValuelocValue&m=abc&loc=locValue&n=12&loc1=locValue
+http://www.google.com/{path}/{path2}/?q={query}&q1={query}{loc}&m=abc&loc={loc}&n=12&loc1={loc}
+path
+path2
+loc
+query
+http://www.google.com/path1/path2/?q=queryValue&q1=queryValuelocValue&m=abc&loc=locValue&n=12&loc1=locValue
+http://www.google.com/{path}/{path2}/?q={query}&q1={query}{loc}&m=abc&loc={loc}sdf&n=12&loc1={loc}
+path
+path2
+loc
+query
+http://www.google.com/path1/path2/?q=queryValue&q1=queryValuelocValue&m=abc&loc=locValuesdf&n=12&loc1=locValue
+http://www.google.com/?q={query}&q1={query}{loc}&m=abc&loc={loc}&n=12&loc1={loc}
+loc
+query
+http://www.google.com/?q=queryValue&m=abc&n=12
+http://www.google.com/?q={query}&q1={query}{loc}&m=abc&loc={loc}&n=12&loc1={loc}
+loc
+query
+http://www.google.com/?q=queryValue&q1=queryValuelocValue&m=abc&loc=locValue&n=12&loc1=locValue
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

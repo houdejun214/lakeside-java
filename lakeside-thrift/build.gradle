@@ -1,0 +1,17 @@
+
+description = 'lakeside-thrift'
+dependencies {
+    compile(group: 'org.apache.thrift', name: 'libthrift', version:'0.9.1') {
+exclude(module: 'slf4j-api')
+    }
+    compile group: 'org.apache.commons', name: 'commons-pool2', version:'2.2'
+  compile project(':lakeside-core')
+    compile group: 'com.google.guava', name: 'guava', version:'14.0.1'
+    compile group: 'com.twitter.common', name: 'quantity', version:'0.0.31'
+    compile group: 'cglib', name: 'cglib', version:'3.1'
+    testCompile group: 'org.slf4j', name: 'jcl-over-slf4j', version:'1.6.1'
+    testCompile group: 'org.slf4j', name: 'log4j-over-slf4j', version:'1.6.1'
+    testCompile group: 'org.slf4j', name: 'jul-to-slf4j', version:'1.6.1'
+    testCompile group: 'ch.qos.logback', name: 'logback-core', version:'1.0.6'
+    testCompile group: 'ch.qos.logback', name: 'logback-classic', version:'1.0.6'
+}

@@ -1,0 +1,6 @@
+
+description = 'lakeside-data-redis'
+dependencies {
+    compile group: 'redis.clients', name: 'jedis', version:'2.1.0'
+    compile project(':lakeside-core')
+}

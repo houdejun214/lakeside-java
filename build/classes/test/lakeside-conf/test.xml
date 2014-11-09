@@ -1,0 +1,6 @@
+<configuration>
+    <property>
+        <name>test</name>
+        <value>testvalue</value>
+    </property>
+</configuration>

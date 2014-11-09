@@ -19,9 +19,9 @@ public class ThriftPoolConfig extends HashMap<String,String>{
 		
 	}
 
-	public ThriftPoolConfig(Iterator<Entry> iterator) {
+	public ThriftPoolConfig(Iterator<Map.Entry> iterator) {
 		while(iterator.hasNext()){
-			Entry<?, ?> next = iterator.next();
+			Map.Entry<?, ?> next = iterator.next();
 			this.put(String.valueOf(next.getKey()), String.valueOf(next.getValue()));
 		}
 	}

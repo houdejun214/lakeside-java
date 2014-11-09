@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.lakeside.core.utils.EmojiFilterUtilsTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2014-11-09T08:04:20" hostname="dejun" time="0.0">
+  <properties/>
+  <testcase name="testFilterEmoji" classname="com.lakeside.core.utils.EmojiFilterUtilsTest" time="0.0"/>
+  <system-out><![CDATA[<body>口口213这是一个有各种内容的消息,  Hia Hia Hia !!!! xxxx@@@...*)!
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,9 @@
+
+description = 'lakeside-data-mongo'
+dependencies {
+    compile group: 'org.mongodb', name: 'mongo-java-driver', version:'2.12.2'
+    compile(group: 'org.mongodb.morphia', name: 'morphia', version:'0.107') {
+        exclude(module: 'mongo-java-driver')
+    }
+    compile project(':lakeside-core')
+}

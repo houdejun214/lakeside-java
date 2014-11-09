@@ -200,7 +200,7 @@ public class StringUtils {
 		return Double.parseDouble(s);
 	}
 
-	private static final Map<String,MessageFormat> Formats =new WeakHashMap<>();
+	private static final Map<String,MessageFormat> Formats =new WeakHashMap();
 
 	/**
 	 * format the given pattern with given arguments
@@ -926,7 +926,7 @@ public class StringUtils {
     if (str == null)
       return values;
     StringTokenizer tokenizer = new StringTokenizer (str,",");
-    values = new ArrayList<>();
+    values = new ArrayList();
     while (tokenizer.hasMoreTokens()) {
       values.add(tokenizer.nextToken());
     }

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.lakeside.config.ConfigurationTest" tests="13" skipped="0" failures="0" errors="0" timestamp="2014-11-09T08:04:19" hostname="dejun" time="0.011">
+  <properties/>
+  <testcase name="testGetLongException" classname="com.lakeside.config.ConfigurationTest" time="0.003"/>
+  <testcase name="testGetFloat" classname="com.lakeside.config.ConfigurationTest" time="0.0"/>
+  <testcase name="testGet" classname="com.lakeside.config.ConfigurationTest" time="0.0"/>
+  <testcase name="testCombineWith" classname="com.lakeside.config.ConfigurationTest" time="0.0"/>
+  <testcase name="testClear" classname="com.lakeside.config.ConfigurationTest" time="0.0"/>
+  <testcase name="testSize" classname="com.lakeside.config.ConfigurationTest" time="0.0"/>
+  <testcase name="testGetDate" classname="com.lakeside.config.ConfigurationTest" time="0.001"/>
+  <testcase name="testGetLong" classname="com.lakeside.config.ConfigurationTest" time="0.0"/>
+  <testcase name="testGetIntException" classname="com.lakeside.config.ConfigurationTest" time="0.0"/>
+  <testcase name="testGetDouble" classname="com.lakeside.config.ConfigurationTest" time="0.0"/>
+  <testcase name="testGetBigDecimal" classname="com.lakeside.config.ConfigurationTest" time="0.001"/>
+  <testcase name="testGetFloat1" classname="com.lakeside.config.ConfigurationTest" time="0.0"/>
+  <testcase name="testGetInt" classname="com.lakeside.config.ConfigurationTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

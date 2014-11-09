@@ -1,0 +1,6 @@
+
+description = 'lakeside-data-ssh'
+dependencies {
+    compile group: 'com.jcraft', name: 'jsch', version:'0.1.48'
+    compile project(':lakeside-core')
+}

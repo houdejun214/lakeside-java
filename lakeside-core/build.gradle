@@ -1,0 +1,19 @@
+
+description = 'lakeside-core'
+dependencies {
+    compile group: 'javax.mail', name: 'mail', version:'1.4.5'
+    compile(group: 'net.sf.json-lib', name: 'json-lib', version:'2.4', classifier:'jdk15') {
+exclude(module: 'commons-lang')
+exclude(module: 'commons-logging')
+    }
+    compile(group: 'commons-beanutils', name: 'commons-beanutils', version:'1.8.0') {
+exclude(module: 'commons-logging')
+    }
+    compile group: 'commons-lang', name: 'commons-lang', version:'2.6'
+    compile(group: 'org.reflections', name: 'reflections', version:'0.9.8') {
+exclude(module: 'javassist')
+    }
+    compile group: 'com.google.guava', name: 'guava', version:'14.0.1'
+    compile group: 'ch.qos.logback', name: 'logback-classic', version:'1.0.6'
+    compile group: 'org.javassist', name: 'javassist', version:'3.18.1-GA'
+}

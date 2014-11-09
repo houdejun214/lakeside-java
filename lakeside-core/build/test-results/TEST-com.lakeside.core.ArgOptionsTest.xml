@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.lakeside.core.ArgOptionsTest" tests="7" skipped="0" failures="0" errors="0" timestamp="2014-11-09T08:04:19" hostname="dejun" time="0.011">
+  <properties/>
+  <testcase name="testAddArgumentLackParameter" classname="com.lakeside.core.ArgOptionsTest" time="0.008"/>
+  <testcase name="testNoNameParameter" classname="com.lakeside.core.ArgOptionsTest" time="0.0"/>
+  <testcase name="test" classname="com.lakeside.core.ArgOptionsTest" time="0.001"/>
+  <testcase name="testAliasParameter" classname="com.lakeside.core.ArgOptionsTest" time="0.0"/>
+  <testcase name="testAddArgument" classname="com.lakeside.core.ArgOptionsTest" time="0.0"/>
+  <testcase name="testPrintParameter" classname="com.lakeside.core.ArgOptionsTest" time="0.0"/>
+  <testcase name="testAliasParameter1" classname="com.lakeside.core.ArgOptionsTest" time="0.001"/>
+  <system-out><![CDATA[--uid		uid of the object
+--ip		ip address
+[--id]		id of the object
+[--ic]		ic of the object
+[--have]		have the value in object
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

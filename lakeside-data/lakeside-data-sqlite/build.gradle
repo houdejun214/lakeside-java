@@ -1,0 +1,6 @@
+
+description = 'lakeside-data-sqlite'
+dependencies {
+    compile group: 'com.almworks.sqlite4java', name: 'sqlite4java', version:'0.282'
+    compile project(':lakeside-core')
+}

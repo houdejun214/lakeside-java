@@ -1,0 +1,5 @@
+
+description = 'lakeside-conf'
+dependencies {
+  compile project(':lakeside-core')
+}

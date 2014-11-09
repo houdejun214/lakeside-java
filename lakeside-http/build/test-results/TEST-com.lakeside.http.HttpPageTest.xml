@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.lakeside.http.HttpPageTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2014-11-09T08:04:23" hostname="dejun" time="8.049">
+  <properties/>
+  <testcase name="testDownloadImage" classname="com.lakeside.http.HttpPageTest" time="8.049"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

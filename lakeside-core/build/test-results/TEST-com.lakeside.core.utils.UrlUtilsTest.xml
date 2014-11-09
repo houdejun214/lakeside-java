@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.lakeside.core.utils.UrlUtilsTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2014-11-09T08:04:19" hostname="dejun" time="0.174">
+  <properties/>
+  <testcase name="testHost" classname="com.lakeside.core.utils.UrlUtilsTest" time="0.001"/>
+  <testcase name="testParseUrlQueryString" classname="com.lakeside.core.utils.UrlUtilsTest" time="0.173"/>
+  <system-out><![CDATA[http://www.google.com.sg/search?aq=f&sourceid=chrome&ie=UTF-8
+google.com.sg
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

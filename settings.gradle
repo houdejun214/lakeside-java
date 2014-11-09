@@ -1,0 +1,23 @@
+rootProject.name = 'lakeside-parent'
+include ':lakeside-core'
+include ':lakeside-thrift'
+include ':lakeside-data:lakeside-data-mongo'
+include ':lakeside-data:lakeside-data-sql'
+include ':lakeside-data:lakeside-data-redis'
+include ':lakeside-data:lakeside-data-ssh'
+include ':lakeside-data:lakeside-data-sqlite'
+include ':lakeside-data'
+include ':lakeside-web'
+include ':lakeside-http'
+include ':lakeside-conf'
+
+project(':lakeside-core').projectDir = "$rootDir/lakeside-core" as File
+project(':lakeside-thrift').projectDir = "$rootDir/lakeside-thrift" as File
+project(':lakeside-data:lakeside-data-mongo').projectDir = "$rootDir/lakeside-data/lakeside-data-mongo" as File
+project(':lakeside-data:lakeside-data-sql').projectDir = "$rootDir/lakeside-data/lakeside-data-sql" as File
+project(':lakeside-data:lakeside-data-redis').projectDir = "$rootDir/lakeside-data/lakeside-data-redis" as File
+project(':lakeside-data:lakeside-data-ssh').projectDir = "$rootDir/lakeside-data/lakeside-data-ssh" as File
+project(':lakeside-data').projectDir = "$rootDir/lakeside-data" as File
+project(':lakeside-web').projectDir = "$rootDir/lakeside-web" as File
+project(':lakeside-http').projectDir = "$rootDir/lakeside-http" as File
+project(':lakeside-conf').projectDir = "$rootDir/lakeside-conf" as File
