@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.lakeside.core.utils.time.DateTimeUtilsTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2014-11-09T08:04:22" hostname="dejun" time="0.001">
-  <properties/>
-  <testcase name="test" classname="com.lakeside.core.utils.time.DateTimeUtilsTest" time="0.001"/>
-  <system-out><![CDATA[1415520262871
-1415549062000
-]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

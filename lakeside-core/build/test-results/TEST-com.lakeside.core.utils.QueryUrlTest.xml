@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.lakeside.core.utils.QueryUrlTest" tests="2" skipped="0" failures="0" errors="0" timestamp="2014-11-09T08:04:20" hostname="dejun" time="0.003">
-  <properties/>
-  <testcase name="testRemoveDuplicated" classname="com.lakeside.core.utils.QueryUrlTest" time="0.003"/>
-  <testcase name="testToString" classname="com.lakeside.core.utils.QueryUrlTest" time="0.0"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

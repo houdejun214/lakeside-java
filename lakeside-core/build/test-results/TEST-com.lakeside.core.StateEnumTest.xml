@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.lakeside.core.StateEnumTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2014-11-09T08:04:19" hostname="dejun" time="0.006">
-  <properties/>
-  <testcase name="testParse" classname="com.lakeside.core.StateEnumTest" time="0.005"/>
-  <testcase name="testParseName" classname="com.lakeside.core.StateEnumTest" time="0.0"/>
-  <testcase name="test" classname="com.lakeside.core.StateEnumTest" time="0.0"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>
