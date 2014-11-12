@@ -1,12 +1,14 @@
 package com.lakeside.core.utils.time;
 
 import com.lakeside.core.utils.Assert;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.DurationFieldType;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 import java.util.TimeZone;
 
 public class DateTimeUtils {
@@ -19,9 +21,9 @@ public class DateTimeUtils {
 		if (parttern == null || parttern.equals("")) {
 			return "";
 		}
-		SimpleDateFormat formater = new SimpleDateFormat(parttern,
-				Locale.ENGLISH);
-		return formater.format(date);
+		DateTime time = new DateTime(date);
+		DateTimeFormatter formatter = DateTimeFormat.forPattern(parttern);
+		return formatter.print(time);
 	}
 
 	public static String formatGMT(Date date, String parttern) {
@@ -31,10 +33,10 @@ public class DateTimeUtils {
 		if (parttern == null || parttern.equals("")) {
 			return "";
 		}
-		SimpleDateFormat formater = new SimpleDateFormat(parttern,
-				Locale.ENGLISH);
-		formater.setTimeZone(GMT);
-		return formater.format(date);
+		DateTime time = new DateTime(date);
+		time.withZone(DateTimeZone.UTC);
+		DateTimeFormatter formatter = DateTimeFormat.forPattern(parttern);
+		return formatter.print(time);
 	}
 
 	public static Date parse(String str, String parttern) {
@@ -44,17 +46,12 @@ public class DateTimeUtils {
 		if (parttern == null || parttern.equals("")) {
 			return null;
 		}
-		SimpleDateFormat formater = new SimpleDateFormat(parttern,
-				Locale.ENGLISH);
-		try {
-			return formater.parse(str);
-		} catch (ParseException e) {
-			return null;
-		}
+		DateTimeFormatter formater = DateTimeFormat.forPattern(parttern);
+		return formater.parseDateTime(str).toDate();
 	}
 
 	public static Long getCurrentTime() {
-		return new Date().getTime();
+		return new DateTime().getMillis();
 	}
 
 	public static Boolean between(Date test, Date start, Date end) {
@@ -65,7 +62,8 @@ public class DateTimeUtils {
 			throw new IllegalArgumentException(
 					"start date must is before the end");
 		}
-		if (test.before(start) && test.after(end)) {
+		DateTime time = new DateTime(test);
+		if (time.isBefore(start.getTime()) || time.isAfter(end.getTime())) {
 			return false;
 		}
 		return true;
@@ -99,11 +97,9 @@ public class DateTimeUtils {
 	 * @param amount
 	 * @return
 	 */
-	public static Date add(Date time, int field, int amount) {
-		Calendar instance = Calendar.getInstance();
-		instance.setTime(new Date(time.getTime()));
-		instance.add(field, amount);
-		return instance.getTime();
+	public static Date add(Date time, DurationFieldType field, int amount) {
+		DateTime instance = new DateTime(time);
+		return instance.withFieldAdded(field, amount).toDate();
 	}
 
 	/**
@@ -133,36 +129,19 @@ public class DateTimeUtils {
 	}
 
 	public static Date getEndOfDay(Date now) {
-		Calendar instance = Calendar.getInstance();
-		instance.setTime(now);
-		instance.set(Calendar.HOUR_OF_DAY, 23);
-		instance.set(Calendar.MINUTE, 59);
-		instance.set(Calendar.SECOND, 59);
-		instance.set(Calendar.MILLISECOND, 0);
-		return instance.getTime();
+		DateTime time = new DateTime(now);
+		return time.withTime(23, 59, 59, 0).toDate();
 	}
 
-	
-	
 	public static Date getBeginOfDay(Date now) {
-		Calendar instance = Calendar.getInstance();
-		instance.setTime(now);
-		instance.set(Calendar.HOUR_OF_DAY, 0);
-		instance.set(Calendar.MINUTE, 0);
-		instance.set(Calendar.SECOND, 0);
-		instance.set(Calendar.MILLISECOND, 0);
-		return instance.getTime();
+		DateTime time = new DateTime(now);
+		return time.withTimeAtStartOfDay().toDate();
 	}
 
 	public static long getUnixTime(Date date) {
 		Calendar instance = Calendar.getInstance();
-		instance.setTime(date);
-		long utc = Date.UTC(instance.get(Calendar.YEAR) - 1900,
-				instance.get(Calendar.MONTH),
-				instance.get(Calendar.DAY_OF_MONTH),
-				instance.get(Calendar.HOUR_OF_DAY),
-				instance.get(Calendar.MINUTE), instance.get(Calendar.SECOND));
-		return utc;
+		DateTime time = new DateTime(date);
+		return time.getMillis()/1000;
 	}
 
 	/**
@@ -173,16 +152,8 @@ public class DateTimeUtils {
 	 * @return
 	 */
 	public static Date getFirstDayOfWeek(int year, int week) {
-		Calendar c = Calendar.getInstance();
-		c.set(Calendar.YEAR, year);
-		c.set(Calendar.WEEK_OF_YEAR, week);
-		c.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);// 设置周一
-		c.set(Calendar.HOUR_OF_DAY, 0);
-		c.set(Calendar.MINUTE, 0);
-		c.set(Calendar.SECOND, 0);
-		c.set(Calendar.MILLISECOND, 0);
-		c.setFirstDayOfWeek(Calendar.MONDAY);
-		return c.getTime();
+		DateTime time = new DateTime().withYear(year);
+		return time.withWeekOfWeekyear(week).dayOfWeek().roundFloorCopy().toDate();
 	}
 
 	/**
@@ -193,16 +164,8 @@ public class DateTimeUtils {
 	 * @return
 	 */
 	public static Date getLastDayOfWeek(int year, int week) {
-		Calendar c = Calendar.getInstance();
-		c.set(Calendar.YEAR, year);
-		c.set(Calendar.WEEK_OF_YEAR, week);
-		c.setFirstDayOfWeek(Calendar.MONDAY);
-		c.set(Calendar.HOUR_OF_DAY, 0);
-		c.set(Calendar.MINUTE, 0);
-		c.set(Calendar.SECOND, 0);
-		c.set(Calendar.MILLISECOND, 0);
-		c.set(Calendar.DAY_OF_WEEK, c.getFirstDayOfWeek() + 6); // Sunday
-		return c.getTime();
+		DateTime time = new DateTime().withYear(year);
+		return time.withWeekOfWeekyear(week).dayOfWeek().roundCeilingCopy().toDate();
 	}
 
 	/**
@@ -213,28 +176,13 @@ public class DateTimeUtils {
 	 * @return
 	 */
 	public static Date getFirstDayOfMonth(int year, int month) {
-		Calendar c = Calendar.getInstance();
-		c.set(Calendar.YEAR, year);
-		c.set(Calendar.MONTH, month - 1);
-		c.set(Calendar.DAY_OF_MONTH, c.getActualMinimum(Calendar.DAY_OF_MONTH));
-		c.set(Calendar.HOUR_OF_DAY, 0);
-		c.set(Calendar.MINUTE, 0);
-		c.set(Calendar.SECOND, 0);
-		c.set(Calendar.MILLISECOND, 0);
-		return c.getTime();
+		DateTime time = new DateTime().withYear(year);
+		return time.withMonthOfYear(month).dayOfMonth().roundFloorCopy().toDate();
 	}
 
 	public static Date getFirstDayOfMonth(Date date) {
-		Calendar c = Calendar.getInstance();
-		c.setTime(date);
-		c.set(Calendar.YEAR, c.get(Calendar.YEAR));
-		c.set(Calendar.MONTH, c.get(Calendar.MONTH));
-		c.set(Calendar.DAY_OF_MONTH, c.getActualMinimum(Calendar.DAY_OF_MONTH));
-		c.set(Calendar.HOUR_OF_DAY, 0);
-		c.set(Calendar.MINUTE, 0);
-		c.set(Calendar.SECOND, 0);
-		c.set(Calendar.MILLISECOND, 0);
-		return c.getTime();
+		DateTime time = new DateTime(date);
+		return time.dayOfMonth().roundFloorCopy().toDate();
 	}
 	/**
 	 * 得到某年某月的最后一天
@@ -244,15 +192,8 @@ public class DateTimeUtils {
 	 * @return
 	 */
 	public static Date getLastDayOfMonth(int year, int month) {
-		Calendar c = Calendar.getInstance();
-		c.set(Calendar.YEAR, year);
-		c.set(Calendar.MONTH, month - 1);
-		c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
-		c.set(Calendar.HOUR_OF_DAY, 0);
-		c.set(Calendar.MINUTE, 0);
-		c.set(Calendar.SECOND, 0);
-		c.set(Calendar.MILLISECOND, 0);
-		return c.getTime();
+		DateTime time = new DateTime().withYear(year);
+		return time.withMonthOfYear(month).dayOfMonth().roundCeilingCopy().toDate();
 	}
 
 	/**
@@ -296,7 +237,8 @@ public class DateTimeUtils {
 	 * @return
 	 */
 	public static Date getFirstDayOfYear(int year) {
-		return getFirstDayOfQuarter(year, 1);
+		DateTime time = new DateTime().withYear(year);
+		return time.dayOfYear().roundFloorCopy().toDate();
 	}
 
 	/**
@@ -306,6 +248,7 @@ public class DateTimeUtils {
 	 * @return
 	 */
 	public static Date getLastDayOfYear(int year) {
-		return getLastDayOfQuarter(year, 4);
+		DateTime time = new DateTime().withYear(year);
+		return time.dayOfYear().roundCeilingCopy().toDate();
 	}
 }
