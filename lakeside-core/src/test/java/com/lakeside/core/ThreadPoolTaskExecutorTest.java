@@ -5,7 +5,7 @@ import org.junit.Test;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class ThreadPoolTaskExecutorTest {
 
