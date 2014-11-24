@@ -280,9 +280,9 @@ public abstract class Assert {
 	/**
 	 * Assert that a Map has entries; that is, it must not be <code>null</code>
 	 * and must have at least one entry.
-	 * <pre class="code">Assert.notEmpty(map, "Map must have entries");</pre>
+	 * <pre class="code">Assert.notEmpty(_map, "Map must have entries");</pre>
 	 *
-	 * @param map the map to check
+	 * @param map the _map to check
 	 * @param message the exception message to use if the assertion fails
 	 */
 	public static void notEmpty(Map map, String message) {
@@ -294,12 +294,12 @@ public abstract class Assert {
 	/**
 	 * Assert that a Map has entries; that is, it must not be <code>null</code>
 	 * and must have at least one entry.
-	 * <pre class="code">Assert.notEmpty(map);</pre>
+	 * <pre class="code">Assert.notEmpty(_map);</pre>
 	 *
-	 * @param map the map to check
+	 * @param map the _map to check
 	 */
 	public static void notEmpty(Map map) {
-		notEmpty(map, "[Assertion failed] - this map must not be empty; it must contain at least one entry");
+		notEmpty(map, "[Assertion failed] - this _map must not be empty; it must contain at least one entry");
 	}
 
 	/**

@@ -1,4 +1,4 @@
-rootProject.name = 'lakeside-parent'
+rootProject.name = 'lakeside-java'
 include ':lakeside-core'
 include ':lakeside-thrift'
 include ':lakeside-data:lakeside-data-mongo'

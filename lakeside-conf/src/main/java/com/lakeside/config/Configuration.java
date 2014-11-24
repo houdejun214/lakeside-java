@@ -34,7 +34,7 @@ public class Configuration {
 
     /**
      * get all the config with a given prefix.
-     * For example, if prefix ="logger.level", return a map like this:
+     * For example, if prefix ="logger.level", return a _map like this:
      * <p/>
      *
      * @param prefix

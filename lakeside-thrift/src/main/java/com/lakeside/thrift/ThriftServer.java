@@ -157,7 +157,7 @@ public abstract class ThriftServer {
      * This may be called at any point except when the server is already alive.  That is, it's
      * allowable to start, stop, and re-start the server.
      *
-     * @param setup options for server
+     * @param setup _options for server
      */
     public void start(ServerSetup setup) {
         Preconditions.checkNotNull(setup.getProcessor());

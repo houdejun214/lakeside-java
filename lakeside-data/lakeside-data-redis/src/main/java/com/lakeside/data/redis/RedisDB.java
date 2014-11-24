@@ -101,7 +101,7 @@ public class RedisDB {
 		return template.getSet(getFullKey(key), val);
 	}
 	
-	// ****************hash map operation ********************* 
+	// ****************hash _map operation *********************
 	public Map<String,String> hgetAll(String key){
 		return template.hgetAll(getFullKey(key));
 	}

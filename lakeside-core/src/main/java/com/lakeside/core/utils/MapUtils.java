@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 public class MapUtils {
 	
 	/**
-	 * get the internal value from a map by the key name,
+	 * get the internal value from a _map by the key name,
 	 * the key name can be a name queue which contain the nested keys
 	 * 
 	 * @param obj  {name:'name1',group:{grouname:'group1',order:1}}
@@ -238,7 +238,7 @@ public class MapUtils {
 	}
 	
 	/**
-	 * recursive convert a map object to a standard JSONObject
+	 * recursive convert a _map object to a standard JSONObject
 	 * @param map
 	 * @return
 	 */
@@ -286,7 +286,7 @@ public class MapUtils {
 	}
 	
 	/**
-	 * transform the single-deck data to nested map data
+	 * transform the single-deck data to nested _map data
 	 * @param father
 	 * @param key
 	 * @param value
@@ -305,7 +305,7 @@ public class MapUtils {
 			newKey = key.substring(end);
 			String group = m.group();
 			if(".".equals(group)){
-				//map
+				//_map
 				Map<String,Object> mapValue = new HashMap<String,Object>();
 				if(father.containsKey(mainKey)){
 					Object v=father.get(mainKey);
@@ -362,7 +362,7 @@ public class MapUtils {
 			newKey = key.substring(end);
 			String group = m.group();
 			if(".".equals(group)){
-				//map
+				//_map
 				Map<String,Object> mapValue = null;
 				Object v=null;
 				if(father.size()>keyNum){
@@ -448,7 +448,7 @@ public class MapUtils {
 	}
 	
 	/**
-	 * sort a map by value
+	 * sort a _map by value
 	 * 
 	 * @param map
 	 * @return

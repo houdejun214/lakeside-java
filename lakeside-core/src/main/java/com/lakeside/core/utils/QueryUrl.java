@@ -117,17 +117,17 @@ public class QueryUrl {
 	}
 	
 	/**
-	 * Parses an URL query string and returns a map with the parameter values.
+	 * Parses an URL query string and returns a _map with the parameter values.
 	 * The URL query string is the part in the URL after the first '?' character
 	 * up to an optional '#' character. It has the format
-	 * "name=value&name=value&...". The map has the same structure as the one
+	 * "name=value&name=value&...". The _map has the same structure as the one
 	 * returned by javax.servlet.ServletRequest.getParameterMap(). A parameter
 	 * name may occur multiple times within the query string. For each parameter
-	 * name, the map contains a string array with the parameter values.
+	 * name, the _map contains a string array with the parameter values.
 	 * 
 	 * @param s  an URL query string.
-	 * @return a QueryUrl object,compose of a parameter map containing parameter names as keys and parameter values as
-	 *         map values, and names list.
+	 * @return a QueryUrl object,compose of a parameter _map containing parameter names as keys and parameter values as
+	 *         _map values, and names list.
 	 */
 	public QueryUrl(String s){
 		if (s == null)

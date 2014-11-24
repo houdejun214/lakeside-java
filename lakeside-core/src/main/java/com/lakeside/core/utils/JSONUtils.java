@@ -17,7 +17,7 @@ import java.util.Map.Entry;
 public class JSONUtils {
 	
 	/**
-	 * recursive convert a map object to a standard JSONObject
+	 * recursive convert a _map object to a standard JSONObject
 	 * @param map
 	 * @return
 	 */

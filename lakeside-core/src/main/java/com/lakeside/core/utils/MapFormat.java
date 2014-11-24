@@ -27,7 +27,7 @@ public class MapFormat extends Format {
     /** Right delimiter */
     private String rdel = "}"; // NOI18N
 
-    /** Used formatting map */
+    /** Used formatting _map */
     private Map argmap;
 
     /** Offsets to {} expressions */
@@ -294,7 +294,7 @@ public class MapFormat extends Format {
     }
 
     /** Test whether formatter will throw exception if object for key was not found.
-    * If given map does not contain object for key specified, it could
+    * If given _map does not contain object for key specified, it could
     * throw an exception. Returns true if throws. If not, key is left unchanged.
     */
     public boolean willThrowExceptionIfKeyWasNotFound() {
@@ -302,7 +302,7 @@ public class MapFormat extends Format {
     }
 
     /** Specify whether formatter will throw exception if object for key was not found.
-    * If given map does not contain object for key specified, it could
+    * If given _map does not contain object for key specified, it could
     * throw an exception. If does not throw, key is left unchanged.
     * @param flag If true, formatter throws IllegalArgumentException.
     */
@@ -351,18 +351,18 @@ public class MapFormat extends Format {
         rdel = delimiter;
     }
 
-    /** Returns argument map */
+    /** Returns argument _map */
     public Map getMap() {
         return argmap;
     }
 
-    /** Sets argument map
-    * This map should contain key-value pairs with key values used in
+    /** Sets argument _map
+    * This _map should contain key-value pairs with key values used in
     * formatted string expression. If value for key was not found, formatter leave
     * key unchanged (except if you've set setThrowExceptionIfKeyWasNotFound(true),
     * then it fires IllegalArgumentException.
     *
-    * @param map the argument map
+    * @param map the argument _map
     */
     public void setMap(Map map) {
         argmap = map;
