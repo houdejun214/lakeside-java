@@ -48,16 +48,16 @@ How to use this project
 <dependency>
   <groupId>com.lakeside</groupId>
   <artifactId>lakeside-core</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.1.0-SNAPSHOT</version>
 </dependency>
 <dependency>
   <groupId>com.lakeside</groupId>
   <artifactId>lakeside-data-sql</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.1.0-SNAPSHOT</version>
 </dependency>
 <dependency>
   <groupId>com.lakeside</groupId>
   <artifactId>lakeside-web</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.1.0-SNAPSHOT</version>
 </dependency>
 ```
