@@ -526,7 +526,7 @@ public class StringUtils {
 		return str.getBytes().length;
 	}
 
-	public static String splitString(String str, int length)
+	public static String split(String str, int length)
 	{
 		StringBuilder reStr = new StringBuilder();
 		if (isEmpty(str))
@@ -547,23 +547,6 @@ public class StringUtils {
 
     public static String deleteLastChar(String str) {
         return str.substring(0, str.length() - 1);
-    }
-
-    /**
-     * @param str
-     * @param separator the delimiting regular expression
-     * @return
-     */
-    public static List<String> split2List(String str, String separator) {
-        List<String> list = new ArrayList<String>();
-        if (str != null) {
-            for (String user : str.split(separator)) {
-                if (user != null && !"".equals(user.trim())) {
-                    list.add(user);
-                }
-            }
-        }
-        return list;
     }
 
 	public static String trim(String str,String chars){
@@ -1165,7 +1148,6 @@ public class StringUtils {
      * @return an array of the tokens
      * @see java.util.StringTokenizer
      * @see String#trim()
-     * @see #delimitedListToStringArray
      */
     public static String[] tokenizeToStringArray(String str, String delimiters) {
         return tokenizeToStringArray(str, delimiters, true, true);
@@ -1188,7 +1170,6 @@ public class StringUtils {
      * was <code>null</code>)
      * @see java.util.StringTokenizer
      * @see String#trim()
-     * @see #delimitedListToStringArray
      */
     public static String[] tokenizeToStringArray(
             String str, String delimiters, boolean trimTokens, boolean ignoreEmptyTokens) {
@@ -1210,60 +1191,13 @@ public class StringUtils {
         return toStringArray(tokens);
     }
 
-
     /**
-     * Take a String which is a delimited list and convert it to a String array.
-     * <p>A single delimiter can consists of more than one character: It will still
-     * be considered as single delimiter string, rather than as bunch of potential
-     * delimiter characters - in contrast to <code>tokenizeToStringArray</code>.
-     * @param str the input String
-     * @param delimiter the delimiter between elements (this is a single delimiter,
-     * rather than a bunch individual delimiter characters)
-     * @return an array of the tokens in the list
-     * @see #tokenizeToStringArray
+     * the given String into a String array, it work same as @see tokenizeToStringArray
+     * @param str
+     * @param delimiters
+     * @return
      */
-    public static String[] delimitedListToStringArray(String str, String delimiter) {
-        return delimitedListToStringArray(str, delimiter, null);
-    }
-
-    /**
-     * Take a String which is a delimited list and convert it to a String array.
-     * <p>A single delimiter can consists of more than one character: It will still
-     * be considered as single delimiter string, rather than as bunch of potential
-     * delimiter characters - in contrast to <code>tokenizeToStringArray</code>.
-     * @param str the input String
-     * @param delimiter the delimiter between elements (this is a single delimiter,
-     * rather than a bunch individual delimiter characters)
-     * @param charsToDelete a set of characters to delete. Useful for deleting unwanted
-     * line breaks: e.g. "\r\n\f" will delete all new lines and line feeds in a String.
-     * @return an array of the tokens in the list
-     * @see #tokenizeToStringArray
-     */
-    public static String[] delimitedListToStringArray(String str, String delimiter, String charsToDelete) {
-        if (str == null) {
-            return new String[0];
-        }
-        if (delimiter == null) {
-            return new String[] {str};
-        }
-        List<String> result = new ArrayList<String>();
-        if ("".equals(delimiter)) {
-            for (int i = 0; i < str.length(); i++) {
-                result.add(deleteAny(str.substring(i, i + 1), charsToDelete));
-            }
-        }
-        else {
-            int pos = 0;
-            int delPos;
-            while ((delPos = str.indexOf(delimiter, pos)) != -1) {
-                result.add(deleteAny(str.substring(pos, delPos), charsToDelete));
-                pos = delPos + delimiter.length();
-            }
-            if (str.length() > 0 && pos <= str.length()) {
-                // Add rest of String, but not in case of empty input.
-                result.add(deleteAny(str.substring(pos), charsToDelete));
-            }
-        }
-        return toStringArray(result);
+    public static String[] split(String str, String delimiters){
+        return tokenizeToStringArray(str, delimiters);
     }
 }

@@ -2,6 +2,8 @@ package com.lakeside.core.utils;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
 public class StringUtilsTest {
 
 	@Test
@@ -52,4 +54,28 @@ public class StringUtilsTest {
 	public void formatTest(){
 		System.out.println(StringUtils.format("this.is {0}, {0},{1}", 0,"women"));
 	}
+
+    @Test
+    public void testTokenizeToStringArray() {
+        String[] stringArray = StringUtils.tokenizeToStringArray("/root/second/third/", "/");
+        assertEquals(3, stringArray.length);
+    }
+
+    @Test
+    public void testTokenizeToStringArrayIgnoreEmpty() {
+        String[] stringArray = StringUtils.tokenizeToStringArray("/root/second//third/", "/");
+        assertEquals(3, stringArray.length);
+
+        stringArray = StringUtils.tokenizeToStringArray("http://www.amazon.com/s/ref=lp_7147441011_ex_n_1?rh=n%3A7141123011%2Cn%3A10445813011/", "/");
+        assertEquals(4, stringArray.length);
+    }
+
+    @Test
+    public void testSplit() {
+        String[] stringArray = StringUtils.split("/root/second//third/", "/");
+        assertEquals(3, stringArray.length);
+
+        stringArray = StringUtils.split("http://www.amazon.com/s/ref=lp_7147441011_ex_n_1?rh=n%3A7141123011%2Cn%3A10445813011/", "/");
+        assertEquals(4, stringArray.length);
+    }
 }

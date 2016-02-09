@@ -670,7 +670,7 @@ public class PathUtils {
             pathToUse = pathToUse.substring(1);
         }
 
-        String[] pathArray = StringUtils.delimitedListToStringArray(pathToUse, FOLDER_SEPARATOR);
+        String[] pathArray = StringUtils.tokenizeToStringArray(pathToUse, FOLDER_SEPARATOR);
         List<String> pathElements = new LinkedList<String>();
         int tops = 0;
 

@@ -170,6 +170,15 @@ public class Configuration {
     }
 
     /**
+     * check if contain specify key
+     * @param key
+     * @return
+     */
+    public boolean containsKey(Object key) {
+        return _map.containsKey(key);
+    }
+
+    /**
      * combine with anther configuration( exclude the keys which have been exists in current configuration)
      * <p/>
      * this will combine the key that doesn't exists in current configuration object
