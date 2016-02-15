@@ -723,4 +723,13 @@ public class PathUtils {
         }
     }
 
+    /**
+     * join the path info
+     * @param path
+     * @param subPath
+     * @return
+     */
+    public static String join(String path, String subPath) {
+        return cleanPath(path+FOLDER_SEPARATOR+subPath);
+    }
 }
