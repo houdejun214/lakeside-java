@@ -1,4 +1,4 @@
-package com.lakeside.core.regex;
+package com.lakeside.core.utils;
 
 public class CommonPattern {
 	public static final String CN = "[\u4e00-\u9fa5]+";

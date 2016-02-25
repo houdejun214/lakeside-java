@@ -10,8 +10,6 @@
 package com.lakeside.core.utils;
 
 
-import com.lakeside.core.regex.CommonPattern;
-
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.math.BigInteger;
